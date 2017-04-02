@@ -1,0 +1,92 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.04.0 ] */
+
+/* [wxMaxima: input   start ] */
+load(functs)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(a, n, m, j)$
+makelist(block(for m:0 thru n do
+    for j:m thru 1 step -1 do
+           (A[m]:(1/(m+1)),A[j-1]:(j*(A[j-1]-A[j]))), return(A[1])), n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+zerobern:false$
+makelist(bern(n), n, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(m,n,k,B,S)$
+S[m](n):=((1/(m+1))*sum((binomial(m+1,k)*B[k]*n^(m+1-k)), k, 0, m));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+B[0]:1$ B[1]:1/2$ makelist(makelist(S[m](n), n, 1, 10), m, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(S[1](n), n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+B[1]:1/2$ makelist(S[1](n), n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+B[0]:1$ B[1]:1/2$ makelist(S[1](n), n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* n = 0, B[1]=-1/2 */
+kill(B)$
+B[m]:=sum(sum((-1)^(v)*binomial(k,v)*((v)^m/(k+1)) ,v, 0, k), k, 0, m);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(B[m], m, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* n = 1, B[1]=+1/2 */
+kill(B,m,n,v,k)$
+B[m]:=sum(sum((-1)^(v+1)*binomial(k-1,v-1)*((v)^m/(k)) ,v, 1, k), k, 1, m+1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(B[m], m, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* more generic */
+kill(B)$ B[m](n):=sum(sum((-1)^(v)*binomial(k,v)*((n+v)^m/(k+1)) ,v, 0, k), k, 0, m);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst([n=1], makelist((B[m](n)), m, 0, 10));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for n:1 thru 10 do (print(makelist(B[m](n), m, 0, 10)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(n,k,m)$
+makelist(subst([n=k], makelist((B[m](n)), m, 0, 10)), k, 0, 0);
+makelist(subst([n=k], makelist((B[m](n)), m, 0, 10)), k, 1, 1);
+makelist(subst([n=k], makelist((B[m](n)), m, 0, 10)), k, 2, 2);
+makelist(subst([n=k, k=3], makelist((B[m](n)), m, 0, 10)), k, k, k);
+k:4$ makelist(subst([n=k], makelist((B[m](n)), m, 0, 10)), k, k, k);
+k:5$ makelist(makelist((B[m](k)), m, 0, 10), k, k, k);
+k:0$ makelist((B[m](k)), m, 0, 10);
+k:1$ makelist((B[m](k)), m, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(gf, gfb,t,n, k)$
+for k:0 thru 10 do print(coeff(makelist(makelist(B[m](n)*((t^(m))/m!), m, 0, 10), n, 1, 1), t, k));
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

@@ -1,0 +1,527 @@
+/* moller3-test.mac
+   comparison of matrix trace and symbolic
+   trace methods of computation of the
+   square of polarized amplitudes,
+   compared to the square of the amplitude
+   computed using the explicit Dirac
+   spinor method.
+   
+   Each of the five cases requires specification of the
+   helicity assignments and the Dirac spinor
+   amplitude A_spinor result for that case.
+   To make the comparison in some cases we need to
+   convert from (th/2) form and replace E in terms
+   of p and m.
+   
+   To run, use: batch ("moller3-test.mac",test);
+   
+   Since each helicity specified case takes 
+   about 2 min on the author's computer, you might want to
+   comment out four of the cases to run a particular case.
+       
+      */
+   
+   
+  invar (D(p1,p1) = m^2,D(p2,p2) = m^2,D(p3,p3) = m^2,D(p4,p4) = m^2,
+             D(p1,Sp1) = 0,D(Sp1,Sp1) = -1,D(p2,Sp2) = 0,D(Sp2,Sp2) = -1,
+             D(p3,Sp3) = 0,D(Sp3,Sp3) = -1,D(p4,Sp4) = 0,D(Sp4,Sp4) = -1);
+  done;
+ 
+  comp_def (p1(E,0,0,p),Sp1(p/m,0,0,E/m),p2(E,0,0,-p),Sp2(p/m,0,0,(-E)/m),
+                p3(E,p*sin(th),0,p*cos(th)),
+                Sp3(p/m,E*sin(th)/m,0,E*cos(th)/m),
+                p4(E,-p*sin(th),0,-p*cos(th)),
+                Sp4(p/m,(-E*sin(th))/m,0,(-E*cos(th))/m));
+  done;
+  
+  ( p_Em (expr) := expand (ratsubst (E^2-m^2,p^2,expr)),
+        E_pm(expr) := expand (ratsubst (m^2+p^2,E^2,expr)),
+        s_th : VP (p2+p1,p2+p1) );
+   4*E^2;
+   
+   t_th : VP (p1-p3,p1-p3);
+  2*p^2*cos(th)-2*p^2;
+  
+  u_th : VP (p1-p4,p1-p4);
+  -2*p^2*cos(th)-2*p^2;
+  
+  t_th2 : to_ao2 (t_th,th);
+  -4*p^2*sin(th/2)^2;
+  
+  u_th2 : to_ao2 (u_th,th);
+  4*p^2*sin(th/2)^2-4*p^2;
+  
+  t_thE : p_Em (t_th);
+  2*cos(th)*E^2-2*E^2-2*m^2*cos(th)+2*m^2;
+  
+  u_thE : p_Em (u_th);
+  -2*cos(th)*E^2-2*E^2+2*m^2*cos(th)+2*m^2;
+  
+  /* note the package default is stu_flag = true 
+     governing noncov behavior */
+     
+  /*****************************************/
+       
+  
+    
+  " case RR --> LL  "$
+  " case RR --> LL  ";
+  
+  
+  ([sv1,sv2,sv3,sv4]:[1,1,-1,-1],
+    A_spinor : 2*m^2/p^2,
+    A_spinor_th : fr_ao2 (A_spinor,th),    
+    A_spSQ : E_pm (A_spinor_th^2));
+    
+  4*m^4/p^4;    
+  
+  [sv1,sv2,sv3,sv4];
+  [1,1,-1,-1];
+    
+  M1n_m : trigsimp (E_pm (mcon ( m_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,nu)*
+                 m_tr (S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+                 
+ -4*m^4*sin(th)^2-8*m^4*cos(th)+8*m^4; 
+ 
+
+ M1n_s : trigsimp (E_pm (mcon ( nc_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,nu)*
+                 nc_tr (S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+                 
+ -4*m^4*sin(th)^2-8*m^4*cos(th)+8*m^4;
+ 
+    M1n_s - M1n_m;
+    0;
+
+ M2n_m : trigsimp (E_pm (mcon ( m_tr (S(sv4,Sp4),p4+m,mu,S(sv1,Sp1),p1+m,nu)*
+                m_tr (S(sv3,Sp3),p3+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+                
+ -4*m^4*sin(th)^2+8*m^4*cos(th)+8*m^4;
+
+ M2n_s : trigsimp (E_pm (mcon ( nc_tr (S(sv4,Sp4),p4+m,mu,S(sv1,Sp1),p1+m,nu)*
+                nc_tr (S(sv3,Sp3),p3+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+                
+ -4*m^4*sin(th)^2+8*m^4*cos(th)+8*m^4;  
+ 
+    M2n_s - M2n_m;
+    0;
+  
+   M12n_m : trigsimp (E_pm (mcon ( m_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,
+                         nu,S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu),mu,nu)));
+ -4*m^4*sin(th)^2;
+ 
+  M12n_s : trigsimp (E_pm (nc_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,
+                         nu,S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu)));
+ -4*m^4*sin(th)^2;
+ 
+    M12n_s - M12n_m;
+    0;
+ 
+  M21n_m : trigsimp (E_pm (mcon ( m_tr (S(sv4,Sp4),p4+m,mu,S(sv1,Sp1),p1+m,
+                      nu,S(sv3,Sp3),p3+m,mu,S(sv2,Sp2),p2+m,nu),mu,nu)));
+ -4*m^4*sin(th)^2;
+ 
+ M21n_s : trigsimp (E_pm (nc_tr (S(sv4,Sp4),p4+m,mu,S(sv1,Sp1),p1+m,
+                         nu,S(sv3,Sp3),p3+m,mu,S(sv2,Sp2),p2+m,nu)));
+ -4*m^4*sin(th)^2;
+ 
+    M21n_s - M21n_m;
+    0;
+ 
+ MfiSQ : expand (M1n_m/t_th^2 + M2n_m/u_th^2 - M12n_m/(t_th*u_th)
+                 - M21n_m/(t_th*u_th));
+ -4*m^4*sin(th)^2/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+       -4*m^4*sin(th)^2/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+       +8*m^4*sin(th)^2/(4*p^4-4*p^4*cos(th)^2)
+       +8*m^4*cos(th)/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+       +8*m^4/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+       -8*m^4*cos(th)/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+       +8*m^4/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4);
+       
+ MfiSQ : trigsimp (MfiSQ);
+ 4*m^4/p^4;
+ 
+ MSQ_diff : trigsimp (MfiSQ - A_spSQ);
+ 0;
+ 
+ 
+
+  /**********************************************/
+  
+  /* 
+   /* case RR --> RL  */
+   
+   
+  " case RR --> RL  "$
+  " case RR --> RL  ";
+  
+  
+  ([sv1,sv2,sv3,sv4]:[1,1,1,-1],
+    A_spinor : m*sin(th/2)*E/(p^2*cos(th/2))-m*cos(th/2)*E/(p^2*sin(th/2)),
+    A_spinor_th : fr_ao2 (A_spinor,th),    
+    A_spSQ : E_pm (A_spinor_th^2));
+    
+  4*m^2*cos(th)^2/(p^2*sin(th)^2)+4*m^4*cos(th)^2/(p^4*sin(th)^2);
+  
+  [sv1,sv2,sv3,sv4];
+  [1,1,1,-1];
+  
+  M1n_m : trigsimp (E_pm (mcon ( m_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,nu)*
+                 m_tr (S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+ (4*m^2*p^2+4*m^4)*sin(th)^2;
+ 
+  M1n_s : trigsimp (E_pm (mcon ( nc_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,nu)*
+                 nc_tr (S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+ (4*m^2*p^2+4*m^4)*sin(th)^2;
+ 
+    M1n_s - M1n_m;
+    0;
+ 
+  M2n_m : trigsimp (E_pm (mcon ( m_tr (S(sv4,Sp4),p4+m,mu,S(sv1,Sp1),p1+m,nu)*
+                m_tr (S(sv3,Sp3),p3+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+ (4*m^2*p^2+4*m^4)*sin(th)^2;
+ 
+  M2n_s : trigsimp (E_pm (mcon ( nc_tr (S(sv4,Sp4),p4+m,mu,S(sv1,Sp1),p1+m,nu)*
+                nc_tr (S(sv3,Sp3),p3+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+ (4*m^2*p^2+4*m^4)*sin(th)^2;
+ 
+    M2n_s - M2n_m;
+    0;
+ 
+  M12n_m : trigsimp (E_pm (mcon ( m_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,
+                         nu,S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu),mu,nu)));
+ (4*m^2*p^2+4*m^4)*sin(th)^2;
+ 
+  M12n_s : trigsimp (E_pm (nc_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,
+                         nu,S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu)));
+ (4*m^2*p^2+4*m^4)*sin(th)^2;
+ 
+    M12n_s - M12n_m;
+    0;
+ 
+  M21n_m : trigsimp (E_pm (mcon ( m_tr (S(sv4,Sp4),p4+m,mu,S(sv1,Sp1),p1+m,
+                      nu,S(sv3,Sp3),p3+m,mu,S(sv2,Sp2),p2+m,nu),mu,nu)));
+ (4*m^2*p^2+4*m^4)*sin(th)^2;
+ 
+  M21n_s : trigsimp (E_pm (nc_tr (S(sv4,Sp4),p4+m,mu,S(sv1,Sp1),p1+m,
+                         nu,S(sv3,Sp3),p3+m,mu,S(sv2,Sp2),p2+m,nu)));
+ (4*m^2*p^2+4*m^4)*sin(th)^2;
+ 
+    M21n_s - M21n_m;
+    0;
+ 
+  MfiSQ : expand (M1n_m/t_th^2 + M2n_m/u_th^2 - M12n_m/(t_th*u_th)
+                 - M21n_m/(t_th*u_th));
+  4*m^2*p^2*sin(th)^2/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+        +4*m^4*sin(th)^2/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+        +4*m^2*p^2*sin(th)^2/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+        +4*m^4*sin(th)^2/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+        -8*m^2*p^2*sin(th)^2/(4*p^4-4*p^4*cos(th)^2)
+        -8*m^4*sin(th)^2/(4*p^4-4*p^4*cos(th)^2);
+        
+   MfiSQ : trigsimp (MfiSQ);
+ (4*m^2*p^2+4*m^4)*cos(th)^2/(p^4*sin(th)^2);
+ 
+  MSQ_diff : trigsimp (MfiSQ - A_spSQ);
+  0;
+ 
+  */
+ 
+ /********************************************/
+  /*
+ 
+  " case RR --> RR  "$
+  " case RR --> RR  ";
+  
+  
+  ([sv1,sv2,sv3,sv4]:[1,1,1,1],
+    A_spinor : m^2*sin(th/2)^2/(p^2*cos(th/2)^2)+2*sin(th/2)^2/cos(th/2)^2
+                                 +m^2*cos(th/2)^2/(p^2*sin(th/2)^2)
+                                 +2*cos(th/2)^2/sin(th/2)^2+4,
+    A_spinor_th : fr_ao2 (A_spinor,th),    
+    A_spSQ : trigsimp (E_pm (A_spinor_th^2)));
+    
+  (4*m^4*cos(th)^4+(32*m^2*p^2+8*m^4)*cos(th)^2+64*p^4+32*m^2*p^2+4*m^4)
+        /(p^4*sin(th)^4);
+                             
+  
+  [sv1,sv2,sv3,sv4];
+  [1,1,1,1];                         
+  
+  
+  M1n_m : trigsimp (E_pm (mcon ( m_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,nu)*
+                 m_tr (S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+ -4*m^4*sin(th)^2+(32*m^2*p^2+8*m^4)*cos(th)+64*p^4+32*m^2*p^2+8*m^4;
+ 
+  
+    
+  M1n_s : trigsimp (E_pm (mcon ( nc_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,nu)*
+                 nc_tr (S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+ -4*m^4*sin(th)^2+(32*m^2*p^2+8*m^4)*cos(th)+64*p^4+32*m^2*p^2+8*m^4;  
+ 
+    M1n_s - M1n_m;
+    0;
+ 
+  M2n_m : trigsimp (E_pm (mcon ( m_tr (S(sv4,Sp4),p4+m,mu,S(sv1,Sp1),p1+m,nu)*
+                m_tr (S(sv3,Sp3),p3+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+ -4*m^4*sin(th)^2+(-32*m^2*p^2-8*m^4)*cos(th)+64*p^4+32*m^2*p^2+8*m^4;
+ 
+  M2n_s : trigsimp (E_pm (mcon ( nc_tr (S(sv4,Sp4),p4+m,mu,S(sv1,Sp1),p1+m,nu)*
+                nc_tr (S(sv3,Sp3),p3+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+ -4*m^4*sin(th)^2+(-32*m^2*p^2-8*m^4)*cos(th)+64*p^4+32*m^2*p^2+8*m^4;
+ 
+   M2n_s - M2n_m;
+   0;
+ 
+  M12n_m : trigsimp (E_pm (mcon ( m_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,
+                         nu,S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu),mu,nu)));
+ -4*m^4*sin(th)^2-64*p^4-32*m^2*p^2;
+ 
+  M12n_s : trigsimp (E_pm (nc_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,
+                         nu,S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu)));
+ -4*m^4*sin(th)^2-64*p^4-32*m^2*p^2;
+ 
+   M12n_s - M12n_m;
+   0;
+ 
+  M21n_m : trigsimp (E_pm (mcon ( m_tr (S(sv4,Sp4),p4+m,mu,S(sv1,Sp1),p1+m,
+                      nu,S(sv3,Sp3),p3+m,mu,S(sv2,Sp2),p2+m,nu),mu,nu)));
+ -4*m^4*sin(th)^2-64*p^4-32*m^2*p^2;
+ 
+  M21n_s : trigsimp (E_pm (nc_tr (S(sv4,Sp4),p4+m,mu,S(sv1,Sp1),p1+m,
+                         nu,S(sv3,Sp3),p3+m,mu,S(sv2,Sp2),p2+m,nu)));
+ -4*m^4*sin(th)^2-64*p^4-32*m^2*p^2;
+ 
+    M21n_s - M21n_m;
+    0;
+    
+    
+ 
+  MfiSQ : expand (M1n_m/t_th^2 + M2n_m/u_th^2 - M12n_m/(t_th*u_th)
+                 - M21n_m/(t_th*u_th));
+ -4*m^4*sin(th)^2/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+        -4*m^4*sin(th)^2/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+        +8*m^4*sin(th)^2/(4*p^4-4*p^4*cos(th)^2)
+        -32*m^2*p^2*cos(th)/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+        -8*m^4*cos(th)/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+        +64*p^4/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+        +32*m^2*p^2/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+        +8*m^4/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+        +32*m^2*p^2*cos(th)/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+        +8*m^4*cos(th)/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+        +64*p^4/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+        +32*m^2*p^2/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+        +8*m^4/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+        +128*p^4/(4*p^4-4*p^4*cos(th)^2)+64*m^2*p^2/(4*p^4-4*p^4*cos(th)^2);
+        
+  MfiSQ : trigsimp (MfiSQ);
+ (4*m^4*sin(th)^4+(-32*m^2*p^2-16*m^4)*sin(th)^2+64*p^4+64*m^2*p^2
+                       +16*m^4)
+        /(p^4*sin(th)^4);
+        
+  MSQ_diff : trigsimp (MfiSQ - A_spSQ);
+  0;
+ 
+  */
+ 
+ /********************************************/
+ 
+  /*
+ 
+  " case RL --> RL  "$
+  " case RL --> RL  ";
+  
+  
+  ([sv1,sv2,sv3,sv4]:[1,-1,1,-1],
+    A_spinor : m^2*cos(th/2)^2/(p^2*sin(th/2)^2)+ 
+            2*cos(th/2)^2/sin(th/2)^2-m^2/p^2,
+    A_spinor_th : fr_ao2 (A_spinor,th),    
+    A_spSQ : trigsimp (E_pm (A_spinor_th^2)));
+    
+ ((4*p^4+8*m^2*p^2+4*m^4)*cos(th)^2+(8*p^4+8*m^2*p^2)*cos(th)+4*p^4)
+        /(p^4*cos(th)^2-2*p^4*cos(th)+p^4);
+       
+  [sv1,sv2,sv3,sv4];
+  [1,-1,1,-1];
+  
+  M1n_m : trigsimp (E_pm (mcon ( m_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,nu)*
+                 m_tr (S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+ (-16*p^4-16*m^2*p^2-4*m^4)*sin(th)^2+(32*p^4+32*m^2*p^2+8*m^4)*cos(th)
+                                          +32*p^4+32*m^2*p^2+8*m^4;
+                                          
+  M1n_s : trigsimp (E_pm (mcon ( nc_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,nu)*
+                 nc_tr (S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+ (-16*p^4-16*m^2*p^2-4*m^4)*sin(th)^2+(32*p^4+32*m^2*p^2+8*m^4)*cos(th)
+                                          +32*p^4+32*m^2*p^2+8*m^4;
+                                          
+   M1n_s - M1n_m;
+   0;
+   
+  M2n_m : trigsimp (E_pm (mcon ( m_tr (S(sv4,Sp4),p4+m,mu,S(sv1,Sp1),p1+m,nu)*
+                m_tr (S(sv3,Sp3),p3+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+ -4*m^4*sin(th)^2+8*m^4*cos(th)+8*m^4;
+ 
+  M2n_s : trigsimp (E_pm (mcon ( nc_tr (S(sv4,Sp4),p4+m,mu,S(sv1,Sp1),p1+m,nu)*
+                nc_tr (S(sv3,Sp3),p3+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+ -4*m^4*sin(th)^2+8*m^4*cos(th)+8*m^4;
+ 
+    M2n_s - M2n_m;
+    0;
+    
+  M12n_m : trigsimp (E_pm (mcon ( m_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,
+                         nu,S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu),mu,nu)));
+ (-8*m^2*p^2-4*m^4)*sin(th)^2+(16*m^2*p^2+8*m^4)*cos(th)+16*m^2*p^2
+                                   +8*m^4;
+                                   
+ M12n_s : trigsimp (E_pm (nc_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,
+                         nu,S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu)));
+ (-8*m^2*p^2-4*m^4)*sin(th)^2+(16*m^2*p^2+8*m^4)*cos(th)+16*m^2*p^2
+                                   +8*m^4;
+                                   
+    M12n_s - M12n_m;
+    0;
+    
+ M21n_m : trigsimp (E_pm (mcon ( m_tr (S(sv4,Sp4),p4+m,mu,S(sv1,Sp1),p1+m,
+                      nu,S(sv3,Sp3),p3+m,mu,S(sv2,Sp2),p2+m,nu),mu,nu)));
+ (-8*m^2*p^2-4*m^4)*sin(th)^2+(16*m^2*p^2+8*m^4)*cos(th)+16*m^2*p^2
+                                   +8*m^4;
+                                   
+ M21n_s : trigsimp (E_pm (nc_tr (S(sv4,Sp4),p4+m,mu,S(sv1,Sp1),p1+m,
+                         nu,S(sv3,Sp3),p3+m,mu,S(sv2,Sp2),p2+m,nu)));
+ (-8*m^2*p^2-4*m^4)*sin(th)^2+(16*m^2*p^2+8*m^4)*cos(th)+16*m^2*p^2
+                                   +8*m^4;
+                                   
+   M21n_s - M21n_m;
+   0;
+   
+  MfiSQ : expand (M1n_m/t_th^2 + M2n_m/u_th^2 - M12n_m/(t_th*u_th)
+                 - M21n_m/(t_th*u_th));
+ -4*m^4*sin(th)^2/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+        -16*p^4*sin(th)^2/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+        -16*m^2*p^2*sin(th)^2/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+        -4*m^4*sin(th)^2/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+        +16*m^2*p^2*sin(th)^2/(4*p^4-4*p^4*cos(th)^2)
+        +8*m^4*sin(th)^2/(4*p^4-4*p^4*cos(th)^2)
+        +8*m^4*cos(th)/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+        +8*m^4/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+        +32*p^4*cos(th)/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+        +32*m^2*p^2*cos(th)/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+        +8*m^4*cos(th)/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+        +32*p^4/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+        +32*m^2*p^2/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+        +8*m^4/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+        -32*m^2*p^2*cos(th)/(4*p^4-4*p^4*cos(th)^2)
+        -16*m^4*cos(th)/(4*p^4-4*p^4*cos(th)^2)
+        -32*m^2*p^2/(4*p^4-4*p^4*cos(th)^2)-16*m^4/(4*p^4-4*p^4*cos(th)^2);
+        
+  MfiSQ : trigsimp (MfiSQ);
+ ((4*p^4+8*m^2*p^2+4*m^4)*cos(th)^4+(16*p^4+24*m^2*p^2+8*m^4)*cos(th)^3
+                                         +(24*p^4+24*m^2*p^2+4*m^4)*cos(th)^2
+                                         +(16*p^4+8*m^2*p^2)*cos(th)+4*p^4)
+        /(p^4*sin(th)^4);
+        
+  MSQ_diff : trigsimp (MfiSQ - A_spSQ);
+  0;
+  
+  */
+  
+  /********************************************/
+ 
+  /*
+ 
+  " case RL --> LR  "$
+  " case RL --> LR  ";
+  
+  
+  ([sv1,sv2,sv3,sv4]:[1,-1,-1,1],
+    A_spinor : m^2*sin(th/2)^2/(p^2*cos(th/2)^2)+
+             2*sin(th/2)^2/cos(th/2)^2-m^2/p^2,
+    A_spinor_th : fr_ao2 (A_spinor,th),    
+    A_spSQ : trigsimp (E_pm (A_spinor_th^2)));
+    
+ ((4*p^4+8*m^2*p^2+4*m^4)*cos(th)^2+(-8*p^4-8*m^2*p^2)*cos(th)+4*p^4)
+        /(p^4*cos(th)^2+2*p^4*cos(th)+p^4);
+       
+  [sv1,sv2,sv3,sv4];
+  [1,-1,-1,1];
+  
+  M1n_m : trigsimp (E_pm (mcon ( m_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,nu)*
+                 m_tr (S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+ -4*m^4*sin(th)^2-8*m^4*cos(th)+8*m^4;
+ 
+  M1n_s : trigsimp (E_pm (mcon ( nc_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,nu)*
+                 nc_tr (S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+ -4*m^4*sin(th)^2-8*m^4*cos(th)+8*m^4;
+ 
+    M1n_s - M1n_m;
+    0;
+    
+ M2n_m : trigsimp (E_pm (mcon ( m_tr (S(sv4,Sp4),p4+m,mu,S(sv1,Sp1),p1+m,nu)*
+                m_tr (S(sv3,Sp3),p3+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+ (-16*p^4-16*m^2*p^2-4*m^4)*sin(th)^2+(-32*p^4-32*m^2*p^2-8*m^4)*cos(th)
+                                          +32*p^4+32*m^2*p^2+8*m^4;
+                                          
+  M2n_s : trigsimp (E_pm (mcon ( nc_tr (S(sv4,Sp4),p4+m,mu,S(sv1,Sp1),p1+m,nu)*
+                nc_tr (S(sv3,Sp3),p3+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+ (-16*p^4-16*m^2*p^2-4*m^4)*sin(th)^2+(-32*p^4-32*m^2*p^2-8*m^4)*cos(th)
+                                          +32*p^4+32*m^2*p^2+8*m^4;
+                                          
+    M2n_s - M2n_m;
+    0;
+    
+  M12n_m : trigsimp (E_pm (mcon ( m_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,
+                         nu,S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu),mu,nu)));
+ (-8*m^2*p^2-4*m^4)*sin(th)^2+(-16*m^2*p^2-8*m^4)*cos(th)+16*m^2*p^2
+                                   +8*m^4;
+                                   
+  M12n_s : trigsimp (E_pm (nc_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,
+                         nu,S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu)));
+ (-8*m^2*p^2-4*m^4)*sin(th)^2+(-16*m^2*p^2-8*m^4)*cos(th)+16*m^2*p^2
+                                   +8*m^4;
+                                   
+    M12n_s - M12n_m;
+    0;
+    
+  M21n_m : trigsimp (E_pm (mcon ( m_tr (S(sv4,Sp4),p4+m,mu,S(sv1,Sp1),p1+m,
+                      nu,S(sv3,Sp3),p3+m,mu,S(sv2,Sp2),p2+m,nu),mu,nu)));
+ (-8*m^2*p^2-4*m^4)*sin(th)^2+(-16*m^2*p^2-8*m^4)*cos(th)+16*m^2*p^2
+                                   +8*m^4;
+                                   
+  M21n_s : trigsimp (E_pm (nc_tr (S(sv4,Sp4),p4+m,mu,S(sv1,Sp1),p1+m,
+                         nu,S(sv3,Sp3),p3+m,mu,S(sv2,Sp2),p2+m,nu)));
+ (-8*m^2*p^2-4*m^4)*sin(th)^2+(-16*m^2*p^2-8*m^4)*cos(th)+16*m^2*p^2
+                                   +8*m^4;
+                                   
+    M21n_s - M21n_m;
+    0;
+    
+  MfiSQ : expand (M1n_m/t_th^2 + M2n_m/u_th^2 - M12n_m/(t_th*u_th)
+                 - M21n_m/(t_th*u_th));
+ -16*p^4*sin(th)^2/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+        -16*m^2*p^2*sin(th)^2/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+        -4*m^4*sin(th)^2/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+        -4*m^4*sin(th)^2/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+        +16*m^2*p^2*sin(th)^2/(4*p^4-4*p^4*cos(th)^2)
+        +8*m^4*sin(th)^2/(4*p^4-4*p^4*cos(th)^2)
+        -32*p^4*cos(th)/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+        -32*m^2*p^2*cos(th)/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+        -8*m^4*cos(th)/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+        +32*p^4/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+        +32*m^2*p^2/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+        +8*m^4/(4*p^4*cos(th)^2+8*p^4*cos(th)+4*p^4)
+        -8*m^4*cos(th)/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+        +8*m^4/(4*p^4*cos(th)^2-8*p^4*cos(th)+4*p^4)
+        +32*m^2*p^2*cos(th)/(4*p^4-4*p^4*cos(th)^2)
+        +16*m^4*cos(th)/(4*p^4-4*p^4*cos(th)^2)
+        -32*m^2*p^2/(4*p^4-4*p^4*cos(th)^2)-16*m^4/(4*p^4-4*p^4*cos(th)^2);
+        
+  MfiSQ : trigsimp (MfiSQ);
+ ((4*p^4+8*m^2*p^2+4*m^4)*cos(th)^4+(-16*p^4-24*m^2*p^2-8*m^4)*cos(th)^3
+                                         +(24*p^4+24*m^2*p^2+4*m^4)*cos(th)^2
+                                         +(-16*p^4-8*m^2*p^2)*cos(th)+4*p^4)
+        /(p^4*sin(th)^4);
+        
+  MSQ_diff : trigsimp (MfiSQ - A_spSQ);
+  0;
+  
+  */
+  

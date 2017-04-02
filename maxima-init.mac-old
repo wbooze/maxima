@@ -1,0 +1,38 @@
+/* this is ~/wbooze/.maxima/maxima-init.mac */
+/* last edit 26.09.2011 */
+
+maxima_userdir: "/home/wbooze/.maxima"$
+
+maxima_tempdir: "/home/wbooze/temp"$
+
+file_search_maxima: append(["maxima_userdir/###.{mac,mc,txt}"], file_search_maxima )$
+
+file_search_lisp: append(["maxima_userdir/###.{lisp}"], file_search_lisp )$
+
+file_search_maxima: append(["maxima_userdir/angeom/###.{mac,mc,txt}"], file_search_maxima )$
+
+file_search_lisp: append(["maxima_userdir/angeom/###.{lisp}"], file_search_lisp )$
+
+file_search_maxima: append(["maxima_userdir/discrete/###.{mac,mc,txt}"], file_search_maxima )$
+
+file_search_lisp: append(["maxima_userdir/discrete/###.{lisp}"], file_search_lisp )$
+
+error_size:2000$
+linel:120$
+stringdisp:true$
+
+
+
+load(mbe1util)$
+ldisp(" Maxima is the Future! ")$ 
+ldisp(" mbe1util.mac functions ", functions)$
+disp(" whish you merry maths!")$
+
+load(draw)$
+load(qdraw)$
+load(graphs)$
+load(Species)$
+load(logic)$
+load(group)$
+load(discrete)$
+load(integer_sequence)$

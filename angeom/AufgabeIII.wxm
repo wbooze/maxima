@@ -1,0 +1,98 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load("angeom.mac")$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: title   start ]
+Ebene und Gerade
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: comment start ]
+Gerade g1
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+g1:[2,2,1]+t*[3,3,-1]$ show(g1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Die Gleichung von E1:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+E1:[6,2,1]+r*[3,0,-2]+s*[2,1,0]$ show(E1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+1. Bestimme NormalForm der Ebene E1:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+NFE1:normalForm(E1)$ NFE1;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+SpurPunkte zum Bestimmen der Plott-Scene
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+spurE1:spurPunkteEbene(NFE1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+spurg1:spurPunkteGerade(g1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Aufnehmen der Punkte in die PLOTT-Scene
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+O:append([[0,0,0]],spurg1,spurE1,[PS]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_S(NFE1,"","",g1,"","",-6,6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Schnittpunkte bestimmen
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+PS:schnittEbeneGerade(E1,g1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Einzelschritte zum Schnittpunkt:
+E1 = g1
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+gls:E1-g1;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Gleichungssystem gls lösen und Lösung in Gerade einsetzen
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+lsg:solve(gls,[r,s,t]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F(g1,[t aus lsg]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Schnittwinkel zwischen Gerade und Ebene bestimmen
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+schnittwinkelEbeneGerade(E1,g1), numer;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

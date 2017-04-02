@@ -1,0 +1,103 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 14.09.0 ] */
+
+/* [wxMaxima: input   start ] */
+limit(((%e^x)-1)/x, x, 0); limit(log(%e^x), x, 1); (log(%e));
+limit(%e^x, x, 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(a^x-1)/x, expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+limit(expand((a^x-1)/x), x, 0);
+limit(a^x/x, x, 0);
+limit(1/x, x, 0);
+limit(a^x/x, x, 0) - limit(1/x, x, 0);
+limit((a^x/x)-(1/x), x, 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+1-(1/x), ratsimp;
+(1/x)-1, ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+limit(1/x, x, 0);
+lmax({1/x, 1/inf});
+lmax({1/x, 1/inf}), x=1;
+lmin({1/x, 1/inf});
+lmin({1/x, 1/inf}), x=1;
+makelist(1/x, x, 1, 10), ratsimp;
+limit(1/n, n, 0); "not one!, why not ?";
+1/1; 1/0.5; 1/0.05; 1/0.0000005;
+display(limit(1/n, n, inf))$ "as expected!";
+display(limit(1/n, n, 1))$
+display(limit(1/n, n, 0))$
+makelist(limit(1/n, n, m), m, 2, 0, -1/10), numer;
+"the last one in these results is due to computer (2s complement!)";
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+declare(n, integer)$
+makelist(1/n, n, 3, 1, -1); printf(true, " 1/0 is undef, so we have to stop at 1 ~%")$
+printf(true, " with an integer mindset it really seems as if 1/n is bound above by 1 ~%
+but if you feedin floats then you are in R, don't forget! ~%
+the same way limits behave, limit of something in one set does not have ~%
+to be the same as limit of the same thing in another set, or even exist ~%")$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+sup(1/n)=1, n element N; sup=lub, inf=glb
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+\alpha;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+tex(\mathbb\{A\})$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+\mu[e]^2; 
+%alpha^x; 
+(%Delta*t/t), simp:false;
+nabla(a);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+integerp(0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ratprint:false$ errormsg:false$
+wxplot2d(1/x, [x, 0, 3], [y, 0, 10]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+limit(1/n, n, inf);
+sum(1/n, n, 1, inf), simpsum;
+limit(1/n, n, 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+limit((%e^x)/x, x, 0); limit(1/x, x, 0);
+limit((%e^x)/x, x, 0) - limit(1/x, x, 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+limit((2^x)/x, x, 0); 
+limit(((2^x)-1)/x, x, 0);
+limit(((2^x)-2)/x, x, 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+limit((3^x)/x, x, 0);
+limit(((3^x)-1)/x, x, 0);
+limit(((3^x)-2)/x, x, 0);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

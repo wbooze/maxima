@@ -1,0 +1,89 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.04.0 ] */
+
+/* [wxMaxima: input   start ] */
+load(functs);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f, x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f(x):=1+1/2*x;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst([del(x)=1], diff(f(x)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst([del(x)=1], at(diff(f(x)), x=0));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f(0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+at(f(x), [x=0]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+at(diff(f(x), x), [x=0]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+taylor(f(x), x, 0, 5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+taylor(diff(f(x), x, 0), x, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(taylor(f(x), x, 0, k), k, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for m:0 thru 6 do (printf(true,"~&"), (for k:6 thru 0 step -1 do (printf(true, "~2s ", taylor(f(x), x, m, k)))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(taylor(f(x), x, m, k), k, 0, 6), m, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix(makelist(makelist(taylor(f(x), x, m, k), k, 0, 6), m, 0, 6));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(taylor(diff(f(x), x), x, 0, k), k, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix(makelist(taylor(diff(f(x), x), x, 0, k), k, 0, 6));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(taylor(diff(f(x), x), x, m, k), k, 0, 6), m, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix(makelist(makelist(taylor(diff(f(x), x), x, m, k), k, 0, 6), m, 0, 6));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+taylorinfo(taylor(f(x), x, 0, 5));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+taylorinfo(taylor(diff(f(x), x), x, 0, 5));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+taylor_truncate_polynomials:false;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

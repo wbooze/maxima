@@ -1,0 +1,710 @@
+/* dgintro2-test.mac */
+
+
+ 
+ /* section 1 noncov  */ 
+
+noncov(Eps(mu,nu,rh,si));
+eps4[mu,nu,rh,si];
+noncov (Eps(mu,nu,al,be));
+eps4[al,be,mu,nu];
+Eps(0,1,2,3);
+Eps(0,1,2,3);
+eps4 [0,1,2,3];
+1;
+eps4 [1,0,2,3];
+-1;
+noncov (Gm (mu,nu));
+gmet[mu,nu];
+Gm (0,0);
+Gm(0,0);
+gmet[0,0];
+1;
+gmet[1,1];
+-1;
+Gm (be,al);
+Gm(al,be);
+noncov (D(p,q));
+-p[3]*q[3]-p[2]*q[2]-p[1]*q[1]+p[0]*q[0];
+D(q,p);
+D(p,q);
+D(b,a);
+D(a,b);
+noncov (UI(p,0));
+p[0];
+noncov (UI(p,1));
+p[1];
+noncov (LI (p,0));
+p[0];
+noncov (LI (p,1));
+-p[1];
+massL;
+[m,M];
+Mmass (m1,m2);
+done;
+massL;
+[m,M,m1,m2];
+map ('massp,%);
+[true,true,true,true];
+indexL;
+[n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,la,mu,nu,rh,si,ta,al,be,ga,de,ep];
+map ('indexp,%);
+[true,true,true,true,true,true,true,true,true,true,true,true,true,true,
+        true,true,true,true,true,true,true];
+scalarL;
+[c1,c2,c3,c4,c5,c6,c7,c8,c9,c10];
+map ('scalarp,%);
+[true,true,true,true,true,true,true,true,true,true];
+noncov (G (mu,p1,nu,p2) );
+G(mu,p1,nu,p2);
+
+
+/* section 2 Dexpand  */
+
+ Dexpand(D(a,b));
+ D(a,b);
+ Dexpand(D(a,b+c));
+ D(a,c)+D(a,b);
+ Dexpand(D(a,b+m));
+ D(a)*m+D(a,b);
+ Dexpand(D(a+m,b+M));
+ m*M+D(a)*M+D(b)*m+D(a,b);
+ Dexpand(D(2*a+m,b/3+M));
+ m*M+2*D(a)*M+D(b)*m/3+2*D(a,b)/3;
+ Dexpand(D(2*c1*a+m,b/3+M));
+ m*M+2*c1*D(a)*M+D(b)*m/3+2*c1*D(a,b)/3;
+ Dexpand ( D(a,b+c) + D(e,f+g) );
+ D(e,g)+D(e,f)+D(a,c)+D(a,b);
+ Dexpand ( r*D(a,b+c)/D(e,f) );
+ D(a,c)*r/D(e,f)+D(a,b)*r/D(e,f);
+ Dexpand ( r*D(a,b+c)/(s*D(e,f+g)) );
+ D(a,c)*r/(D(e,g)*s+D(e,f)*s)+D(a,b)*r/(D(e,g)*s+D(e,f)*s);
+
+
+
+
+
+
+
+
+/* sect. 3  Gexpand  */
+
+ Gexpand (G());
+ G();
+ Gexpand (G(1));
+ G(1);
+ Gexpand (G(-1));
+ -G(1);
+ 
+ Gexpand (G(a));
+ G(a);
+ Gexpand (G(-a));
+ -G(a);
+ 
+ Gexpand (G(m));
+ G(1)*m;
+ Gexpand (G(a + m));
+ G(1)*m+G(a);
+ Gexpand (G(a - m));
+ G(a)-G(1)*m;
+ Gexpand (G(-a + m));
+ G(1)*m-G(a);
+ 
+ 
+ Gexpand (G(a+b));
+ G(b)+G(a);
+ Gexpand (G(a,b+c));
+ G(a,c)+G(a,b);
+ Gexpand (G(a+b,c));
+ G(b,c)+G(a,c);
+ 
+ Gexpand (G (a,b+m));
+ G(a)*m+G(a,b);
+ Gexpand (G (a+m,b));
+ G(b)*m+G(a,b);
+ Gexpand (G (a+m,b+M));
+ G(1)*m*M+G(a)*M+G(b)*m+G(a,b);
+ 
+ Gexpand (G (-a,b+m));
+ -G(a)*m-G(a,b);
+ Gexpand (G (a+m,-b));
+ -G(b)*m-G(a,b);
+ Gexpand (G (-a+m,-b));
+ G(a,b)-G(b)*m;
+ 
+ Gexpand (G(2*a/7));
+ 2*G(a)/7;
+ Gexpand (G(-2*a/7));
+ -2*G(a)/7;
+ Gexpand (G(c1*a/c2));
+ c1*G(a)/c2;
+ Gexpand (G (a,c1*b + c2*c));
+ c2*G(a,c)+c1*G(a,b);
+ Gexpand (G (c1*a,b/c2 + c/c3));
+ c1*G(a,c)/c3+c1*G(a,b)/c2;
+ 
+ Gexpand (G (S(1)));
+ G(G5)/2+G(1)/2;
+ Gexpand (G (S(-1)));
+ G(1)/2-G(G5)/2;
+ Gexpand (G (S(1,Sp)));
+ G(G5,Sp)/2+G(1)/2;
+ Gexpand (G (S(-1,Sp)));
+ G(1)/2-G(G5,Sp)/2;
+ 
+ Gexpand (G (S(1,Sp),b+m));
+ G(G5,Sp,b)/2+m*G(G5,Sp)/2+G(1)*m/2+G(b)/2;
+ Gexpand (G (a,S(sv),b));
+ G(a,G5,b)*sv/2+G(a,b)/2;
+ Gexpand (G (a+m,S(sv),b));
+ m*sv*G(G5,b)/2+G(a,G5,b)*sv/2+G(b)*m/2+G(a,b)/2;
+ Gexpand (G (a+m,S(sv),b+M));
+ m*sv*G(G5)*M/2+G(a,G5)*sv*M/2+G(1)*m*M/2+G(a)*M/2+m*sv*G(G5,b)/2
+                    +G(a,G5,b)*sv/2+G(b)*m/2+G(a,b)/2;
+                    
+ Gexpand (G (S(1),a,S(1),b));
+ G(G5,a,G5,b)/4+G(G5,a,b)/4+G(a,G5,b)/4+G(a,b)/4;
+
+
+/* sect.4 */
+
+tr(1);
+4;
+Gtr (G(1));
+4;
+tr(mu);
+0;
+tr(mu,nu);
+4*Gm(mu,nu);
+Gtr (G (mu,nu));
+4*Gm(mu,nu);
+tr(p,q);
+4*D(p,q);
+tr(p,mu);
+4*UI(p,mu);
+noncov(%);
+4*p[mu];
+tr(mu,p);
+4*UI(p,mu);
+tr(G5);
+0;
+tr(G5,mu);
+0;
+tr (G5,mu,nu);
+0;
+tr (G5,mu,nu,rh);
+0;
+tr (G5,al,be,la,mu);
+-4*%i*Eps(al,be,la,mu);
+noncov(%);
+-4*%i*eps4[al,be,la,mu];
+tr(la,mu,nu,rh);
+4*Gm(la,mu)*Gm(nu,rh)-4*Gm(la,nu)*Gm(mu,rh)+4*Gm(la,rh)*Gm(mu,nu);
+tr (a,b,c,d);
+4*D(a,b)*D(c,d)-4*D(a,c)*D(b,d)+4*D(a,d)*D(b,c);
+tr(G5,p,be,la,mu);
+-4*%i*LI(p,N1)*Eps(N1,be,la,mu);
+Nlast;
+1;
+
+/*  Sect. 5 explicit matrix methods */
+
+I4;
+matrix([1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]);
+mat_trace(%);
+4;
+Z4;
+matrix([0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]);
+mat_trace (%);
+0;
+(a(mu,nu) := mat_trace(Gam[mu] . Gam[nu]),
+         b(mu,nu) := 4*gmet[mu,nu],
+         c(mu,nu) := is (equal (a(mu,nu),b(mu,nu))));
+c(mu,nu):=is(equal(a(mu,nu),b(mu,nu)));
+c(0,0);
+true;
+for mu : 0 thru 3 do
+           for nu : 0 thru 3 do
+                if not c(mu,nu) then print(mu,nu,"  false");
+done;
+
+/*  Sect. 6  more trace examples  */
+
+tr(m+p1,mu,m+p2,mu);
+16*m^2-8*D(p1,p2);
+tr(m,m);
+4*m^2;
+tr(m,M);
+4*m*M;
+mat_trace((m*I4) . (m*I4));
+4*m^2;
+scalarL;
+[c1,c2,c3,c4,c5,c6,c7,c8,c9,c10];
+tr(c1*p,q);
+4*c1*D(p,q);
+tr(-c1*p,q/c2);
+-4*c1*D(p,q)/c2;
+tr(-c1*%i*p,q/c2);
+-4*%i*c1*D(p,q)/c2;
+tr(-7*c1*%i*p,q/c2/10);
+-14*%i*c1*D(p,q)/(5*c2);
+tr(a,b);
+4*D(a,b);
+tr(a,b+c);
+4*D(a,c)+4*D(a,b);
+tr(a,c1*b+c2*c+c3*d);
+4*c3*D(a,d)+4*c2*D(a,c)+4*c1*D(a,b);
+
+/*  Sect. 7  Con  */
+
+Con (G (mu,p,q,mu));
+4*G(1)*D(p,q);
+Gtr (%);
+16*D(p,q);
+tr (mu,p,q,mu);
+16*D(p,q);
+Con (G (mu,G5,mu));
+-4*G(G5);
+Con (G(n1,p,n2,n1),n1);
+4*G(1)*UI(p,n2);
+Con (G(n1,p,n2,n1));
+4*G(1)*UI(p,n2);
+Con (G(n1,n2,n2,n1),n1);
+4*G(1)*Gm(n2,n2);
+Con (%);
+16*G(1);
+Gtr (%);
+64;
+Con (UI(p,mu)*UI(q,mu));
+D(p,q);
+Con (UI(p,mu)*Gm(mu,nu));
+UI(p,nu);
+Con (G(a,mu,b,c,mu,a));
+4*G(1)*D(a,a)*D(b,c);
+Con (G(n1,p+m,q+M,n1),n1);
+-2*G(p)*M+4*G(1)*m*M-2*m*G(q)+4*G(1)*D(p,q);
+Gtr (%);
+16*m*M+16*D(p,q);
+tr(n1,p+m,q+M,n1);
+16*m*M+16*D(p,q);
+Con (G(n1,2*a,b/3,n1),n1);
+8*G(1)*D(a,b)/3;
+Con  (G(n5,n4,n3,n2,n1,n5,n1,n4,n3,n2));
+256*G(1);
+Gtr (%);
+1024;
+tr (n5,n4,n3,n2,n1,n5,n1,n4,n3,n2);
+1024;
+Con (G (G5,mu,nu,nu,mu));
+16*G(G5);
+/* scon calls get_rind to look for repeated indices
+   and then calls simp_scon1  */
+   
+scon (Gm (n1,n2)*Eps (n1,n3,n4,n5));
+Eps(n2,n3,n4,n5);
+
+/* Con calls Eps_facp --> true, then noncov, and econ 
+    upon finding a factor of Eps. The noncov
+    converts Gm( ) to gmet[ ] and Eps(  ) to eps4[  ].
+    econ (and mcon) will not automatically contract - must
+    supply contraction index. */
+    
+ Con (Gm (n1,n2)*Eps (n1,n3,n4,n5));
+ gmet[n1,n2]*eps4[n1,n3,n4,n5];
+ Con (Gm (n1,n2)*Eps (n1,n3,n4,n5),n1);
+ eps4[n2,n3,n4,n5];
+
+  scon(Eps(n1,n2,n3,n4)*Eps(n1,n5,n6,n7));
+ Eps(n1,n2,n3,n4)*Eps(n1,n5,n6,n7);
+ scon(Eps(n1,n2,n3,n4)*Eps(n1,n5,n6,n7),n1);
+ Eps(n1,n2,n3,n4)*Eps(n1,n5,n6,n7);
+ 
+ Con(Eps(n1,n2,n3,n4)*Eps(n1,n5,n6,n7));
+ eps4[n1,n2,n3,n4]*eps4[n1,n5,n6,n7];
+ 
+ Con(Eps(n1,n2,n3,n4)*Eps(n1,n5,n6,n7),n1);
+ -eps4[3,n2,n3,n4]*eps4[3,n5,n6,n7]-eps4[2,n2,n3,n4]*eps4[2,n5,n6,n7]
+                                         -eps4[1,n2,n3,n4]*eps4[1,n5,n6,n7]
+                                         +eps4[0,n2,n3,n4]*eps4[0,n5,n6,n7];
+
+
+noncov (Eps(n1,n2,n3,n4)*Eps(n1,n5,n6,n7));
+ eps4[n1,n2,n3,n4]*eps4[n1,n5,n6,n7];
+econ(%,n1);
+-eps4[3,n2,n3,n4]*eps4[3,n5,n6,n7]-eps4[2,n2,n3,n4]*eps4[2,n5,n6,n7]
+                                         -eps4[1,n2,n3,n4]*eps4[1,n5,n6,n7]
+                                         +eps4[0,n2,n3,n4]*eps4[0,n5,n6,n7];
+
+/* sect. 8  explicit matrix contraction */
+
+Con (Gam[n1] . Gam[n1],n1);
+matrix([4,0,0,0],[0,4,0,0],[0,0,4,0],[0,0,0,4]);
+ is (equal (%,4*I4));
+ true;
+ Con (G(n1,n1));
+ 4*G(1);
+ Con (Gam[mu] . Gam[5] . Gam[mu],mu);
+ matrix([4,0,0,0],[0,4,0,0],[0,0,-4,0],[0,0,0,-4]);
+ is (equal (%,-4*Gam[5]));
+ true;
+ Con (G(mu,G5,mu));
+ -4*G(G5);
+ Con(Gam[5] . Gam[mu] . Gam[nu] . Gam[nu] . Gam[mu],mu,nu);
+ matrix([-16,0,0,0],[0,-16,0,0],[0,0,16,0],[0,0,0,16]);
+ is (equal (%,16*Gam[5]));
+ true;
+
+/*  Sect. 9 noncov, comp_def, econ   */
+
+ noncov(D(p,q));
+ -p[3]*q[3]-p[2]*q[2]-p[1]*q[1]+p[0]*q[0];
+ VP (p,q);
+ -p[3]*q[3]-p[2]*q[2]-p[1]*q[1]+p[0]*q[0];
+ noncov(Gm(mu,nu));
+ gmet[mu,nu];
+ gmet[0,0];
+ 1;
+ gmet[1,1];
+ -1;
+ noncov(UI(p,mu));
+ p[mu];
+ noncov(LI(p,mu));
+ p[3]*gmet[3,mu]+p[2]*gmet[2,mu]+p[1]*gmet[1,mu]+p[0]*gmet[0,mu];
+ noncov(LI(p,0));
+ p[0];
+ noncov(LI(p,1));
+ -p[1];
+ noncov(Eps(mu,nu,rh,la));
+ -eps4[la,mu,nu,rh];
+ eps4[0,1,2,3];
+ 1;
+ Eps(0,1,2,3);
+ Eps(0,1,2,3);
+ eps4[1,0,2,3];
+ -1;
+
+ map ('dummyp,[N1,N2,N3,N4,N5]);
+ [true,true,true,true,true];
+ noncov(Eps(N1,N2,N3,N4)*Eps(N1,N2,N3,N4));
+ 24;
+ econ(eps4[n1,n2,n3,n4]*eps4[n1,n2,n3,n4],n1,n2,n3,n4);
+ -24;
+ noncov(Eps(N1,N2,N3,0)*Eps(N1,N2,N3,0));
+ 6;
+ econ(eps4[n1,n2,n3,0]*eps4[n1,n2,n3,0],n1,n2,n3);
+ -6;
+ noncov(Eps(N1,N2,N3,0)*Eps(N1,N2,N3,1));
+ 0;
+ econ(eps4[n1,n2,n3,0]*eps4[n1,n2,n3,1],n1,n2,n3);
+ 0;
+ noncov(Eps(N1,N2,0,1)*Eps(N1,N2,0,1));
+ 2;
+ econ(eps4[n1,n2,0,1]*eps4[n1,n2,0,1],n1,n2);
+ 2;
+
+/* Sect. 10:  2 --> 2 scattering kinematics */
+
+assume(E > 0,th >= 0,th <= %pi);
+[E > 0,th >= 0,th <= %pi];
+comp_def(p1(E,0,0,E),p2(E,0,0,-E),p3(E,E*sin(th),0,E*cos(th)),
+                 p4(E,-E*sin(th),0,-E*cos(th)));
+done;
+map ('listarray, [p1,p2,p3,p4]);
+[[E,0,0,E],[E,0,0,-E],[E,sin(th)*E,0,cos(th)*E],
+        [E,-sin(th)*E,0,-cos(th)*E]];
+p1[0];
+E;
+p3[1];
+sin(th)*E;
+noncov(D(p1,p2));
+2*E^2;
+noncov(D(p2+p1,p2+p1));
+4*E^2;
+VP(p2+p1,p2+p1);
+4*E^2;
+factor(VP(p1-p3,p1-p3));
+2*(cos(th)-1)*E^2;
+tr1 : tr(p3,mu,p1,nu);
+4*UI(p1,mu)*UI(p3,nu)+4*UI(p1,nu)*UI(p3,mu)-4*Gm(mu,nu)*D(p1,p3);
+tr2 : tr(p4,mu,p2,nu);
+4*UI(p2,mu)*UI(p4,nu)+4*UI(p2,nu)*UI(p4,mu)-4*Gm(mu,nu)*D(p2,p4);
+Con (expand (tr1*tr2),mu,nu);
+32*D(p1,p2)*D(p3,p4)+32*D(p1,p4)*D(p2,p3);
+method1 : noncov(%);
+32*cos(th)^2*E^4+64*cos(th)*E^4+160*E^4;
+nctr1 : nc_tr(p3,mu,p1,nu);
+4*gmet[mu,nu]*cos(th)*E^2-4*gmet[mu,nu]*E^2+4*p1[mu]*p3[nu]
+                               +4*p3[mu]*p1[nu];
+nctr2 : nc_tr(p4,mu,p2,nu);
+4*gmet[mu,nu]*cos(th)*E^2-4*gmet[mu,nu]*E^2+4*p2[mu]*p4[nu]
+                               +4*p4[mu]*p2[nu];
+Con (nctr1*nctr2,mu,nu);
+64*sin(th)^2*E^4+96*cos(th)^2*E^4+64*cos(th)*E^4+96*E^4;
+method2 : expand (trigsimp (%));
+32*cos(th)^2*E^4+64*cos(th)*E^4+160*E^4;
+method2 - method1;
+0;
+Con (tr1*tr2);
+32*D(p1,p2)*D(p3,p4)+32*D(p1,p4)*D(p2,p3);
+Con (nctr1*nctr2);
+16*gmet[mu,nu]^2*cos(th)^2*E^4-32*gmet[mu,nu]^2*cos(th)*E^4
+                                     +16*gmet[mu,nu]^2*E^4
+                                     +16*p2[mu]*gmet[mu,nu]*p4[nu]*cos(th)*E^2
+                                     +16*p1[mu]*gmet[mu,nu]*p3[nu]*cos(th)*E^2
+                                     +16*p4[mu]*gmet[mu,nu]*p2[nu]*cos(th)*E^2
+                                     +16*p3[mu]*gmet[mu,nu]*p1[nu]*cos(th)*E^2
+                                     -16*p2[mu]*gmet[mu,nu]*p4[nu]*E^2
+                                     -16*p1[mu]*gmet[mu,nu]*p3[nu]*E^2
+                                     -16*p4[mu]*gmet[mu,nu]*p2[nu]*E^2
+                                     -16*p3[mu]*gmet[mu,nu]*p1[nu]*E^2
+                                     +16*p1[mu]*p2[mu]*p3[nu]*p4[nu]
+                                     +16*p2[mu]*p3[mu]*p1[nu]*p4[nu]
+                                     +16*p1[mu]*p4[mu]*p2[nu]*p3[nu]
+                                     +16*p3[mu]*p4[mu]*p1[nu]*p2[nu];
+Con (%,mu,nu);
+64*sin(th)^2*E^4+96*cos(th)^2*E^4+64*cos(th)*E^4+96*E^4;
+method3a : Con(m_tr(p3,mu,p1,nu)*m_tr(p4,mu,p2,nu),mu,nu);
+64*sin(th)^2*E^4+96*cos(th)^2*E^4+64*cos(th)*E^4+96*E^4;
+method3a : expand (trigsimp (%));
+32*cos(th)^2*E^4+64*cos(th)*E^4+160*E^4;
+method3a - method1;
+0;
+method3b : Con(mat_trace(sL(p3) . Gam[mu] . sL(p1) . Gam[nu])
+                      *mat_trace(sL(p4) . Gam[mu] . sL(p2) . Gam[nu]),mu,nu);
+64*sin(th)^2*E^4+96*cos(th)^2*E^4+64*cos(th)*E^4+96*E^4;
+method3b : expand (trigsimp (%));
+32*cos(th)^2*E^4+64*cos(th)*E^4+160*E^4;
+method3b - method1;
+0;
+mat_trace(Gam[5]);
+0;
+is (equal (Gam[5] . Gam[5],I4));
+true;
+
+
+/* sect. 11: contraction timing comparisons */
+
+
+/*  Sect. 12: Dirac spinor amplitudes  */
+
+ 
+ (up1:UU(E,E,0,0,1),
+        is (equal (up1,matrix([0],[0],[sqrt(2*E)],[0]))));
+ true;
+
+ (vp2b : sbar (VV (E,E,%pi,0,-1)),
+         is (equal (vp2b,matrix([0,-sqrt(2*E),0,0]))));
+ true;
+
+ (a12 : vp2b . Gam[mu] . up1,
+    is (equal (a12,
+          matrix([0,-sqrt(2*E),0,0]) . Gam[mu] . matrix([0],[0],[sqrt(2*E)],[0]))));
+ true;
+ 
+ (up3b : sbar (UU (E,E,th,0,1)),
+     is (equal (up3b,
+       matrix([cos(th/2)*sqrt(2*E),sin(th/2)*sqrt(2*E),0,0]))));
+  true;
+  (vp4 : VV (E,E,%pi-th,%pi,-1),
+    is (equal (vp4,
+       matrix([0],[0],[-cos((%pi-th)/2)*sqrt(2*E)],
+              [sin((%pi-th)/2)*sqrt(2*E)]))));
+  true;
+   (a34 : up3b . Gam[mu] . vp4,
+      is (equal (a34,
+       matrix([cos(th/2)*sqrt(2*E),sin(th/2)*sqrt(2*E),0,0])
+         . Gam[mu]
+         . matrix([0],[0],[-cos((%pi-th)/2)*sqrt(2*E)],
+                  [sin((%pi-th)/2)*sqrt(2*E)]))));
+                  
+   true;
+Mn : Con (a12*a34,mu);
+8*cos(th/2)^2*E^2;
+s_th : VP (p1 + p2,p1 + p2);
+4*E^2;
+Amp_RL_RL : Mn/s_th;
+2*cos(th/2)^2;
+sbar(up1) . up1;
+0;
+up1 : UU(E,p,0,0,1);
+matrix([sqrt(E-p)],[0],[sqrt(E+p)],[0]);
+sbar (up1) . up1;
+2*sqrt(E-p)*sqrt(E+p);
+rootscontract (%);
+2*sqrt(E^2-p^2);
+ratsubst (m, sqrt(E^2-p^2), %);
+2*m;
+is (equal (P(1), (I4 + Gam[5])/2 ));
+true;
+is (equal (P(-1), (I4 - Gam[5])/2 ));
+true;
+Mn_sq:(a12:mat_trace(P(1) . sL(p2)
+                                   . Gam[mu] . P(1) . sL(p1) . Gam[nu]),
+               a34:mat_trace(P(1) . sL(p3)
+                                   . Gam[mu] . P(1) . sL(p4) . Gam[nu]),
+               Con (a12*a34,mu,nu),factor(%%));
+16*(cos(th)+1)^2*E^4;
+Mn_sq : to_ao2 (Mn_sq, th);
+64*cos(th/2)^4*E^4;
+M_sq : Mn_sq/s_th^2;
+4*cos(th/2)^4;
+M_sq - Amp_RL_RL^2;
+0;
+Mn_sq:(a12 : m_tr (S(1),p2,mu,S(1),p1,nu),
+               a34 : m_tr (S(1),p3,mu,S(1),p4,nu),
+                 Con (a12*a34,mu,nu), factor(%%));
+16*(cos(th)+1)^2*E^4;
+Mn_sq : to_ao2 (Mn_sq, th);
+64*cos(th/2)^4*E^4;
+M_sq : Mn_sq/s_th^2;
+4*cos(th/2)^4;
+M_sq-Amp_RL_RL^2;
+0;
+scon (LI(p1,N4)*LI(p2,N3)*Eps(N3,mu,N4,nu)*
+               LI(p3,N7)*LI(p4,N8)*Eps(N7,mu,N8,nu), mu,nu);
+LI(p1,N4)*LI(p2,N3)*LI(p3,N7)*LI(p4,N8)*Eps(N3,mu,N4,nu)
+                *Eps(N7,mu,N8,nu);
+Mn_sq:(a12 : nc_tr (S(1),p2,mu,S(1),p1,nu),
+              a34 : nc_tr (S(1),p3,mu,S(1),p4,nu),
+              Con (a12*a34,mu,nu),
+              factor(%%));
+-16*(sin(th)^2-2*cos(th)-2)*E^4;
+Mn_sq : to_ao2 (Mn_sq,th);
+64*cos(th/2)^4*E^4;
+M_sq : Mn_sq/s_th^2;
+4*cos(th/2)^4;
+M_sq - Amp_RL_RL^2;
+0;
+Mn_sq : (a12 : tr(S(1),p2,mu,S(1),p1,nu),
+         a34 : tr(S(1),p3,mu,S(1),p4,nu),
+		 noncov (a12*a34),
+		 Con (%%,mu,nu),factor(%%));
+-16*(sin(th)^2-2*cos(th)-2)*E^4;
+
+
+ /* Sect. 9 Arb Energy case polarized amplitudes for
+        e(-) e(+) --> mu(-) mu(+)    */
+ 
+ 
+ (comp_def(p1(E,0,0,p),
+               p2(E,0,0,-p),
+               p3(E,k*sin(th),0,k*cos(th)),
+               p4(E,-k*sin(th),0,-k*cos(th))),
+         s_th : VP (p1 + p2,p1 + p2));
+ 4*E^2; 
+ 
+  (up1 : UU(E,p,0,0,1), 
+    is (equal (up1,
+            matrix([sqrt(E-p)],[0],[sqrt(E+p)],[0]))));
+ true;
+ 
+  ( vp2b : sbar(VV(E,p,%pi,0,-1)),
+      is (equal (vp2b,
+        matrix([0,-sqrt(E+p),0,sqrt(E-p)]))));
+ true;
+ 
+   ( a12 : vp2b . Gam[mu] . up1,
+      is (equal (a12,
+         matrix([0,-sqrt(E+p),0,sqrt(E-p)]) . Gam[mu]
+            . matrix([sqrt(E-p)],[0],[sqrt(E+p)],[0]))));
+  true;
+  
+   ( uk1b : sbar(UU(E,k,th,0,1)),
+      is (equal (uk1b,
+            matrix([cos(th/2)*sqrt(E+k),sin(th/2)*sqrt(E+k),cos(th/2)*sqrt(E-k),
+               sin(th/2)*sqrt(E-k)]))));
+  true;
+  
+  ( vk2 : VV(E,k,%pi-th,%pi,-1),
+      is (equal (vk2,
+           matrix([cos((%pi-th)/2)*sqrt(E-k)],[-sin((%pi-th)/2)*sqrt(E-k)],
+              [-cos((%pi-th)/2)*sqrt(E+k)],[sin((%pi-th)/2)*sqrt(E+k)]))));
+  true;
+  
+   ( a34 : uk1b . Gam[mu] . vk2,
+       is (equal (a34,
+            matrix([cos(th/2)*sqrt(E+k),sin(th/2)*sqrt(E+k),cos(th/2)*sqrt(E-k),
+               sin(th/2)*sqrt(E-k)])
+         . Gam[mu]
+         . matrix([cos((%pi-th)/2)*sqrt(E-k)],[-sin((%pi-th)/2)*sqrt(E-k)],
+                  [-cos((%pi-th)/2)*sqrt(E+k)],[sin((%pi-th)/2)*sqrt(E+k)]))));
+                  
+   true;
+   
+   
+ Mn : Con (a12*a34,mu);
+ 8*cos(th/2)^2*E^2;
+ Amp_RL_RL : Mn/s_th;
+ 2*cos(th/2)^2;               
+ 
+  (p_Em(expr) := expand (ratsubst (E^2-m^2,p^2,expr)),
+        k_EM(expr) := expand (ratsubst (E^2-M^2,k^2,expr)),
+        comp_def(Sp1(p/m,0,0,E/m),
+                Sp2(p/m,0,0,(-E)/m),                
+                Sp3(k/M,E*sin(th)/M,0,E*cos(th)/M),                
+                Sp4(k/M,(-E*sin(th))/M,0,(-E*cos(th))/M)));
+ done;
+ 
+ is (equal (P(1,Sp1),(I4 + Gam[5].sL(Sp1))/2));
+ true;
+ is (equal (P(-1,Sp1),(I4 - Gam[5].sL(Sp1))/2));
+ true;
+ 
+  (a12 : mat_trace(Gam[mu] . P(1,Sp1) . (sL(p1) + m*I4)
+                       . Gam[nu] . P(-1,Sp2) . (sL(p2) - m*I4)),
+        a34 : mat_trace (Gam[mu] . P(-1,Sp4) . (sL(p4) - M*I4)
+                   . Gam[nu] . P(1,Sp3) . (sL(p3) + M*I4)),
+        Mn_sq : (Con (a12*a34,mu,nu),
+                 k_EM(%%),p_Em(%%),
+                 expand(trigsimp(%%)),factor(%%)));
+ 16*(cos(th)+1)^2*E^4;
+ 
+ Mn_sq : to_ao2 (Mn_sq, th);
+ 64*cos(th/2)^4*E^4;
+ M_sq : Mn_sq/s_th^2;
+ 4*cos(th/2)^4;
+ 
+ (a12 : m_tr (mu,S(1,Sp1),p1 + m,nu,S(-1,Sp2),p2 - m),
+        a34 : m_tr (mu,S(-1,Sp4),p4 - M,nu,S(1,Sp3),p3 + M),
+        Mn_sq : (Con (a12*a34,mu,nu),
+                 k_EM(%%),p_Em(%%),
+                 expand(trigsimp(%%)),factor(%%)));
+ 16*(cos(th)+1)^2*E^4;
+ 
+ Mn_sq : to_ao2 (Mn_sq, th);
+ 64*cos(th/2)^4*E^4;
+ M_sq : Mn_sq/s_th^2;
+ 4*cos(th/2)^4;
+ 
+ /* symbolic method for arb. energy square of polarized amplitude */
+ 
+  invar(D(p1,p1) = m^2,
+             D(p2,p2) = m^2,
+             D(p3,p3) = M^2,
+             D(p4,p4) = M^2,
+             D(p1,Sp1) = 0,
+             D(Sp1,Sp1) = -1,
+             D(p2,Sp2) = 0,
+             D(Sp2,Sp2) = -1,
+             D(p3,Sp3) = 0,
+             D(Sp3,Sp3) = -1,
+             D(p4,Sp4) = 0,
+             D(Sp4,Sp4) = -1);
+ done;
+ 
+ 
+ 
+  Mn_sq : (nc_tr(mu,S(1,Sp1),m+p1,nu,S(-1,Sp2),p2-m),a12:p_Em(%%),
+              nc_tr(mu,S(-1,Sp4),p4-M,nu,S(1,Sp3),M+p3),a34:k_EM(%%),
+              mcon(a12*a34,mu,nu),k_EM(%%),p_Em(%%),trigsimp(%%),factor(%%));
+ -16*(sin(th)^2-2*cos(th)-2)*E^4;
+ Mn_sq:to_ao2(Mn_sq,th);
+ 64*cos(th/2)^4*E^4;
+ M_sq:Mn_sq/s_th^2;
+ 4*cos(th/2)^4;
+
+ 
+
+ 
+  
+  

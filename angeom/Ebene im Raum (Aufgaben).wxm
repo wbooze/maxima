@@ -1,0 +1,207 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load("angeom");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+http://ksbg.educanet2.ch/fgmathematik1/kap_3_6/kap_3_6_aufgaben.pdf
+1. Gegeben sind die Punkte A(–1/14/2), B(4/9/5) und C(–7/10/2). 
+Dadurch wird eine Ebene Ers durch A, B und C definiert.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+A:[-1,14,2];B:[4,9,5];C:[-7,10,2];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+1.1 Wie lautet die Parameterform der Gleichung von Ers?
+>>Ortsvektor A und die Richtungsvektoren B-A und C-A:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Ers:A+r*(B-A)+s*(C-A)$ show(Ers);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+1.2 Wie müssen die Parameter r und s gewählt werden, damit der Punkt P(6/2/8) erreicht wird?
+>> Bestimme r und s für Ers-P=0
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+P:[6,2,8];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gls:Ers-P;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsg:solve(gls,[r,s]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+°F(Ers,[r aus lsg,s aus lsg]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+2. Gegeben ist die Ebene Euv
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Euv:[4,2,3]+u*[2,1,0]+v*[-4,0,3]$ show(Euv);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Hilfsangaben zum Plotten der Scene
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+NFErs:normalForm(Ers)$ NFEuv:normalForm(Euv)$ gx:[1,0,0]+l*[1,0,0]; O:[[0,0,0],[-2,0,0],[10,0,0]];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_S(NFErs,NFEuv,"",gx,"","",-3,10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+2.1 Berechne den Schnittpunkt von Ers mit der z-Achse (Spurpunkt Sz).
+>> x=0 und y=0
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Sz:solve([Euv[1],Euv[2]],[u,v]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Sz:F(Euv,[u aus Sz,v aus Sz]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+2.2 Bestimme die Schnittgerade gxy von Euv mit der xy-Ebene (Spurgerade Sxy).
+>> z=0
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Sgxy:Euv[3];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gls:solve(Sgxy,listofvars(Sgxy)[1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Sxy:F(Euv,[t,v aus gls]); show(Sxy);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_S(NFErs,NFEuv,"",Sxy,"","",-3,10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+2.3 Bestimme die Koordinatengleichung von Euv.
+>> Normalenvektor n in n.[x,y,z]-Ortsvektor.n=0
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+n:ERV1(Euv)><ERV2(Euv);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+NFEuv:n.[x,y,z]-1*EOV(Euv).n;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+2.4 Berechne den Schnittpunkt von Euv mit der x-Achse (Spurpunkt Sx) mit 
+Hilfe der Koordinatengleichung.
+>> d.h. y=0 und z=0
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+glsx:F(NFEuv,[x,0,0]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsgx:solve(glsx,x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Sx:[x aus lsgx,0,0];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+2.5 Bestimme die Schnittgerade von Euv mit der yz-Ebene (Spurgerade Syz) 
+mit Hilfe der Koordinatengleichung: 
+>> Schnitt NFEuv=0 mit x=0, setze z=q
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Syz:solve(F(NFEuv,[0,y,q]),[y]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Syz:[0,y aus Syz,q]; show(Syz);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:append([Sx,Sz,[-2,0,0],[10,0,0]],spurPunkteEbene(NFEuv))$ PLOTT_S(NFErs,NFEuv,"",Syz,Sxy,"",-3,10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+2.6 Bestimme den Schnittwinkel zwischen Euv und der y-Achse.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+gy:p*[0,1,0];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+180/%pi*asin(n.[0,1,0]/sqrt([0,1,0].[0,1,0])/sqrt(n.n)), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_S(NFErs,NFEuv,"",gy,"","",-3,10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+2.7 Berechne den Abstand des Punktes P(5/–5/7) von Euv
+>> Hesse'sche NF von Euv und P einsetzen
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+HNFEuv:NFEuv/sqrt(n.n);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F(HNFEuv,[5,-5,7]), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+2.8 Welcher Punkt FE auf Euv liegt am nächsten beim Punkt P(5/–5/7)?
+>> Bestimme Gerade go mit Ortsvektor P und Nomalenvektor von Euv 
+>> FE ist Schnittpunkt von go und Euv: Euv-gf=0
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+go:[5,-5,7]+o*n;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsg:solve(Euv-go,[u,v,o]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+FE:ev(go,lsg[1][3]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:append(O,[FE],[[5,-5,7]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_S(NFErs,NFEuv,"",go,"","",-9,20);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

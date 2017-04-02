@@ -1,0 +1,74 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load("angeom")$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: title   start ]
+Geraden im Raum
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: comment start ]
+1. Gegeben sind die Punkte A(2/5/4) und B(2/2/2). 
+Dadurch wird eine Gerade g durch A und B definiert.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+A:[2,-5,4];B:[2,2,2];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+a) Wie lautet die Parameterform der Gleichung von g?
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+g1:A+t*(B-A)$ show(g1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+b) Wo stösst g durch die xy-Ebene hindurch (Spurpunkt Sxy)?
+z=0
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Sxy:g1[3]=0;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Sxy:solve(Sxy,t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Sxy:ev(g1,Sxy);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+c) Wie müsste bei einem Parameterwert t = 2 der Punkt B angepasst werden, 
+damit g die y-Achse schneidet? 
+In welchem Punkt P wird dann die y-Achse geschitten?
+Die x-Koordinate von B muss verändert, damit g auf y-Achse trifft:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+P:[0,-q,0]+A+r*2*(B+[k,0,0])-2*A;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsg:solve(P,[q,r,k]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+P:B+[k aus lsg,0,0];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+g2:A+v*(P-A)$ °g2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[[0,0,0],A,B,P]$ PLOTT_S(z,"","",g1,g2,"",-10,10);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

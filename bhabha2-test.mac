@@ -1,0 +1,232 @@
+/* bhabha2-test.mac 
+   arbitrary energy
+   bhabha scattering */
+   
+ invar(D(p1,p1) = m^2,D(p1,p2) = s/2-m^2,D(p1,p3) = m^2-t/2,
+             D(p1,p4) = m^2-u/2,D(p2,p2) = m^2,D(p2,p3) = m^2-u/2,
+             D(p2,p4) = m^2-t/2,D(p3,p3) = m^2,D(p3,p4) = s/2-m^2,
+             D(p4,p4) = m^2);
+  done;
+  
+  M1n:Con(tr(m+p3,mu,m+p1,nu)*tr(p2-m,mu,p4-m,nu),mu,nu);
+  8*u^2-32*m^2*u+32*m^2*t+8*s^2-32*m^2*s+64*m^4;
+  
+  M2n:Con(tr(p2-m,mu,m+p1,nu)*tr(m+p3,mu,p4-m,nu),mu,nu);
+  8*u^2-32*m^2*u+8*t^2-32*m^2*t+32*m^2*s+64*m^4;
+  
+  M12n:tr(m+p3,mu,m+p1,nu,p2-m,mu,p4-m,nu);
+  -8*u^2+48*m^2*u-16*m^2*t-16*m^2*s-32*m^4;
+  
+  M21n:tr(p2-m,mu,m+p1,nu,m+p3,mu,p4-m,nu);
+  -8*u^2+48*m^2*u-16*m^2*t-16*m^2*s-32*m^4;
+  
+  MfiSQ:expand ((-M21n)/(t*s)+(-M12n)/(t*s)+M2n/s^2+M1n/t^2);
+  16*u^2/(s*t)+8*u^2/t^2+8*u^2/s^2-96*m^2*u/(s*t)-32*m^2*u/t^2
+                   -32*m^2*u/s^2+8*t^2/s^2-32*m^2*t/s^2+64*m^4/(s*t)+64*m^2/t
+                   +8*s^2/t^2-32*m^2*s/t^2+64*m^4/t^2+64*m^2/s+64*m^4/s^2;
+                   
+  (assume(E > 0,p > 0,th >= 0,th <= %pi),
+         comp_def(p1(E,0,0,p),p2(E,0,0,-p),p3(E,p*sin(th),0,p*cos(th)),
+                p4(E,-p*sin(th),0,-p*cos(th))),
+         E_pm(expr):=expand(ratsubst(m^2+p^2,E^2,expr)),
+         s_th:VP(p2+p1,p2+p1));
+   4*E^2;
+   
+   t_th:factor(VP(p1-p3,p1-p3));
+   2*p^2*(cos(th)-1);
+   
+   u_th:factor(VP(p1-p4,p1-p4));
+   -2*p^2*(cos(th)+1);
+   
+   /* convert to function of th */
+   
+   MfiSQ_th:sub_stu(MfiSQ);
+   32*E^8/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        -32*m^2*E^6/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        -8*p^4*sin(th)^2*E^4/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        +16*p^4*cos(th)*E^4/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        +48*m^2*p^2*cos(th)*E^4/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        +16*p^4*E^4/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        -16*m^2*p^2*E^4/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        +16*m^4*E^4/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        -8*p^6*cos(th)*sin(th)^2*E^2/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4
+                                                       +p^4*E^4)
+        -8*p^6*sin(th)^2*E^2/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        -40*m^2*p^4*sin(th)^2*E^2/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4
+                                                    +p^4*E^4)
+        -32*m^2*p^4*cos(th)*E^2/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        +8*m^4*p^2*cos(th)*E^2/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        +32*m^2*p^4*E^2/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        -8*m^4*p^2*E^2/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        +4*p^8*sin(th)^4/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        +8*p^8*cos(th)*sin(th)^2/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        -16*p^8*sin(th)^2/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        -8*m^2*p^6*sin(th)^2/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        -4*m^4*p^4*sin(th)^2/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        -16*p^8*cos(th)/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        -16*m^2*p^6*cos(th)/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        -8*m^4*p^4*cos(th)/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        +16*p^8/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        +16*m^2*p^6/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4)
+        +8*m^4*p^4/(p^4*cos(th)^2*E^4-2*p^4*cos(th)*E^4+p^4*E^4);
+        
+        
+   /* replace E^2 by m^2 + p^2  */
+   
+   MfiSQ_p: (E_pm(MfiSQ_th),trigsimp(%%));
+   (4*p^8*sin(th)^4+(-8*m^2*p^6*cos(th)-32*p^8-72*m^2*p^6-52*m^4*p^4)
+                        *sin(th)^2+(32*m^2*p^6+80*m^4*p^4+56*m^6*p^2)*cos(th)
+                       +64*p^8+160*m^2*p^6+128*m^4*p^4+40*m^6*p^2+16*m^8)
+        /((p^8+2*m^2*p^6+m^4*p^4)*cos(th)^2
+         +(-2*p^8-4*m^2*p^6-2*m^4*p^4)*cos(th)+p^8+2*m^2*p^6+m^4*p^4);
+         
+   /*  POLARIZED DIRAC SPINOR AMPLITUDES  */
+   
+   
+   (p_Em(expr):=expand(ratsubst(E^2-m^2,p^2,expr)),
+        Ep_m(expr):=expand(ratsubst(m,sqrt(E-p)*sqrt(p+E),expr)),
+        Ep_Mm(expr):=(expand(ratsubst(M^2/4-m^2,p^2,expr)),
+             expand(ratsubst(M/2,E,%%))),
+        t_th2:to_ao2(t_th,th) );
+   -4*p^2*sin(th/2)^2;
+   
+   
+   (
+        dA():=(
+          (up1:UU(E,p,0,0,s1),up3b:sbar(UU(E,p,th,0,s3)),
+           vp2b:sbar(VV(E,p,%pi,0,s2)),vp4:VV(E,p,%pi-th,%pi,s4)),
+          Mt:(a13:up3b . Gam[mu] . up1,a42:vp2b . Gam[mu] . vp4,
+              mcon(a13*a42,mu),Ep_m(%%),E_pm(%%),trigsimp(%%)),M1:Mt/t_th2,
+          Ms:(a12:vp2b . Gam[mu] . up1,a43:up3b . Gam[mu] . vp4,
+              mcon(a12*a43,mu),Ep_m(%%),E_pm(%%),trigsimp(%%)),M2:Ms/s_th,
+          M2-M1),
+         [s1,s2,s3,s4]:[1,1,1,1],
+         dA() );
+   (4*m^2-8*m^2*sin(th/2)^2)/(4*E^2)
+        +(-4*m^2*cos(th/2)^2-8*p^2)/(4*p^2*sin(th/2)^2);
+        
+        
+   block([sL,sv1,sv2,sv3,sv4,temp],
+             sL:[1,-1],mssq:0,
+             
+             for sv1 in sL do
+                 for sv2 in sL do
+                     for sv3 in sL do
+                         for sv4 in sL do
+                             ([s1,s2,s3,s4]:[sv1,sv2,sv3,sv4],temp:dA(),
+                             
+                              temp:E_pm(temp),mssq:Avsq(temp)+mssq),
+                              
+              mssq:E_pm(mssq),
+              mssq:expand(fr_ao2(mssq,th)),
+              mssq:trigsimp(mssq),
+              expand (mssq));
+   4*p^8*sin(th)^4/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2+m^4*p^4*cos(th)^2
+                                     -2*p^8*cos(th)-4*m^2*p^6*cos(th)
+                                     -2*m^4*p^4*cos(th)+p^8+2*m^2*p^6+m^4*p^4)
+        -8*m^2*p^6*cos(th)*sin(th)^2/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2
+                                                   +m^4*p^4*cos(th)^2
+                                                   -2*p^8*cos(th)
+                                                   -4*m^2*p^6*cos(th)
+                                                   -2*m^4*p^4*cos(th)+p^8
+                                                   +2*m^2*p^6+m^4*p^4)
+        -32*p^8*sin(th)^2/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2+m^4*p^4*cos(th)^2
+                                        -2*p^8*cos(th)-4*m^2*p^6*cos(th)
+                                        -2*m^4*p^4*cos(th)+p^8+2*m^2*p^6
+                                        +m^4*p^4)
+        -72*m^2*p^6*sin(th)^2/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2
+                                            +m^4*p^4*cos(th)^2-2*p^8*cos(th)
+                                            -4*m^2*p^6*cos(th)
+                                            -2*m^4*p^4*cos(th)+p^8+2*m^2*p^6
+                                            +m^4*p^4)
+        -52*m^4*p^4*sin(th)^2/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2
+                                            +m^4*p^4*cos(th)^2-2*p^8*cos(th)
+                                            -4*m^2*p^6*cos(th)
+                                            -2*m^4*p^4*cos(th)+p^8+2*m^2*p^6
+                                            +m^4*p^4)
+        +32*m^2*p^6*cos(th)/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2
+                                          +m^4*p^4*cos(th)^2-2*p^8*cos(th)
+                                          -4*m^2*p^6*cos(th)-2*m^4*p^4*cos(th)
+                                          +p^8+2*m^2*p^6+m^4*p^4)
+        +80*m^4*p^4*cos(th)/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2
+                                          +m^4*p^4*cos(th)^2-2*p^8*cos(th)
+                                          -4*m^2*p^6*cos(th)-2*m^4*p^4*cos(th)
+                                          +p^8+2*m^2*p^6+m^4*p^4)
+        +56*m^6*p^2*cos(th)/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2
+                                          +m^4*p^4*cos(th)^2-2*p^8*cos(th)
+                                          -4*m^2*p^6*cos(th)-2*m^4*p^4*cos(th)
+                                          +p^8+2*m^2*p^6+m^4*p^4)
+        +64*p^8/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2+m^4*p^4*cos(th)^2
+                              -2*p^8*cos(th)-4*m^2*p^6*cos(th)
+                              -2*m^4*p^4*cos(th)+p^8+2*m^2*p^6+m^4*p^4)
+        +160*m^2*p^6/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2+m^4*p^4*cos(th)^2
+                                   -2*p^8*cos(th)-4*m^2*p^6*cos(th)
+                                   -2*m^4*p^4*cos(th)+p^8+2*m^2*p^6+m^4*p^4)
+        +128*m^4*p^4/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2+m^4*p^4*cos(th)^2
+                                   -2*p^8*cos(th)-4*m^2*p^6*cos(th)
+                                   -2*m^4*p^4*cos(th)+p^8+2*m^2*p^6+m^4*p^4)
+        +40*m^6*p^2/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2+m^4*p^4*cos(th)^2
+                                  -2*p^8*cos(th)-4*m^2*p^6*cos(th)
+                                  -2*m^4*p^4*cos(th)+p^8+2*m^2*p^6+m^4*p^4)
+        +16*m^8/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2+m^4*p^4*cos(th)^2
+                              -2*p^8*cos(th)-4*m^2*p^6*cos(th)
+                              -2*m^4*p^4*cos(th)+p^8+2*m^2*p^6+m^4*p^4);
+                              
+                              
+  MfiSQ_p:E_pm(MfiSQ_th);
+   4*p^8*sin(th)^4/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2+m^4*p^4*cos(th)^2
+                                     -2*p^8*cos(th)-4*m^2*p^6*cos(th)
+                                     -2*m^4*p^4*cos(th)+p^8+2*m^2*p^6+m^4*p^4)
+        -8*m^2*p^6*cos(th)*sin(th)^2/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2
+                                                   +m^4*p^4*cos(th)^2
+                                                   -2*p^8*cos(th)
+                                                   -4*m^2*p^6*cos(th)
+                                                   -2*m^4*p^4*cos(th)+p^8
+                                                   +2*m^2*p^6+m^4*p^4)
+        -32*p^8*sin(th)^2/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2+m^4*p^4*cos(th)^2
+                                        -2*p^8*cos(th)-4*m^2*p^6*cos(th)
+                                        -2*m^4*p^4*cos(th)+p^8+2*m^2*p^6
+                                        +m^4*p^4)
+        -72*m^2*p^6*sin(th)^2/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2
+                                            +m^4*p^4*cos(th)^2-2*p^8*cos(th)
+                                            -4*m^2*p^6*cos(th)
+                                            -2*m^4*p^4*cos(th)+p^8+2*m^2*p^6
+                                            +m^4*p^4)
+        -52*m^4*p^4*sin(th)^2/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2
+                                            +m^4*p^4*cos(th)^2-2*p^8*cos(th)
+                                            -4*m^2*p^6*cos(th)
+                                            -2*m^4*p^4*cos(th)+p^8+2*m^2*p^6
+                                            +m^4*p^4)
+        +32*m^2*p^6*cos(th)/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2
+                                          +m^4*p^4*cos(th)^2-2*p^8*cos(th)
+                                          -4*m^2*p^6*cos(th)-2*m^4*p^4*cos(th)
+                                          +p^8+2*m^2*p^6+m^4*p^4)
+        +80*m^4*p^4*cos(th)/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2
+                                          +m^4*p^4*cos(th)^2-2*p^8*cos(th)
+                                          -4*m^2*p^6*cos(th)-2*m^4*p^4*cos(th)
+                                          +p^8+2*m^2*p^6+m^4*p^4)
+        +56*m^6*p^2*cos(th)/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2
+                                          +m^4*p^4*cos(th)^2-2*p^8*cos(th)
+                                          -4*m^2*p^6*cos(th)-2*m^4*p^4*cos(th)
+                                          +p^8+2*m^2*p^6+m^4*p^4)
+        +64*p^8/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2+m^4*p^4*cos(th)^2
+                              -2*p^8*cos(th)-4*m^2*p^6*cos(th)
+                              -2*m^4*p^4*cos(th)+p^8+2*m^2*p^6+m^4*p^4)
+        +160*m^2*p^6/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2+m^4*p^4*cos(th)^2
+                                   -2*p^8*cos(th)-4*m^2*p^6*cos(th)
+                                   -2*m^4*p^4*cos(th)+p^8+2*m^2*p^6+m^4*p^4)
+        +128*m^4*p^4/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2+m^4*p^4*cos(th)^2
+                                   -2*p^8*cos(th)-4*m^2*p^6*cos(th)
+                                   -2*m^4*p^4*cos(th)+p^8+2*m^2*p^6+m^4*p^4)
+        +40*m^6*p^2/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2+m^4*p^4*cos(th)^2
+                                  -2*p^8*cos(th)-4*m^2*p^6*cos(th)
+                                  -2*m^4*p^4*cos(th)+p^8+2*m^2*p^6+m^4*p^4)
+        +16*m^8/(p^8*cos(th)^2+2*m^2*p^6*cos(th)^2+m^4*p^4*cos(th)^2
+                              -2*p^8*cos(th)-4*m^2*p^6*cos(th)
+                              -2*m^4*p^4*cos(th)+p^8+2*m^2*p^6+m^4*p^4);
+                              
+                              
+   trigsimp(mssq-MfiSQ_p);
+   0;
+   
+   

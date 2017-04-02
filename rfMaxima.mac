@@ -1,0 +1,463 @@
+
+/*
+rfMaxima 0.2.3, January 2011
+*/
+
+disp("rfMaxima 0.2.3, January 2011")$
+disp("   Please download most recent version from http://rfmaxima.sourceforge.net")$
+disp("   Please E-Mail bug reports and extensions to vcaeken@umich.edu")$
+
+load("bode")$
+log10(x):=log(x)/log(10)$
+dB10(x):=10*log10(x)$
+dB20(x):=20*log10(x)$
+
+/*
+declare([%alpha,%beta,%delta,%epsilon,%mu,%sigma,%omega,B,d],[real,scalar])$
+declare([%gamma,[complex,scalar])$
+declare([k_B,T,Z_0],[constant,real,scalar])$
+declare([ABCD,G,H,InverseABCD,M,S,Y,Z],nonscalar)$
+assume(%alpha>0)$
+assume(%beta>0)$
+assume(%delta>0)$
+assume(%epsilon>0)$
+assume(%mu>0)$
+assume(%sigma>0)$
+assume(%omega>0)$
+assume(B>0)$
+assume(d>0)$
+assume(k_B>0)$
+assume(T>0)$
+assume(Z_0>0)$
+*/
+
+/*
+Symbolic Simplification
+*/
+
+AbsSymbolic(H):=block(
+    [FactorH,DenominatorH,NumeratorH],
+    FactorH:factor(H),
+    DenominatorH:expand(denom(FactorH)),
+    NumeratorH:expand(num(FactorH)),
+    sqrt(realpart(NumeratorH)^2+imagpart(NumeratorH)^2)/sqrt(realpart(DenominatorH)^2+imagpart(DenominatorH)^2))$
+ArgSymbolic(H):=block(
+    [FactorH,DenominatorH,NumeratorH,ConjugateDenominatorH],
+    FactorH:factor(H),
+    DenominatorH:denom(FactorH),
+    NumeratorH:num(FactorH),
+    ConjugateDenominatorH:conjugate(DenominatorH),
+    atan2(ratsimp(imagpart(expand(NumeratorH*ConjugateDenominatorH))),ratsimp(realpart(expand(NumeratorH*ConjugateDenominatorH)))))$
+GroupDelaySymbolic(H):=ratsimp(diff(ArgSymbolic(H),%omega))$
+ImSymbolic(H):=block(
+    [FactorH,DenominatorH,NumeratorH,ConjugateDenominatorH],
+    FactorH:factor(H),
+    DenominatorH:denom(FactorH),
+    NumeratorH:num(FactorH),
+    ConjugateDenominatorH:conjugate(DenominatorH),
+    imagpart(expand(NumeratorH*ConjugateDenominatorH))/(DenominatorH*ConjugateDenominatorH))$
+ReSymbolic(H):=block(
+    [FactorH,DenominatorH,NumeratorH,ConjugateDenominatorH],
+    FactorH:factor(H),
+    DenominatorH:denom(FactorH),
+    NumeratorH:num(FactorH),
+    ConjugateDenominatorH:conjugate(DenominatorH),
+    realpart(expand(NumeratorH*ConjugateDenominatorH))/(DenominatorH*ConjugateDenominatorH))$
+PolesSymbolic(H):=ratsimp(solve(denom(factor(H))=0,s))$
+ZerosSymbolic(H):=ratsimp(solve(num(factor(H))=0,s))$
+
+/*
+Transmission Lines
+*/
+
+%alpha_TL(%gamma_TL):=ReSymbolic(%gamma_TL)$
+%beta_TL(%gamma_TL):=ImSymbolic(%gamma_TL)$
+%gamma_TL(C,G,L,R,s):=sqrt((R+s*L)*(G+s*C))$
+Z_TL(C,G,L,R,s):=sqrt((R+s*L)/(G+s*C))$
+R_TL(%gamma_TL,Z_TL):=ReSymbolic(%gamma_TL*Z_TL)$
+L_TL(%gamma_TL,Z_TL,%omega):=ImSymbolic(%gamma_TL*Z_TL)/%omega$
+G_TL(%gamma_TL,Z_TL):=ReSymbolic(%gamma_TL/Z_TL)$
+C_TL(%gamma_TL,Z_TL,%omega):=ImSymbolic(%gamma_TL/Z_TL)/%omega$
+v_g(%beta_TL,%omega):=ratsimp(1/diff(%beta_TL,%omega))$
+GVD(v_g,%omega):=diff(v_g,%omega)$
+
+/*
+Two-Port Parameters
+*/
+
+/*
+Two-Port Parameters of Simple Circuits
+*/
+
+define(ABCD_LosslessTL(%beta_TL,l,Z_TL),matrix([cos(%beta_TL*l),%i*Z_TL*sin(%beta_TL*l)],[%i*sin(%beta_TL*l)/Z_TL,cos(%beta_TL*l)]))$
+define(ABCD_LossyTL(%gamma_TL,l,Z_TL),matrix([cosh(%gamma_TL*l),Z_TL*sinh(%gamma_TL*l)],[sinh(%gamma_TL*l)/Z_TL,cosh(%gamma_TL*l)]))$
+define(ABCD_SeriesImpedance(z),matrix([1,z],[0,1]))$
+define(ABCD_ShuntAdmittance(y),matrix([1,0],[y,1]))$
+define(ABCD_Transformer(n),matrix([n,0],[0,1/n]))$
+define(ABCD_PiNetwork(y1,y2,y3),matrix([1+y2/y3,1/y3],[y1+y2+(y1*y2)/y3,1+y1/y3]))$
+define(ABCD_TNetwork(z1,z2,z3),matrix([1+z1/z3,z1+z2+(z1*z2)/z3],[1/z3,1+z2/z3]))$
+ABCD_Nullor:matrix([0,0],[0,0])$
+define(Z_Gyrator(r),matrix([0,-r],[r,0]))$
+
+/*
+Conversion of Linear Equation Set (KCL, KVL) Solution to Two-Port 
+Parameters (ABCD-, G-, H-, InverseABCD-, Y-, and Z-Parameters)
+*/
+
+Solution2ABCD(Solution):=block(
+    [ABCD_11,ABCD_12,ABCD_21,ABCD_22],
+    ABCD_11:ratsimp(coeff(expand(ev(v_in,Solution)),v_out,1)),
+    ABCD_12:ratsimp(coeff(expand(ev(v_in,Solution)),i_out,1)),
+    ABCD_21:ratsimp(coeff(expand(ev(i_in,Solution)),v_out,1)),
+    ABCD_22:ratsimp(coeff(expand(ev(i_in,Solution)),i_out,1)),
+    matrix([ABCD_11,ABCD_12],[ABCD_21,ABCD_22]))$
+
+Solution2G(Solution):=block(
+    [G_11,G_12,G_21,G_22],
+    G_11:ratsimp(coeff(expand(ev(i_in,Solution)),v_in,1)),
+    G_12:ratsimp(coeff(expand(ev(i_in,Solution)),i_out,1)),
+    G_21:ratsimp(coeff(expand(ev(v_out,Solution)),v_in,1)),
+    G_22:ratsimp(coeff(expand(ev(v_out,Solution)),i_out,1)),
+    matrix([G_11,G_12],[G_21,G_22]))$
+
+Solution2H(Solution):=block(
+    [H_11,H_12,H_21,H_22],
+    H_11:ratsimp(coeff(expand(ev(v_in,Solution)),i_in,1)),
+    H_12:ratsimp(coeff(expand(ev(v_in,Solution)),v_out,1)),
+    H_21:ratsimp(coeff(expand(ev(i_out,Solution)),i_in,1)),
+    H_22:ratsimp(coeff(expand(ev(i_out,Solution)),v_out,1)),
+    matrix([H_11,H_12],[H_21,H_22]))$
+
+Solution2InverseABCD(Solution):=block(
+    [InverseABCD_11,InverseABCD_12,InverseABCD_21,InverseABCD_22],
+    InverseABCD_11:ratsimp(coeff(expand(ev(v_out,Solution)),v_in,1)),
+    InverseABCD_12:ratsimp(coeff(expand(ev(v_out,Solution)),i_in,1)),
+    InverseABCD_21:ratsimp(coeff(expand(ev(i_out,Solution)),v_in,1)),
+    InverseABCD_22:ratsimp(coeff(expand(ev(i_out,Solution)),i_in,1)),
+    matrix([InverseABCD_11,InverseABCD_12],[InverseABCD_21,InverseABCD_22]))$
+
+Solution2Y(Solution):=block(
+    [Y_11,Y_12,Y_21,Y_22],
+    Y_11:ratsimp(coeff(expand(ev(i_in,Solution)),v_in,1)),
+    Y_12:ratsimp(coeff(expand(ev(i_in,Solution)),v_out,1)),
+    Y_21:ratsimp(coeff(expand(ev(i_out,Solution)),v_in,1)),
+    Y_22:ratsimp(coeff(expand(ev(i_out,Solution)),v_out,1)),
+    matrix([Y_11,Y_12],[Y_21,Y_22]))$
+
+Solution2Z(Solution):=block(
+    [Z_11,Z_12,Z_21,Z_22],
+    Z_11:ratsimp(coeff(expand(ev(v_in,Solution)),i_in,1)),
+    Z_12:ratsimp(coeff(expand(ev(v_in,Solution)),i_out,1)),
+    Z_21:ratsimp(coeff(expand(ev(v_out,Solution)),i_in,1)),
+    Z_22:ratsimp(coeff(expand(ev(v_out,Solution)),i_out,1)),
+    matrix([Z_11,Z_12],[Z_21,Z_22]))$
+
+/*
+Two-Port Parameter Conversions (ABCD-, G-, H-, InverseABCD-, S-, Y-, and Z-Parameters)
+*/
+
+ABCD2H(ABCD):=block(
+    [H_11,H_12,H_21,H_22],
+    H_11:ratsimp(ABCD[1,2]/ABCD[2,2]),
+    H_12:ratsimp(-(ABCD[1,1]*ABCD[2,2]-ABCD[1,2]*ABCD[2,1])/ABCD[2,2]),
+    H_21:ratsimp(-1/ABCD[2,2]),
+    H_22:ratsimp(ABCD[2,1]/ABCD[2,2]),
+    matrix([H_11,H_12],[H_21,H_22]))$
+
+ABCD2S(ABCD):=block(
+    [S_11,S_12,S_21,S_22],
+    S_11:ratsimp((ABCD[1,1]+ABCD[1,2]/Z_0-ABCD[2,1]*Z_0-ABCD[2,2])/(ABCD[1,1]+ABCD[1,2]/Z_0+ABCD[2,1]*Z_0+ABCD[2,2])),
+    S_12:ratsimp(2*(ABCD[1,1]*ABCD[2,2]-ABCD[1,2]*ABCD[2,1])/(ABCD[1,1]+ABCD[1,2]/Z_0+ABCD[2,1]*Z_0+ABCD[2,2])),
+    S_21:ratsimp(2/(ABCD[1,1]+ABCD[1,2]/Z_0+ABCD[2,1]*Z_0+ABCD[2,2])),
+    S_22:ratsimp((-ABCD[1,1]+ABCD[1,2]/Z_0-ABCD[2,1]*Z_0+ABCD[2,2])/(ABCD[1,1]+ABCD[1,2]/Z_0+ABCD[2,1]*Z_0+ABCD[2,2])),
+    matrix([S_11,S_12],[S_21,S_22]))$
+
+ABCD2Y(ABCD):=block(
+    [Y_11,Y_12,Y_21,Y_22],
+    Y_11:ratsimp(ABCD[2,2]/ABCD[1,2]),
+    Y_12:ratsimp(-(ABCD[1,1]*ABCD[2,2]-ABCD[1,2]*ABCD[2,1])/ABCD[1,2]),
+    Y_21:ratsimp(-1/ABCD[1,2]),
+    Y_22:ratsimp(ABCD[1,1]/ABCD[1,2]),
+    matrix([Y_11,Y_12],[Y_21,Y_22]))$
+
+ABCD2Z(ABCD):=block(
+    [Z_11,Z_12,Z_21,Z_22],
+    Z_11:ratsimp(ABCD[1,1]/ABCD[2,1]),
+    Z_12:ratsimp((ABCD[1,1]*ABCD[2,2]-ABCD[1,2]*ABCD[2,1])/ABCD[2,1]),
+    Z_21:ratsimp(1/ABCD[2,1]),
+    Z_22:ratsimp(ABCD[2,2]/ABCD[2,1]),
+    matrix([Z_11,Z_12],[Z_21,Z_22]))$
+
+S2ABCD(S):=block(
+    [ABCD_11,ABCD_12,ABCD_21,ABCD_22],
+    ABCD_11:ratsimp(((1+S[1,1])*(1-S[2,2])+S[1,2]*S[2,1])/(2*S[2,1])),
+    ABCD_12:ratsimp(Z_0*((1+S[1,1])*(1+S[2,2])-S[1,2]*S[2,1])/(2*S[2,1])),
+    ABCD_21:ratsimp(1/Z_0*((1-S[1,1])*(1-S[2,2])-S[1,2]*S[2,1])/(2*S[2,1])),
+    ABCD_22:ratsimp(((1-S[1,1])*(1+S[2,2])+S[1,2]*S[2,1])/(2*S[2,1])),
+    matrix([ABCD_11,ABCD_12],[ABCD_21,ABCD_22]))$
+
+Y2ABCD(Y):=block(
+    [ABCD_11,ABCD_12,ABCD_21,ABCD_22],
+    ABCD_11:ratsimp(-Y[2,2]/Y[2,1]),
+    ABCD_12:ratsimp(-1/Y[2,1]),
+    ABCD_21:ratsimp(-determinant(Y)/Y[2,1]),
+    ABCD_22:ratsimp(-Y[1,1]/Y[2,1]),
+    matrix([ABCD_11,ABCD_12],[ABCD_21,ABCD_22]))$
+
+Y2H(Y):=block(
+    [H_11,H_12,H_21,H_22],    
+    H_11:ratsimp(1/Y[1,1]),
+    H_12:ratsimp(-Y[1,2]/Y[1,1]),
+    H_21:ratsimp(Y[2,1]/Y[1,1]),
+    H_22:ratsimp(determinant(Y)/Y[1,1]),
+    matrix([H_11,H_12],[H_21,H_22]))$
+
+Z2ABCD(Z):=block(
+    [ABCD_11,ABCD_12,ABCD_21,ABCD_22],
+    ABCD_11:ratsimp(Z[1,1]/Z[2,1]),
+    ABCD_12:ratsimp(determinant(Z)/Z[2,1]),
+    ABCD_21:ratsimp(1/Z[2,1]),
+    ABCD_22:ratsimp(Z[2,2]/Z[2,1]),
+    matrix([ABCD_11,ABCD_12],[ABCD_21,ABCD_22]))$
+
+ABCD2InverseABCD(ABCD):=ratsimp(invert(ABCD))$
+InverseABCD2ABCD(InverseABCD):=ratsimp(invert(InverseABCD))$
+
+G2H(G):=ratsimp(invert(G))$
+H2G(H):=ratsimp(invert(H))$
+
+Y2Z(Y):=ratsimp(invert(Y))$
+Z2Y(Z):=ratsimp(invert(Z))$
+
+TwoPortMatrices(Solution):=block(
+    define(Y(s),Solution2Y(ev(Solution))),
+    define(ABCD(s),Y2ABCD(Y(s))),
+    define(H(s),Y2H(Y(s))),
+    define(G(s),H2G(H(s))),
+    define(InverseABCD(s),ABCD2InverseABCD(ABCD(s))),
+    define(S(s),ABCD2S(ABCD(s))),
+    define(Z(s),Y2Z(Y(s))),
+    print("ABCD(s) := ", ABCD(s)),
+    print("G(s) := ", G(s)),
+    print("H(s) := ", H(s)),
+    print("InverseABCD(s) := ", InverseABCD(s)),
+    print("S(s) := ", S(s)),
+    print("Y(s) := ", Y(s)),
+    print("Z(s) := ", Z(s)))$
+
+/*
+S-Parameters
+*/
+
+PowerIV(I,V):=1/2*ReSymbolic(V*conjugate(I))$
+PowerIZ(I,Z):=1/2*ReSymbolic(Z_0*I*conjugate(I))$
+PowerVZ(V,Z):=1/2*ReSymbolic(V*conjugate(V/Z_0))$
+define(Z_IN(s),ratsimp(ev(Z_0*(1+S(s)[1,1])/(1-S(s)[1,1]))))$
+define(Z_OUT(s),ratsimp(ev(Z_0*(1+S(s)[2,2])/(1-S(s)[2,2]))))$
+
+SParameters(S):=block(
+    define(Abs_S11(%omega),AbsSymbolic(ev(S(%i*%omega)[1,1]))),
+    print("Abs_S11(%omega) := ",Abs_S11(%omega)),
+    define(Arg_S11(%omega),ArgSymbolic(ev(S(%i*%omega)[1,1]))),
+    print("Arg_S11(%omega) := ",Arg_S11(%omega)),
+    define(Abs_S12(%omega),AbsSymbolic(ev(S(%i*%omega)[1,2]))),
+    print("Abs_S12(%omega) := ",Abs_S12(%omega)),
+    define(Arg_S12(%omega),ArgSymbolic(ev(S(%i*%omega)[1,2]))),
+    print("Arg_S12(%omega) := ",Arg_S12(%omega)),
+    define(Abs_S21(%omega),AbsSymbolic(ev(S(%i*%omega)[2,1]))),
+    print("Abs_S21(%omega) := ",Abs_S21(%omega)),
+    define(Arg_S21(%omega),ArgSymbolic(ev(S(%i*%omega)[2,1]))),
+    print("Arg_S21(%omega) := ",Arg_S21(%omega)),
+    Poles_S21:PolesSymbolic(S(s)[2,1]),
+    print("Poles S21 = ", Poles_S21),
+    Zeros_S21:ZerosSymbolic(S(s)[2,1]),
+    print("Zeros S21 = ", Zeros_S21),
+    define(tau_g(%omega),GroupDelaySymbolic(ev(S(%i*%omega)[2,1]))),
+    print("tau_g(%omega) := ",tau_g(%omega)),
+    define(Abs_S22(%omega),AbsSymbolic(ev(S(%i*%omega)[2,2]))),
+    print("Abs_S22(%omega) := ",Abs_S22(%omega)),
+    define(Arg_S22(%omega),ArgSymbolic(ev(S(%i*%omega)[2,2]))),
+    print("Arg_S22(%omega) := ",Arg_S22(%omega)),
+    print("ZIN(s) := ", Z_IN(s)),
+    define(R_IN(%omega),ReSymbolic(Z_IN(%i*%omega))),
+    print("R_IN(%omega) := ",R_IN(%omega)),
+    define(X_IN(%omega),ImSymbolic(Z_IN(%i*%omega))),
+    print("X_IN(%omega) := ",X_IN(%omega)),
+    print("ZOUT(s) := ", Z_OUT(s)),
+    define(R_OUT(%omega),ReSymbolic(Z_OUT(%i*%omega))),
+    print("R_OUT(%omega) := ",R_OUT(%omega)),
+    define(X_OUT(%omega),ImSymbolic(Z_OUT(%i*%omega))),
+    print("X_OUT(%omega) := ",X_OUT(%omega)),
+    UnityGainH21:solve(AbsSymbolic(ev(H(%i*%omega)[2,1]))=1,%omega),
+    print("%omega_T(%omega) := ",UnityGainH21),
+    UnityGainS21:solve(Abs_S21(%omega)=1,%omega),
+    print("%omega_max(%omega) := ",UnityGainS21))$
+
+Stability(S):=block(
+    define(MSG(%omega),ev(if (Abs_S12(%omega)=0) then Abs_S21(%omega) else ratsimp(Abs_S21(%omega)/Abs_S12(%omega)))),
+    print("MSG(%omega) := ", MSG(%omega)),
+    define(Delta(%omega),ratsimp(determinant(ev(S(%i*%omega))))),
+    print("Delta(%omega) := ", Delta(%omega)),
+    define(AbsDelta(%omega),AbsSymbolic(Delta(%omega))),
+    define(K(%omega),ratsimp((1-Abs_S11(%omega)^2-Abs_S22(%omega)^2-AbsDelta(%omega)^2)/(2*Abs_S21(%omega)*Abs_S12(%omega)))),
+    print("K(%omega) :=", K(%omega)),
+    define(mu(%omega),ratsimp((1-Abs_S11(%omega)^2)/(AbsSymbolic(S(%i*%omega)[2,2]-conjugate(S(%i*%omega)[1,1])*Delta(%omega))+Abs_S21(%omega)*Abs_S12(%omega)))),
+    print("mu(%omega) := ", mu(%omega)),
+    define(muprime(%omega),ratsimp((1-Abs_S22(%omega)^2)/(AbsSymbolic(S(%i*%omega)[1,1]-conjugate(S(%i*%omega)[2,2])*Delta(%omega))+Abs_S21(%omega)*Abs_S12(%omega)))),
+    print("muprime(%omega) := ", muprime(%omega)))$
+
+PlotSmithChart(PlotCommand):=block(
+    local(Gamma),
+    Gamma(z):=(z-1)/(z+1),
+    wxplot2d([
+        [parametric,realpart(Gamma(t)),imagpart(Gamma(t)),[t,0,120],[nticks,600]],
+        [parametric,realpart(Gamma(t-%i*0.5)),imagpart(Gamma(t-%i*0.5)),[t,0,120],[nticks,600]],
+        [parametric,realpart(Gamma(t-%i*2)),imagpart(Gamma(t-%i*2)),[t,0,120],[nticks,600]],            
+        [parametric,realpart(Gamma(t+%i*0.5)),imagpart(Gamma(t+%i*0.5)),[t,0,120],[nticks,600]],
+        [parametric,realpart(Gamma(t+%i*2)),imagpart(Gamma(t+%i*2)),[t,0,120],[nticks,600]],
+        [parametric,realpart(Gamma(%i*t)),imagpart(Gamma(%i*t)),[t,-60,60],[nticks,1000]],
+        [parametric,realpart(Gamma(0.5+%i*t)),imagpart(Gamma(0.5+%i*t)),[t,-60,60],[nticks,600]],
+        [parametric,realpart(Gamma(1+%i*t)),imagpart(Gamma(1+%i*t)),[t,-60,60],[nticks,600]],
+        [parametric,realpart(Gamma(2+%i*t)),imagpart(Gamma(2+%i*t)),[t,-60,60],[nticks,600]],
+        PlotCommand],
+        [axes,false],
+        [box,false],
+        [gnuplot_preamble,"set size ratio 1;"],
+        [legend,false],
+        [style,[lines,1,11],[lines,1,11],[lines,1,11],[lines,1,11],[lines,1,11],[lines,1,11],[lines,1,11],[lines,1,11],[lines,1,11],[lines,3,2]],
+        [xlabel,""],
+        [ylabel,""]))$
+
+PrintSmithChart(PlotCommand,Format,FileName):=block(
+    local(Gamma),
+    Gamma(z):=(z-1)/(z+1),
+    plot2d([
+        [parametric,realpart(Gamma(t)),imagpart(Gamma(t)),[t,0,120],[nticks,600]],
+        [parametric,realpart(Gamma(t-%i*0.5)),imagpart(Gamma(t-%i*0.5)),[t,0,120],[nticks,600]],
+        [parametric,realpart(Gamma(t-%i*2)),imagpart(Gamma(t-%i*2)),[t,0,120],[nticks,600]],            
+        [parametric,realpart(Gamma(t+%i*0.5)),imagpart(Gamma(t+%i*0.5)),[t,0,120],[nticks,600]],
+        [parametric,realpart(Gamma(t+%i*2)),imagpart(Gamma(t+%i*2)),[t,0,120],[nticks,600]],
+        [parametric,realpart(Gamma(%i*t)),imagpart(Gamma(%i*t)),[t,-60,60],[nticks,1000]],
+        [parametric,realpart(Gamma(0.5+%i*t)),imagpart(Gamma(0.5+%i*t)),[t,-60,60],[nticks,600]],
+        [parametric,realpart(Gamma(1+%i*t)),imagpart(Gamma(1+%i*t)),[t,-60,60],[nticks,600]],
+        [parametric,realpart(Gamma(2+%i*t)),imagpart(Gamma(2+%i*t)),[t,-60,60],[nticks,600]],
+        PlotCommand],
+        [axes,false],
+        [box,false],
+        [gnuplot_preamble,"set size ratio 1;"],
+        [legend,false],
+        [style,[lines,1,11],[lines,1,11],[lines,1,11],[lines,1,11],[lines,1,11],[lines,1,11],[lines,1,11],[lines,1,11],[lines,1,11],[lines,3,2]],
+        [xlabel,""],
+        [ylabel,""],
+        [gnuplot_term,Format],
+        [gnuplot_out_file,FileName]))$
+
+/*
+Four-Port Parameters
+*/
+
+/*
+Four-Port Standard S-Parameter to Mixed-Mode S-Parameter Conversion
+*/
+
+M:1/sqrt(2)*matrix([1,-1,0,0],[0,0,1,-1],[1,1,0,0],[0,0,1,1])$
+S_STANDARD4PORT:matrix([S11,S12,S13,S14],[S21,S22,S23,S24],[S31,S32,S33,S34],[S41,S42,S43,S44])$
+S_MIXEDMODE:M.S_STANDARD4PORT.M$
+Inverse[M].matrix([S11,S12,0,0],[S21,S22,0,0],[0,0,S33,S34],[0,0,S43,S44]).M$
+
+/*
+Noise
+*/
+
+NoiseVoltage2OutputWhileInputShorted(NoiseSolutionInputShorted):=block(
+    [v_noise_out_coefficient,i_noise_out_coefficient],
+    v_noise_out_coefficient:ratsimp(coeff(expand(ev(v_out,NoiseSolutionInputShorted)),v_noise,1)),
+    i_noise_out_coefficient:ratsimp(coeff(expand(ev(i_out,NoiseSolutionInputShorted)),v_noise,1)),
+    ratsimp(matrix([v_noise_out_coefficient],[i_noise_out_coefficient]))*v_noise)$
+
+NoiseVoltage2OutputWhileInputOpened(NoiseSolutionInputOpened):=block(
+    [v_noise_out_coefficient,i_noise_out_coefficient],
+    v_noise_out_coefficient:ratsimp(coeff(expand(ev(v_out,NoiseSolutionInputOpened)),v_noise,1)),
+    i_noise_out_coefficient:ratsimp(coeff(expand(ev(i_out,NoiseSolutionInputOpened)),v_noise,1)),
+    ratsimp(matrix([v_noise_out_coefficient],[i_noise_out_coefficient]))*v_noise)$
+
+NoiseCurrent2OutputWhileInputShorted(NoiseSolutionInputShorted):=block(
+    [v_noise_out_coefficient,i_noise_out_coefficient],
+    v_noise_out_coefficient:ratsimp(coeff(expand(ev(v_out,NoiseSolutionInputShorted)),i_noise,1)),
+    i_noise_out_coefficient:ratsimp(coeff(expand(ev(i_out,NoiseSolutionInputShorted)),i_noise,1)),
+    ratsimp(matrix([v_noise_out_coefficient],[i_noise_out_coefficient]))*i_noise)$
+
+NoiseCurrent2OutputWhileInputOpened(NoiseSolutionInputOpened):=block(
+    [v_noise_out_coefficient,i_noise_out_coefficient],
+    v_noise_out_coefficient:ratsimp(coeff(expand(ev(v_out,NoiseSolutionInputOpened)),i_noise,1)),
+    i_noise_out_coefficient:ratsimp(coeff(expand(ev(i_out,NoiseSolutionInputOpened)),i_noise,1)),
+    ratsimp(matrix([v_noise_out_coefficient],[i_noise_out_coefficient]))*i_noise)$
+
+NoiseVoltage2EquivalentInputNoiseVoltage(ABCD,NoiseSolutionInputShorted):=block(
+    [v_noise_out_coefficient,i_noise_out_coefficient],
+    v_noise_out_coefficient:ratsimp(coeff(expand(ev(v_out,NoiseSolutionInputShorted)),v_noise,1)),
+    i_noise_out_coefficient:ratsimp(coeff(expand(ev(i_out,NoiseSolutionInputShorted)),v_noise,1)),
+    ratsimp(expand(ABCD[1,1]*v_noise_out_coefficient+ABCD[1,2]*i_noise_out_coefficient))*v_noise)$
+
+NoiseVoltage2EquivalentInputNoiseCurrent(ABCD,NoiseSolutionInputOpened):=block(
+    [v_noise_out_coefficient,i_noise_out_coefficient],
+    v_noise_out_coefficient:ratsimp(coeff(expand(ev(v_out,NoiseSolutionInputOpened)),v_noise,1)),
+    i_noise_out_coefficient:ratsimp(coeff(expand(ev(i_out,NoiseSolutionInputOpened)),v_noise,1)),
+    ratsimp(expand(ABCD[2,1]*v_noise_out_coefficient+ABCD[2,2]*i_noise_out_coefficient))*v_noise)$
+
+NoiseCurrent2EquivalentInputNoiseVoltage(ABCD,NoiseSolutionInputShorted):=block(
+    [v_noise_out_coefficient,i_noise_out_coefficient],
+    v_noise_out_coefficient:ratsimp(coeff(expand(ev(v_out,NoiseSolutionInputShorted)),i_noise,1)),
+    i_noise_out_coefficient:ratsimp(coeff(expand(ev(i_out,NoiseSolutionInputShorted)),i_noise,1)),
+    ratsimp(expand(ABCD[1,1]*v_noise_out_coefficient+ABCD[1,2]*i_noise_out_coefficient))*i_noise)$
+
+NoiseCurrent2EquivalentInputNoiseCurrent(ABCD,NoiseSolutionInputOpened):=block(
+    [v_noise_out_coefficient,i_noise_out_coefficient],
+    v_noise_out_coefficient:ratsimp(coeff(expand(ev(v_out,NoiseSolutionInputOpened)),i_noise,1)),
+    i_noise_out_coefficient:ratsimp(coeff(expand(ev(i_out,NoiseSolutionInputOpened)),i_noise,1)),
+    ratsimp(expand(ABCD[2,1]*v_noise_out_coefficient+ABCD[2,2]*i_noise_out_coefficient))*i_noise)$
+
+F(EquivalentInputNoiseCurrentVariance,EquivalentInputNoiseVoltageVariance):=
+    1+EquivalentInputNoiseVoltageVariance/(4*k_B*T*Z_0*B)+EquivalentInputCurrentVariance/(4*k_B*T/Z_0*B)$
+NF(F):=float(10*log10(F))$
+NoiseTemperature(F,T)=(F-1)*T$
+
+/*
+Noise Wave Correlation Matrix (Using Bosma's Theorem, EXPERIMENTAL)
+*/
+
+NoiseWaveCorrelationMatrix(S):=k_B*T*(ident(2)-ev(S).transpose(conjugate(ev(S))))$
+
+S(%omega):=matrix([0,1/sqrt(2)],[1/sqrt(2),0])$
+NoiseWaveCorrelationMatrix(S(%omega))$
+
+F(S):=block(
+    local(Abs_S21,C),
+    define(Abs_S21(%omega),AbsSymbolic(ev(S(%i*%omega)[2,1]))),
+    define(C(%omega),NoiseWaveCorrelationMatrix(S(%omega))),
+    ratsimp(1+C(%omega)[2,2]/(k_B*T*(Abs_S21(%omega))^2)))$
+
+/*
+Gamma_OPT, NF_min (EXPERIMENTAL)
+*/
+
+Gamma_OPT(S):=block(
+    local(Abs_S11,Abs_S21,C,eta_1,eta_2),
+    define(Abs_S11(%omega),AbsSymbolic(ev(S(%i*%omega)[2,1]))),
+    define(Abs_S21(%omega),AbsSymbolic(ev(S(%i*%omega)[2,1]))),
+    C:NoiseWaveCorrelationMatrix(S(0)),
+    eta_1:ratsimp(C[1,1]*(Abs_S21(%omega))^2-2*ReSymbolic(C[1,2]*S(%i*%omega)[2,1]*Conjugate(S(%i*%omega)[1,1])+C[2,2]*(Abs_S11(%omega))^2)),
+    eta_2:ratsimp(1/2*(C[2,2]+eta_1)/(C[2,2]*S(%i*%omega)[1,1]-C[1,2]*S(%i*%omega)[2,1])),
+    ratsimp(eta_2*(1-sqrt(1-(1)/((AbsSymbolic(eta_2))^2)))))$
+
+F_min(%omega):=block(
+    local(Abs_S11,Abs_S21,C,eta_1,eta_2,Gamma_OPT,AbsGamma_OPT),
+    define(Abs_S11(%omega),AbsSymbolic(ev(S(%i*%omega)[2,1]))),
+    define(Abs_S21(%omega),AbsSymbolic(ev(S(%i*%omega)[2,1]))),
+    C:NoiseWaveCorrelationMatrix(S(0)),
+    eta_1:ratsimp(C[1,1]*(Abs_S21(%omega))^2-2*ReSymbolic(C[1,2]*S(%i*%omega)[2,1]*Conjugate(S(%i*%omega)[1,1])+C[2,2]*(Abs_S11(%omega))^2)),
+    eta_2:ratsimp(1/2*(C[2,2]+eta_1)/(C[2,2]*S(%i*%omega)[1,1]-C[1,2]*S(%i*%omega)[2,1])),
+    Gamma_OPT:ratsimp(eta_2*(1-sqrt(1-(1)/((AbsSymbolic(eta_2))^2)))),
+    AbsGamma_OPT:AbsSymbolic(Gamma_OPT),
+    ratsimp(1+(C[2,2]-eta_1*(AbsGamma_OPT)^2)/(k_B*T*(Abs_S21(%omega))^2*(1+(AbsGamma_OPT)^2))))$
+

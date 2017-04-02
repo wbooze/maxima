@@ -1,0 +1,286 @@
+/* pair2-test.mac */
+
+  /* CASE: e(-,p1,+1)  e(+,p2,+1) --> gamma(k1,+1)  gamma(k2,+1)  */
+
+
+  (up1 : UU(M/2,M*v/2,th,0,1), 
+   vp2b : sbar( VV (M/2,M*v/2,%pi-th,%pi,1)),
+       comp_def (p1(M/2,M*v*sin(th)/2,0,M*v*cos(th)/2),
+           k1(M/2,0,0,M/2),
+           k2(M/2,0,0,-M/2),
+           e1_cc(0,-1/sqrt(2),%i/sqrt(2),0),
+           e2_cc(0,1/sqrt(2),%i/sqrt(2),0) ),
+         Mtd : -2*pullfac (noncov (D(k1,p1)),M^2/4),
+         expand(Mtd));
+  cos(th)*v*M^2/2-M^2/2;
+ 
+  (Mud:-2*pullfac(noncov(D(k2,p1)),M^2/4),
+        expand(Mud));
+  -cos(th)*v*M^2/2-M^2/2;
+  
+  (g1:sL(e2_cc) . (m*I4-sL(k1)+sL(p1)) . sL(e1_cc),
+       Mtn:vp2b . g1 . up1,
+       Mtn:expand(ratsubst(cos(th/2),sin((%pi-th)/2),Mtn)),
+        Mtn : rootscontract(Mtn),
+       Mtn:expand (ratsubst(2*m/M,sqrt(1-v^2),Mtn)));
+ -2*m*cos(th/2)^2*cos(th)*v*M+2*m*cos(th/2)^2*v*M+2*m*cos(th/2)^2*M;
+ 
+  Mtn : pullfac(Mtn,2*m*M*cos(th/2)^2);
+  2*m*cos(th/2)^2*(-cos(th)*v+v+1)*M;
+  
+  Mtn : expand(ratsubst((cos(th)+1)/2,cos(th/2)^2,Mtn));
+  -m*cos(th)^2*v*M+m*v*M+m*cos(th)*M+m*M;
+  
+  Mtn:pullfac(Mtn,m*M);
+  m*(-cos(th)^2*v+v+cos(th)+1)*M;
+  
+  M1:Mtn/Mtd;
+  -2*m*(-cos(th)^2*v+v+cos(th)+1)/((1-cos(th)*v)*M);
+  
+  (g2 : g2:sL(e1_cc) . (m*I4-sL(k2)+sL(p1)) . sL(e2_cc),
+        Mun:vp2b . g2 . up1,
+        Mun : expand(ratsubst(sin(th/2),cos((%pi-th)/2),Mun)),
+        Mun : rootscontract(Mun),
+        Mun : expand(ratsubst(2*m/M,sqrt(1-v^2),Mun)));
+  2*m*sin(th/2)^2*cos(th)*v*M+2*m*sin(th/2)^2*v*M+2*m*sin(th/2)^2*M;
+  
+  Mun : pullfac(Mun,2*m*M*sin(th/2)^2);
+  2*m*sin(th/2)^2*(cos(th)*v+v+1)*M;
+  
+  Mun:expand(ratsubst((1-cos(th))/2,sin(th/2)^2,Mun));
+  -m*cos(th)^2*v*M+m*v*M-m*cos(th)*M+m*M;
+  
+  Mun:pullfac(Mun,m*M);
+  m*(-cos(th)^2*v+v-cos(th)+1)*M;
+  
+  M2:Mun/Mud;
+  -2*m*(-cos(th)^2*v+v-cos(th)+1)/((cos(th)*v+1)*M);
+  
+  Mfi:trigsimp(M2+M1);
+  (4*m*v+4*m)/((cos(th)^2*v^2-1)*M);
+  
+  Mfi_n:factor(num(Mfi));
+  4*m*(v+1);
+  
+  (Mfi_d:pullfac(expand(denom(Mfi)),-M),
+           expand (Mfi_d));
+  cos(th)^2*v^2*M-M;
+  
+  Mfi:Mfi_n/Mfi_d;
+  -4*m*(v+1)/((1-cos(th)^2*v^2)*M);
+  
+  /*  CASE: e(-,p1,+1)  e(+,p2,+1) --> gamma(k1,-1)  gamma(k2,-1)  */
+  
+  (comp_def(e1_cc(0,1/sqrt(2),%i/sqrt(2),0),
+                e2_cc(0,(-1)/sqrt(2),%i/sqrt(2),0)),
+       g1:sL(e2_cc) . (m*I4-sL(k1)+sL(p1)) . sL(e1_cc),
+       g2:sL(e1_cc) . (m*I4-sL(k2)+sL(p1)) . sL(e2_cc),
+        Mtn:vp2b . g1 . up1,
+       Mtn:expand(ratsubst(sin(th/2),cos((%pi-th)/2),Mtn)),
+        Mtn : rootscontract(Mtn),
+        Mtn : expand(ratsubst(2*m/M,sqrt(1-v^2),Mtn)));
+    2*m*sin(th/2)^2*cos(th)*v*M+2*m*sin(th/2)^2*v*M-2*m*sin(th/2)^2*M;
+    
+  Mtn : pullfac(Mtn,2*m*M*sin(th/2)^2);
+  2*m*sin(th/2)^2*(cos(th)*v+v-1)*M;
+  
+  Mtn : expand(ratsubst((1-cos(th))/2,sin(th/2)^2,Mtn));
+  -m*cos(th)^2*v*M+m*v*M+m*cos(th)*M-m*M;
+  
+  Mtn:pullfac(Mtn,m*M);
+  m*(-cos(th)^2*v+v+cos(th)-1)*M;
+  
+  M1:Mtn/Mtd;
+  -2*m*(-cos(th)^2*v+v+cos(th)-1)/((1-cos(th)*v)*M);
+  
+  (Mun:vp2b . g2 . up1,
+        Mun : expand(ratsubst(cos(th/2),sin((%pi-th)/2),Mun)),
+        Mun : rootscontract(Mun),
+        Mun : expand(ratsubst(2*m/M,sqrt(1-v^2),Mun)));
+  -2*m*cos(th/2)^2*cos(th)*v*M+2*m*cos(th/2)^2*v*M-2*m*cos(th/2)^2*M;
+  
+  Mun : pullfac(Mun,2*m*M*cos(th/2)^2);
+  2*m*cos(th/2)^2*(-cos(th)*v+v-1)*M;
+  
+  Mun : expand(ratsubst((cos(th)+1)/2,cos(th/2)^2,Mun));
+  -m*cos(th)^2*v*M+m*v*M-m*cos(th)*M-m*M;
+  
+  Mun:pullfac(Mun,m*M);
+  m*(-cos(th)^2*v+v-cos(th)-1)*M;
+  
+  M2:Mun/Mud;
+  -2*m*(-cos(th)^2*v+v-cos(th)-1)/((cos(th)*v+1)*M);
+  
+  Mfi:trigsimp(M2+M1);
+  (4*m*v-4*m)/((cos(th)^2*v^2-1)*M);
+  
+  Mfi_n:pullfac(num(Mfi),-4*m);
+  -4*m*(1-v);
+  
+  (Mfi_d:pullfac(expand(denom(Mfi)),-M),
+         expand (Mfi_d));
+  cos(th)^2*v^2*M-M;
+  
+  Mfi:Mfi_n/Mfi_d;
+  4*m*(1-v)/((1-cos(th)^2*v^2)*M);
+  
+  /* CASE: e(-,p1,+1)  e(+,p2,+1) --> gamma(k1,1)  gamma(k2,-1)  */
+  
+  (comp_def(e1_cc(0,(-1)/sqrt(2),%i/sqrt(2),0)),
+        g1:sL(e2_cc) . (m*I4-sL(k1)+sL(p1)) . sL(e1_cc),
+        g2:sL(e1_cc) . (m*I4-sL(k2)+sL(p1)) . sL(e2_cc),
+        Mtn:vp2b . g1 . up1,
+        Mtn : expand(ratsubst(sin(th/2),cos((%pi-th)/2),Mtn)),
+        Mtn : rootscontract(Mtn),
+        Mtn : expand(ratsubst(2*m/M,sqrt(1-v^2),Mtn)));
+   -2*m*cos(th/2)*sin(th/2)*sin(th)*v*M;
+   
+   Mtn:ratsubst(sin(th)/2,cos(th/2)*sin(th/2),Mtn);
+   -m*sin(th)^2*v*M;
+   
+   M1:Mtn/Mtd;
+   2*m*sin(th)^2*v/((1-cos(th)*v)*M);
+   
+   (Mun:vp2b . g2 . up1,
+        Mun : expand(ratsubst(sin(th/2),cos((%pi-th)/2),Mun)),
+        Mun : rootscontract(Mun),
+        Mun : expand(ratsubst(2*m/M,sqrt(1-v^2),Mun)));
+   -2*m*cos(th/2)*sin(th/2)*sin(th)*v*M;
+   
+   Mun:ratsubst(sin(th)/2,cos(th/2)*sin(th/2),Mun);
+   -m*sin(th)^2*v*M;
+   
+   M2:Mun/Mud;
+   2*m*sin(th)^2*v/((cos(th)*v+1)*M);
+   
+   Mfi:trigsimp(M2+M1);
+   -4*m*sin(th)^2*v/((cos(th)^2*v^2-1)*M);
+   
+   Mfi:num(Mfi)/pullfac(expand(denom(Mfi)),-M);
+   4*m*sin(th)^2*v/((1-cos(th)^2*v^2)*M);
+   
+   /* CASE: e(-,p1,+1)  e(+,p2,+1) --> gamma(k1,-1)  gamma(k2,+1)  */
+   
+   (comp_def(e1_cc(0,1/sqrt(2),%i/sqrt(2),0),
+                 e2_cc(0,1/sqrt(2),%i/sqrt(2),0)),
+       g1:sL(e2_cc) . (m*I4-sL(k1)+sL(p1)) . sL(e1_cc),
+       g2:sL(e1_cc) . (m*I4-sL(k2)+sL(p1)) . sL(e2_cc),
+       Mtn:vp2b . g1 . up1,
+       Mtn : expand(ratsubst(cos(th/2),sin((%pi-th)/2),Mtn)),
+       Mtn : rootscontract(Mtn),
+       Mtn : expand(ratsubst(2*m/M,sqrt(1-v^2),Mtn)));
+    -2*m*cos(th/2)*sin(th/2)*sin(th)*v*M;
+    
+    Mtn:ratsubst(sin(th)/2,cos(th/2)*sin(th/2),Mtn);
+    -m*sin(th)^2*v*M;
+    
+    M1:Mtn/Mtd;
+    2*m*sin(th)^2*v/((1-cos(th)*v)*M);
+    
+    (Mun:vp2b . g2 . up1,
+        Mun : expand(ratsubst(cos(th/2),sin((%pi-th)/2),Mun)),
+        Mun : rootscontract(Mun),
+        Mun : expand(ratsubst(2*m/M,sqrt(1-v^2),Mun)));
+   -2*m*cos(th/2)*sin(th/2)*sin(th)*v*M;
+   
+   Mun:ratsubst(sin(th)/2,cos(th/2)*sin(th/2),Mun);
+   -m*sin(th)^2*v*M;
+   
+   M2:Mun/Mud;
+   2*m*sin(th)^2*v/((cos(th)*v+1)*M);
+   
+   Mfi:trigsimp(M2+M1);
+   -4*m*sin(th)^2*v/((cos(th)^2*v^2-1)*M);
+   
+   Mfi:num(Mfi)/pullfac(expand(denom(Mfi)),-M);
+   4*m*sin(th)^2*v/((1-cos(th)^2*v^2)*M);
+   
+   /* CASE: e(-,p1,+1)  e(+,p2,-1) --> gamma(k1,+1)  gamma(k2,-1)  */
+   
+   (vp2b:sbar(VV(M/2,M*v/2,%pi-th,%pi,-1)),
+        comp_def(e1_cc(0,(-1)/sqrt(2),%i/sqrt(2),0),
+                 e2_cc(0,(-1)/sqrt(2),%i/sqrt(2),0)),
+        g1:sL(e2_cc) . (m*I4-sL(k1)+sL(p1)) . sL(e1_cc),
+        g2:sL(e1_cc) . (m*I4-sL(k2)+sL(p1)) . sL(e2_cc),
+        Mtn:vp2b . g1 . up1,
+        Mtn:expand(ratsubst(cos(th/2),sin((%pi-th)/2),Mtn)));
+    cos(th/2)^2*sin(th)*v*M^2;
+    
+    M1:Mtn/Mtd;
+    -2*cos(th/2)^2*sin(th)*v/(1-cos(th)*v);
+    
+    (Mun:vp2b . g2 . up1,
+        Mun:expand(ratsubst(cos(th/2),sin((%pi-th)/2),Mun)));
+     cos(th/2)^2*sin(th)*v*M^2;
+     
+     M2:Mun/Mud;
+    -2*cos(th/2)^2*sin(th)*v/(cos(th)*v+1);
+    
+    Mfi : trigsimp(M2+M1);
+    4*cos(th/2)^2*sin(th)*v/(cos(th)^2*v^2-1);
+    
+    Mfi:(-num(Mfi))/(-denom(Mfi));
+    -4*cos(th/2)^2*sin(th)*v/(1-cos(th)^2*v^2);
+    
+    /*  CASE: e(-,p1,+1)  e(+,p2,-1) --> gamma(k1,-1)  gamma(k2,+1)  */
+    
+    (comp_def(e1_cc(0,1/sqrt(2),%i/sqrt(2),0),
+                 e2_cc(0,1/sqrt(2),%i/sqrt(2),0)),
+       g1:sL(e2_cc) . (m*I4-sL(k1)+sL(p1)) . sL(e1_cc),
+       g2:sL(e1_cc) . (m*I4-sL(k2)+sL(p1)) . sL(e2_cc),
+       Mtn:vp2b . g1 . up1,
+       Mtn:expand(ratsubst(sin(th/2),cos((%pi-th)/2),Mtn)));
+     -sin(th/2)^2*sin(th)*v*M^2;
+     
+     M1:Mtn/Mtd;
+     2*sin(th/2)^2*sin(th)*v/(1-cos(th)*v);
+     
+     (Mun:vp2b . g2 . up1,
+        Mun:expand(ratsubst(sin(th/2),cos((%pi-th)/2),Mun)));
+     -sin(th/2)^2*sin(th)*v*M^2;
+     
+     M2:Mun/Mud;
+     2*sin(th/2)^2*sin(th)*v/(cos(th)*v+1);
+     
+     Mfi : trigsimp(M2+M1);
+     -4*sin(th/2)^2*sin(th)*v/(cos(th)^2*v^2-1);
+     
+     Mfi:(-num(Mfi))/(-denom(Mfi));
+     4*sin(th/2)^2*sin(th)*v/(1-cos(th)^2*v^2);
+     
+     
+     /*  CASE: e(-,p1,+1)  e(+,p2,-1) --> gamma(k1,+1)  gamma(k2,+1)  */
+     
+     
+   (comp_def(e1_cc(0,(-1)/sqrt(2),%i/sqrt(2),0),
+                 e2_cc(0,1/sqrt(2),%i/sqrt(2),0)),
+        g1:sL(e2_cc) . (m*I4-sL(k1)+sL(p1)) . sL(e1_cc),
+         g2:sL(e1_cc) . (m*I4-sL(k2)+sL(p1)) . sL(e2_cc),
+        Mtn:vp2b . g1 . up1,
+        Mtn : expand(ratsubst(sin(th/2),cos((%pi-th)/2),Mtn)));
+    cos(th/2)*sin(th/2)*M^2-cos(th/2)*sin(th/2)*cos(th)*v*M^2;
+    
+    Mtn : expand(ratsubst(sin(th)/2,cos(th/2)*sin(th/2),Mtn));
+    sin(th)*M^2/2-cos(th)*sin(th)*v*M^2/2;
+    
+    Mtn:pullfac(Mtn,sin(th)*M^2/2);
+    sin(th)*(1-cos(th)*v)*M^2/2;
+    
+    M1:Mtn/Mtd;
+    -sin(th);
+    
+    (Mun:vp2b . g2 . up1,
+        Mun : expand(ratsubst(cos(th/2),sin((%pi-th)/2),Mun)),
+        Mun : expand(ratsubst(sin(th)/2,cos(th/2)*sin(th/2),Mun)));
+    -cos(th)*sin(th)*v*M^2/2-sin(th)*M^2/2;
+    
+    Mun:factor(Mun);
+    -sin(th)*(cos(th)*v+1)*M^2/2;
+    
+    M2:Mun/Mud;
+    sin(th);
+    
+    Mfi:M2+M1;
+    0;
+    
+    

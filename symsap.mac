@@ -1,0 +1,1588 @@
+/* Copyright (C) 2009-2010  Stefano Ferri
+
+This file is part of SymSAP.
+
+SymSAP is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 3
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
+
+/*
+This is a simple program for symbolic matrix structural analysis.
+*/
+
+
+
+/*------------------
+  GLOBAL SETTINGS 
+--------------------*/
+
+/* number of degrees of freedom per node */
+ndofn : 3 $
+
+/* total number of nodes, beams and variables */
+
+nNodes : length(NodeCoord) $
+nBeams : length(ConnectMatrix) $
+nVars : ndofn*nNodes $
+
+
+
+/*------------------------------
+
+  AUXILIARY FUNCTIONS
+
+--------------------------------*/
+
+
+/* Shape functions */
+
+shape_func(_beamlength) := block([l:_beamlength],
+	_sfN1 : -x/l + 1,
+	_sfB1 : 1 - 3*x^2/l^2 + 2*x^3/l^3,
+	_sfB2 : x - 2*x^2/l + x^3/l^2,
+	_sfN2 : x/l,
+	_sfB3 : 3*x^2/l^2 - 2*x^3/l^3,
+	_sfB4 : -x^2/l + x^3/l^2,
+	sfm : matrix([_sfN1, _sfB1, _sfB2, _sfN2, _sfB3, _sfB4]))$
+
+
+/* Shape functions derivatives */
+
+shape_func_der(_beamlength) := block([l:_beamlength],
+	_sfdN1 : -1/l,
+	_sfdB1 : -6*x/l^2 + 6*x^2/l^3,
+	_sfdB2 : 1 - 4*x/l + 3*x^2/l^2,
+	_sfdN2 : 1/l,
+	_sfdB3 : 6*x/l^2 - 6*x^2/l^3,
+	_sfdB4 : -2*x/l + 3*x^2/l^2,
+	sfdm : matrix([_sfdN1, _sfdB1, _sfdB2, _sfdN2, _sfdB3, _sfdB4]))$
+
+
+/* Rotation angle */
+
+rot_angle(_coordinates) := block([x1,y1,x2,y2],
+	x1 : _coordinates[1,1],
+	y1 : _coordinates[1,2],
+	x2 : _coordinates[1,3],
+	y2 : _coordinates[1,4],
+	if x1=x2 and y2>y1 then
+		angle : %pi/2
+	elseif x1=x2 and y2<y1 then
+		angle : -%pi/2
+	elseif y2>=y1 and x2>x1 then
+		angle : atan((y2-y1)/(x2-x1))
+	elseif y2>=y1 and x2<x1 then
+		angle : %pi + atan((y2-y1)/(x2-x1))
+	elseif y2<=y1 and x2<x1 then
+		angle : %pi + atan((y2-y1)/(x2-x1))
+	elseif y2<=y1 and x2>x1 then
+		angle : atan((y2-y1)/(x2-x1))
+	else /* most generic case, possibly unsafe */
+		error("Error: cannot univocally determine rotation angle")
+)$
+
+
+/* Rotation matrix (for a beam) */
+
+rot_matrix(_angle) := block([alpha:_angle],
+	RM : matrix(
+	[cos(alpha), sin(alpha), 0, 0, 0, 0],
+	[-sin(alpha), cos(alpha), 0, 0, 0, 0],
+	[0, 0, 1, 0, 0, 0],
+	[0, 0, 0, cos(alpha), sin(alpha), 0],
+	[0, 0, 0, -sin(alpha), cos(alpha), 0],
+	[0, 0, 0, 0, 0, 1])
+)$
+
+
+/* Rotation matrix (for a two-dimensional vector) */
+
+reduced_rot_matrix(_angle) := block([alpha:_angle],
+	RM : matrix(
+	[cos(alpha), sin(alpha)],
+	[-sin(alpha), cos(alpha)])
+)$
+
+
+/* Internal constraints definitions */
+
+internal_constraint(type, constr_ind) := block([br:concat(br_,constr_ind)],
+	/* pendulum */
+	if type = 1 then return (
+		matrix(
+		[_bk,0,0,-_bk,0,0],
+		[0,0,0,0,0,0],
+		[0,0,0,0,0,0],
+		[-_bk,0,0,_bk,0,0],
+		[0,0,0,0,0,0],
+		[0,0,0,0,0,0]))
+
+	/* double double pendulum */
+	elseif type = 2 then return (
+		matrix(
+		[0,0,0,0,0,0],
+		[0,0,0,0,0,0],
+		[0,0,_bk,0,0,-_bk],
+		[0,0,0,0,0,0],
+		[0,0,0,0,0,0],
+		[0,0,-_bk,0,0,_bk]))
+
+	/* hinge */
+	elseif type = 3 then return (
+		matrix(
+		[_bk,0,0,-_bk,0,0],
+		[0,_bk,0,0,-_bk,0],
+		[0,0,0,0,0,0],
+		[-_bk,0,0,_bk,0,0],
+		[0,-_bk,0,0,_bk,0],
+		[0,0,0,0,0,0]))
+
+	/* double pendulum */
+	elseif type = 4 then return (
+		matrix(
+		[_bk,0,0,-_bk,0,0],
+		[0,0,0,0,0,0],
+		[0,0,_bk,0,0,-_bk],
+		[-_bk,0,0,_bk,0,0],
+		[0,0,0,0,0,0],
+		[0,0,-_bk,0,0,_bk]))
+
+	/*  elastic hinge */
+	elseif type = 5 then return (
+		matrix(
+		[_bk,0,0,-_bk,0,0],
+		[0,_bk,0,0,-_bk,0],
+		[0,0,br,0,0,-br],
+		[-_bk,0,0,_bk,0,0],
+		[0,-_bk,0,0,_bk,0],
+		[0,0,-br,0,0,br]))
+
+	/* spring */
+	elseif type = 6 then return (
+		matrix(
+		[br,0,0,-br,0,0],
+		[0,0,0,0,0,0],
+		[0,0,0,0,0,0],
+		[-br,0,0,br,0,0],
+		[0,0,0,0,0,0],
+		[0,0,0,0,0,0])) )$
+
+
+/* External elastic constraints matrix */
+
+el_ext_constraint(ext_constr_ind) := block([
+	bn : concat(ebn_,ext_constr_ind),
+	bt : concat(ebt_,ext_constr_ind),
+	br : concat(ebr_,ext_constr_ind)],
+	return(
+		matrix(
+		[bn,0,0],
+		[0,bt,0],
+		[0,0,br] )))$
+
+
+/* Auxiliary function freeeof_var.
+Thanks to Alexey Beshenov */
+
+freeof_var ([xe]) := block ([v, x, e],
+	if xe=[] then return(true),
+	block ([ex : reverse(xe)],
+		e : first (ex),
+		x : rest (ex)
+	),
+	v : listofvars (e),
+	while true do (
+		if x=[] then
+			return (true)
+		elseif member(first(x),v) then
+			return (false)
+		else
+			x : rest(x)
+	)
+)$
+
+
+/* This function extracts nodal displacements of a beam after
+system resolution */
+
+extract_ubeam(_i, ConnectMatrix, u) := block([uu],
+	uu : zeromatrix(6,1),
+	node1 : ConnectMatrix[_i,1],
+	node2 : ConnectMatrix[_i,2],
+	uu[1,1] : u[(node1-1)*3+1,1],
+	uu[2,1] : u[(node1-1)*3+2,1],
+	uu[3,1] : u[(node1-1)*3+3,1],
+	uu[4,1] : u[(node2-1)*3+1,1],
+	uu[5,1] : u[(node2-1)*3+2,1],
+	uu[6,1] : u[(node2-1)*3+3,1],
+	return(uu))$
+
+
+
+/* Function that extracts all operators contained in an expression.
+Thanks to Boris Gaertner */
+
+allOpsPriv(expression, opList) := block ( [x, args, newList],
+	if atom(expression) then
+		opList
+	else (
+		x: op(expression),
+		args: args(expression),
+		newList: if member (x, opList)
+			then opList
+			else cons(x, opList),
+		for arg in args do
+			newList: allOpsPriv(arg, newList),
+			newList
+	) 
+)$
+
+allOps(expression):= block( [],
+	allOpsPriv (expression, [])
+)$
+
+
+/* Function to delete identical rows in a matrix */
+
+delete_equal_rows(_matrix) := block([],
+	if not matrixp(_matrix) then
+		error("Error: delete_equal_rows expects a matrix as input"),
+	_equalrowset : setify([]),
+	for _i:1 thru length(_matrix) do (
+		for _j:_i+1 thru length(_matrix) do (
+			if row(_matrix,_i) = row(_matrix,_j) then (
+				_equalrowset : union(_equalrowset,setify([_j]))
+			)
+		 )
+	),
+	if not emptyp(_equalrowset) then (
+print("Rows", listify(_equalrowset), "deleted because duplicate"),
+		apply(submatrix,endcons(_matrix,listify(_equalrowset))))
+	else
+		return(_matrix)
+)$
+
+
+/*-----------------------------
+  END OF AUXILIARY FUNCTIONS
+-------------------------------*/
+
+
+
+/* -------------------------------------------------------------------*/
+
+
+
+/*-------------------------------
+
+         MAIN PROGRAM
+
+---------------------------------*/
+
+
+/*--------------------
+    ASSUMPTIONS
+--------------------- */
+
+/* General and automatic assumptions */
+
+/* All length symbols must be > 0 */
+
+for _el in listofvars(NodeCoord) do
+	assume (_el>0) $
+
+/* All distributed load symbols must be assumed > 0 */
+
+if length(DistributedLoads) > 0 then
+	for _el in listofvars(submatrix(DistributedLoads,1,2)) do
+		assume (_el>0) $
+
+/* All concentrated load symbols are assumed > 0, but
+maybe it is not necessary */
+
+if length(NodalLoads) > 0 then
+	for _el in listofvars(submatrix(NodalLoads,1,2,3)) do
+		assume (_el>0) $
+
+/* Geometric and mechanical properties are assumed > 0*/
+
+for _el in listofvars(BeamCar) do
+	assume (_el>0) $
+
+/* Assumptions for thermal loads */
+
+for _el in listofvars(ThermalLoads) do
+	assume (_el>0) $
+
+/* Assumptions for internal restraints stiffnesses */
+
+if length(Disconnections) > 0 then
+	for _el in listofvars(submatrix(Disconnections,1,2,4)) do
+		assume (_el>0) $
+
+
+/* Assumptions for external elastic restraints stiffnesses */
+
+if length(ElasticConstrCond) > 0 then
+	for _el in listofvars(submatrix(ElasticConstrCond,1,5)) do
+		assume (_el>0) $
+
+
+/* --------------   Assumptions end   --------------------------*/
+
+
+/* Construction of two arrays, one containing rotation
+angles, the other one the lengths of each beam */
+
+for _i:1 thru nBeams do (
+	_j : ConnectMatrix[_i,1],
+	_jj : ConnectMatrix[_i,2],
+	_len : sqrt((NodeCoord[_jj,1]-NodeCoord[_j,1])^2 + (NodeCoord[_jj,2]-NodeCoord[_j,2])^2),
+	if member(abs,allOps(_len)) then error(
+"Error: length of beam",_i,"contains an absolute value.
+It is necessary to add some extra hypotheses about relations between its nodal coordinates."),
+	if _len=0 then
+		error("Error: beam", _i, "has null length"),
+	_coordinates : matrix([NodeCoord[_j,1],NodeCoord[_j,2], NodeCoord[_jj,1], NodeCoord[_jj,2]]),
+	beamlength[_i] : _len,
+	BeamRotation[_i] : rot_angle(_coordinates)
+)$
+
+
+/*-----------------------------------
+    EQUIVALENT NODAL LOADS VECTOR
+-------------------------------------*/
+
+/* Equivalent nodal loads vector of each beam.
+Here we construct a vector containing the total equivalent nodal
+loads in the local reference frame of each loaded beam */
+
+LoadedBeamsList : [] $
+LoadedBeamsListM : [] $
+
+for _i:1 thru length(DistributedLoads) do (
+	if DistributedLoads[_i,2]=1 or DistributedLoads[_i,2]=2 then
+		LoadedBeamsList : append(LoadedBeamsList, [DistributedLoads[_i,1]])
+	elseif DistributedLoads[_i,2]=3 then
+		LoadedBeamsListM : append(LoadedBeamsListM, [DistributedLoads[_i,1]])
+	else (
+		print("Error in distributed load definition."),
+		error("Load type must have index either equal to 1, 2 or 3.")
+		)
+	)
+$
+
+LoadedBeamsList : sort(unique(LoadedBeamsList))$
+LoadedBeamsListM : sort(unique(LoadedBeamsListM))$
+
+LocalDistributedLoads : zeromatrix(nBeams,7)$
+LocalDistributedMoments : zeromatrix(nBeams,7)$
+
+for _i:1 thru nBeams do (
+	LocalDistributedLoads[_i,1] : _i,
+	LocalDistributedMoments[_i,1] : _i
+	)
+$
+
+for _i in LoadedBeamsList do (
+	for _j:1 thru length(DistributedLoads) do (
+		if DistributedLoads[_j,1] = _i and DistributedLoads[_j,2] = 1 then (
+			_alpha : BeamRotation[_i],
+			_beta : DistributedLoads[_j,3],
+			_gamma : _beta - _alpha,
+			RM : reduced_rot_matrix(_alpha),
+			localloadsmatrix : DistributedLoads[_j,4]*signum(cos(_gamma))*cos(_gamma) * RM . matrix([cos(_beta)],[sin(_beta)]),
+			LocalDistributedLoads[_i,2] : LocalDistributedLoads[_i,2] + localloadsmatrix[1,1],
+			LocalDistributedLoads[_i,3] : LocalDistributedLoads[_i,3] + localloadsmatrix[2,1],
+			LocalDistributedLoads[_i,4] : LocalDistributedLoads[_i,4] + localloadsmatrix[2,1]
+		)
+		elseif DistributedLoads[_j,1] = _i and DistributedLoads[_j,2] = 2 then (
+			_alpha : BeamRotation[_i],
+			_beta : DistributedLoads[_j,3],
+			_gamma : _beta - _alpha,
+			RM : reduced_rot_matrix(_alpha),
+			localloadsmatrix : DistributedLoads[_j,4]*signum(sin(_gamma))*sin(_gamma) * RM . matrix([cos(_beta)],[sin(_beta)]),
+			LocalDistributedLoads[_i,2] : LocalDistributedLoads[_i,2] + localloadsmatrix[1,1],
+			LocalDistributedLoads[_i,3] : LocalDistributedLoads[_i,3] + localloadsmatrix[2,1],
+			LocalDistributedLoads[_i,4] : LocalDistributedLoads[_i,4] + localloadsmatrix[2,1]
+		)
+	),
+		LocalDistributedLoads[_i,5] : LocalDistributedLoads[_i,2],
+		LocalDistributedLoads[_i,6] : LocalDistributedLoads[_i,3],
+		LocalDistributedLoads[_i,7] : LocalDistributedLoads[_i,4]
+)$
+
+
+for _i in LoadedBeamsListM do (
+	for _j:1 thru length(DistributedLoads) do (
+		if DistributedLoads[_j,1] = _i  and DistributedLoads[_j,2] = 3 then (
+			LocalDistributedMoments[_i,2] : 0,
+			LocalDistributedMoments[_i,3] : LocalDistributedMoments[_i,3] + DistributedLoads[_j,4]
+		)
+	),
+		LocalDistributedMoments[_i,4] : LocalDistributedMoments[_i,3],
+		LocalDistributedMoments[_i,5] : LocalDistributedMoments[_i,2],
+		LocalDistributedMoments[_i,6] : LocalDistributedMoments[_i,3],
+		LocalDistributedMoments[_i,7] : LocalDistributedMoments[_i,3]
+)$
+
+
+
+for _i:1 thru nBeams do (
+	_lbeam : beamlength[LocalDistributedLoads[_i,1]],
+	_Rtempf : zeromatrix(6,1),
+	_Rtempm : zeromatrix(6,1),
+	bfmat : shape_func(_lbeam),
+	bfmatder : shape_func_der(_lbeam),
+	for _j:1 thru 6 do (
+		_Rtempf[_j,1] : integrate(LocalDistributedLoads[_i,_j+1]*bfmat[1,_j], x, 0, _lbeam),
+		_Rtempm[_j,1] : integrate(LocalDistributedMoments[_i,_j+1]*bfmatder[1,_j], x, 0, _lbeam)),
+	Rg[LocalDistributedLoads[_i,1]] : _Rtempf + _Rtempm
+)$
+
+
+
+/* Equivalent nodal loads due to thermal distortions */
+
+for _i:1 thru nBeams do
+	Rt[_i] : zeromatrix(6,1) $
+
+for _i:1 thru length(ThermalLoads) do block([E,A,I,h,a,t1,t2,tg],
+	_j : ThermalLoads[_i,1],
+	E : BeamCar[_j,1],
+	A : BeamCar[_j,2],
+	I : BeamCar[_j,3],
+	h : BeamCar[_j,4],
+	a : BeamCar[_j,5],
+	t1 : ThermalLoads[_i,2],
+	t2 : ThermalLoads[_i,3],
+	tg : (t1+t2)/2,
+	/* we need a sum in the event a beam has more than one 
+	thermal distortion defined in the input file */
+	Rt[_j] : Rt[_j] + matrix([-E*A*a*tg], [0], [(t1-t2)*a*E*I/h], [E*A*a*tg], [0], [-(t1-t2)*a*E*I/h] )
+)$
+
+/* total vector of equivalent loads in the local reference frame */
+for _i:1 thru nBeams do
+	Rlocal[_i] : zeromatrix(6,1) $
+
+for _i:1 thru nBeams do
+	Rlocal[_i] : Rg[_i] + Rt[_i] $
+
+/* Rotation of equivalend nodal loads vectors from local 
+reference frame to the global frame. */
+
+for _i:1 thru nBeams do (
+	RM : rot_matrix(BeamRotation[_i]),
+	RR[_i] : transpose(RM).Rlocal[_i]) $
+
+
+/* Assembly of global equivalent nodal loads vector */
+
+print("Assembling nodal loads vector...");
+
+/* Global nodal forces vector assembly */
+
+for _i:1 thru nNodes do
+	Rtemp[_i] : zeromatrix(ndofn,1)$
+
+for _i:1 thru nBeams do (
+	node1 : ConnectMatrix[_i,1],
+	node2 : ConnectMatrix[_i,2],
+	Rtemp[node1] : Rtemp[node1] + submatrix(4,5,6,RR[_i]),
+	Rtemp[node2] : Rtemp[node2] + submatrix(1,2,3,RR[_i])
+)$
+
+/* assembly */
+_R : matrix()$
+for _i:1 thru nNodes do
+	_R : addrow(_R,Rtemp[_i])$
+
+
+
+/* Global vector of concentrated loads */
+
+_F : zeromatrix(nVars,1)$
+for _i:1 thru length(NodalLoads) do (
+	if NodalLoads[_i,2] = 1 then (
+		_Fx : NodalLoads[_i,4]*cos(NodalLoads[_i,3]),
+		_Fy : NodalLoads[_i,4]*sin(NodalLoads[_i,3]),
+		/* we need a sum in the event a beam has more than one concentrated load
+		   defined on it in the input file */
+		_F[3*(NodalLoads[_i,1]-1)+1,1] : _F[3*(NodalLoads[_i,1]-1)+1,1] + _Fx,
+		_F[3*(NodalLoads[_i,1]-1)+2,1] : _F[3*(NodalLoads[_i,1]-1)+2,1] + _Fy)
+	elseif NodalLoads[_i,2] = 2 then
+		_F[3*(NodalLoads[_i,1]-1)+3,1] : _F[3*(NodalLoads[_i,1]-1)+3,1] + NodalLoads[_i,4]
+	else (
+		print("Error in concentrated load definition."),
+		error("Load type must have index either equal to 1 or 2.")
+	)
+)$
+
+
+/* Global nodal loads vector */
+
+_f : _F + _R $
+
+
+/* Incidence matrix */
+
+IncMatrix : zeromatrix(nNodes, nBeams)$
+for _i:1 thru nBeams do (
+	IncMatrix[ConnectMatrix[_i,1],_i] : 1,
+	IncMatrix[ConnectMatrix[_i,2],_i] : 1)$
+
+
+/* NodeInBeams is a matrix in wich each line contains the beams
+linked to the node wich has the index of the row itself */
+
+NodeInBeams : matrix() $
+for _i:1 thru length(IncMatrix) do (
+	for _j:1 thru nBeams do
+		if IncMatrix[_i,_j] = 1 then 
+			_temp[_j] : _j,
+	NodeInBeams : addrow(NodeInBeams, [_i, sort(unique(listarray(_temp)))]),
+	kill(_temp)
+)$
+
+
+/*------------------------
+    STIFFNESS MATRIX
+-------------------------*/
+
+/* Stiffnes matrices of each beam computed in their local reference frames */
+
+for _i:1 thru nBeams do block([l,E,A,I],
+	l : beamlength[_i],
+	E : BeamCar[_i,1],
+	A : BeamCar[_i,2],
+	I : BeamCar[_i,3],
+	_k[_i] : matrix (
+	[E*A/l, 0, 0, -E*A/l, 0, 0],
+	[0, 12*E*I/l^3, 6*E*I/l^2, 0, -12*E*I/l^3, 6*E*I/l^2],
+	[0, 6*E*I/l^2, 4*E*I/l, 0, -6*E*I/l^2, 2*E*I/l],
+	[-E*A/l, 0, 0, E*A/l, 0, 0],
+	[0, -12*E*I/l^3, -6*E*I/l^2, 0, 12*E*I/l^3, -6*E*I/l^2],
+	[0, 6*E*I/l^2, 2*E*I/l, 0, -6*E*I/l^2, 4*E*I/l] ) 
+)$
+
+
+/* Stiffnes matrices of each beam in the global reference frame */
+
+for _i:1 thru nBeams do (
+	RM : rot_matrix(BeamRotation[_i]),
+	_kg[_i] : transpose(RM)._k[_i].RM
+	)
+$
+
+
+/* Assembly of global stiffness matrix */
+
+print("Assembling global stiffness matrix...");
+
+/* Initialization of a matrix whose elements are matrices of size ndofn x ndofn */
+for _i:1 thru nNodes do
+	for _j:1 thru nNodes do
+		ktemp[_i,_j] : zeromatrix(ndofn,ndofn)$
+
+for _i:1 thru nBeams do (
+	node1 : ConnectMatrix[_i,1],
+	node2 : ConnectMatrix[_i,2],
+	/* ktemp are matrices of size 3x3 */
+	ktemp[node1,node1] : ktemp[node1,node1] + submatrix(4,5,6,_kg[_i],4,5,6),
+	ktemp[node1,node2] : ktemp[node1,node2] + submatrix(4,5,6,_kg[_i],1,2,3),
+	ktemp[node2,node1] : ktemp[node2,node1] + submatrix(1,2,3,_kg[_i],4,5,6),
+	ktemp[node2,node2] : ktemp[node2,node2] + submatrix(1,2,3,_kg[_i],1,2,3)
+)$
+
+/* assembly */
+K : matrix()$
+for _i:1 thru nNodes do
+	block([_krow],
+	_krow : matrix(),
+	for _j:1 thru nNodes do _krow : addcol(_krow,ktemp[_i,_j]),
+	K : addrow(K,_krow)
+)$
+
+
+
+/*-----------------------------------------------
+  MATRICES FOR CONSTRAINT REACTIONS COMPUTATION
+-------------------------------------------------*/
+
+/* For a better organization, matrix ConstrCond is modified to express
+all costraint conditions in the global reference frame */
+
+
+/* First of all, matrix ConstrCond is modified if some constraint 
+conditions are given in a skewed reference frame rotated by integer
+multiples of %pi/2, so that such constraint conditions can be defined
+in the main reference frame */
+
+for _i:1 thru length(ConstrCond) do (
+	if ConstrCond[_i,2]=1 and sin(ConstrCond[_i,4])=1 then (
+		/* constraint condition can be written along the main y axis */
+		ConstrCond[_i,2] : 2,
+		ConstrCond[_i,4] : 0
+	)
+	elseif ConstrCond[_i,2]=1 and cos(ConstrCond[_i,4])=-1 then (
+		/* constraint condition can be written along the main x axis, with changed sign */
+		ConstrCond[_i,3] : -ConstrCond[_i,3],
+		ConstrCond[_i,4] : 0
+	)
+	elseif ConstrCond[_i,2]=1 and sin(ConstrCond[_i,4])=-1 then (
+		/* constraint condition can be written along the main y axis, with changed sign */
+		ConstrCond[_i,2] : 2,
+		ConstrCond[_i,3] : -ConstrCond[_i,3],
+		ConstrCond[_i,4] : 0
+	)
+	elseif ConstrCond[_i,2]=2 and sin(ConstrCond[_i,4])=1 then (
+		/* constraint condition can be written along the main x axis, with changed sign */
+		ConstrCond[_i,2] : 1,
+		ConstrCond[_i,3] : -ConstrCond[_i,3],
+		ConstrCond[_i,4] : 0
+	)
+	elseif ConstrCond[_i,2]=2 and cos(ConstrCond[_i,4])=-1 then (
+		/* constraint condition can be written along the main y axis, with changed sign */
+		ConstrCond[_i,3] : -ConstrCond[_i,3],
+		ConstrCond[_i,4] : 0
+	)
+	elseif ConstrCond[_i,2]=2 and sin(ConstrCond[_i,4])=-1 then (
+		/* constraint condition can be written along the main x axis */
+		ConstrCond[_i,2] : 1,
+		ConstrCond[_i,4] : 0
+	)
+)$
+
+
+/* Elimination of identical rows to delete duplicate constraint conditions */
+ConstrCond : delete_equal_rows(ConstrCond) $
+
+
+/* Then, matrix ConstrCond is modified for constraint conditions expressed
+in a generically rotated reference frame. This is done only if both two traslational
+components are assigned. If a value is given only for one of them, a linear dependency
+relation must be written (see below, section "constraint conditions imposition"). */
+
+/* Some checks are necessary */
+for _ii:1 thru length(ConstrCond) do (
+	for _jj:_ii+1 thru length(ConstrCond) do (
+	if ConstrCond[_ii,1]=ConstrCond[_jj,1] and ConstrCond[_ii,2]=ConstrCond[_jj,2] then (
+		/* two identical displacements components with different values assigned in the same node */
+		error("Error: duplicate/inconsistent constraint condition for displacement component", ConstrCond[_ii,2], "in node", ConstrCond[_ii,1]))
+	elseif ConstrCond[_ii,1]=ConstrCond[_jj,1] and ConstrCond[_ii,4] # ConstrCond[_jj,4] and ConstrCond[_ii,2] # 3 and ConstrCond[_jj,2] # 3 then (
+		/* two different displacement components (excluded rotations) with differents angles assigned in the same node */
+		error("Error: inconsistent constraint condition in node",ConstrCond[_ii,1],".Different displacement components of the same node cannot be assigned in two different reference frames."))
+	)
+)$
+
+/* skewed_double_constr stores nodes in wich both traslational components have
+an assigned value in a generically rotated reference frame, and their row index
+in matrix ConstrCond.
+Structure: [node, row index of the x component, row index of the y component] */
+
+skewed_double_constr : matrix() $
+for _i:1 thru length(ConstrCond) do (	
+	if ConstrCond[_i,4] # 0 and ConstrCond[_i,2] # 3 then (
+		for _j:_i+1 thru length(ConstrCond) do (
+			if ConstrCond[_j,4] = ConstrCond[_i,4] and ConstrCond[_j,1] = ConstrCond[_i,1] then (
+				if ConstrCond[_j,2] =2 then
+					skewed_double_constr : addrow([ConstrCond[_i,1],_i,_j])
+				else
+					skewed_double_constr : addrow([ConstrCond[_i,1],_j,_i])
+			)
+		)
+	 )
+)$
+
+/* Matrix ConstrCond is modified by writing constraint conditions in the global
+reference frame. */
+
+for _i:1 thru length(skewed_double_constr) do (
+	_csi : skewed_double_constr[_i,2],
+	_eta : skewed_double_constr[_i,3],
+	RM : reduced_rot_matrix(ConstrCond[_csi,4]),
+	_new_constr_cond : transpose(RM).matrix([ConstrCond[_csi,3]],[ConstrCond[_eta,3]]),
+	ConstrCond[_csi] : _new_constr_cond[1],
+	ConstrCond[_eta] : _new_constr_cond[2]
+)$
+
+
+/* Further checks on final matrix ConstrCond are performed, since original
+constraint conditions may not belong to the above cases, and some of them
+may be duplicate and/or inconsistent */
+
+for _ii:1 thru length(ConstrCond) do (
+	for _jj:1 thru length(ConstrCond) do (
+		if _ii # _jj and ConstrCond[_ii,1]=ConstrCond[_jj,1] and ConstrCond[_ii,2]=ConstrCond[_jj,2] then
+			error("Error: duplicate/inconsistent constraint condition for displacement component", ConstrCond[_ii,2], "in node", ConstrCond[_ii,1])
+		elseif _ii = _jj and ConstrCond[_ii,4] # ConstrCond[_jj,4] then
+			error("Error: duplicate constraint condition in node",ConstrCond[_ii,1],". A displacement component cannot be assigned in two different reference frames.")
+	)
+)$
+
+
+/* To later retrieve the equations needed for the computation of
+constraint reactions, we need a vector to store indices of constrained nodes. */
+
+ConstrIndices : [] $
+for _i:1 thru length(ConstrCond) do (
+	if ConstrCond[_i,4] = 0 or ConstrCond[_i,2] = 3 then (
+		ConstrIndices : append(ConstrIndices, [ndofn*(ConstrCond[_i,1]-1) + ConstrCond[_i,2]]))
+	else (
+		ConstrIndices : append(ConstrIndices, [ndofn*(ConstrCond[_i,1]-1) + 1]),
+		ConstrIndices : append(ConstrIndices, [ndofn*(ConstrCond[_i,1]-1) + 2])
+	)
+)$
+
+/* This check is only for security: no errors should be generated here, if
+the matrix ConstrCond has been correctly modified and checked above. */
+
+if length(ConstrIndices) # length(unique(ConstrIndices)) then (
+	for _i in unique(ConstrIndices) do (
+		_count : 0,
+		for _j in ConstrIndices do (
+			if _i = _j then (
+				_count : count + 1,
+				if _count > 1 then (
+					print("Error: ConstrIndices contains a duplicate element."),
+					error("Bad constraint condition definition at node", floor((_i-1)/ndofn + 1))
+				)
+			)
+		)
+	)
+)$
+
+
+/* Same for external elastic constraints */
+
+ElConstrIndices : [] $
+for _i:1 thru length(ElasticConstrCond) do (
+	RM : submatrix(1,2,3,rot_matrix(ElasticConstrCond[_i,5]),1,2,3),
+	_ebn : ElasticConstrCond[_i,2],
+	_ebt : ElasticConstrCond[_i,3],
+	_ebr : ElasticConstrCond[_i,4],
+	
+	kElVinc : transpose(RM).matrix([_ebn,0,0],[0,_ebt,0],[0,0,_ebr]).RM,
+
+	for _ii:1 thru length(kElVinc) do
+		if kElVinc[_ii] # [0,0,0] then
+			ElConstrIndices : append(ElConstrIndices, [ndofn*(ElasticConstrCond[_i,1]-1) + _ii])
+)$
+
+if length(ElConstrIndices) # length(unique(ElConstrIndices)) then (
+	for _i in unique(ElConstrIndices) do (
+		_count : 0,
+		for _j in ElConstrIndices do (
+			if _i = _j then (
+				_count : count + 1,
+				if _count > 1 then (
+					print("Error: ElConstrIndices contains a duplicate element."),
+					error("Bad elastic constraint condition definition at node", floor((_i-1)/ndofn + 1))
+				)
+			)
+		)
+	)
+)$
+
+for _i in ConstrIndices do (
+	for _j in ElConstrIndices do (
+		if _i = _j then (
+			node : floor(((_i-1)/ndofn + 1)),
+			print("Error: double constraint condition at node", node),
+			error("Both a standard constraint condition and an elastic one have been defined for displacement component number", _i - ndofn*(node-1))
+		 )
+	)
+)$
+
+
+/* Attention to array ConstrIndices: construction of Kvinctemp depends on the
+order of its elements. ConstrIndices must be ordered from smallest to highest index. */
+
+ConstrIndices : sort(append(ConstrIndices,ElConstrIndices)) $
+
+
+/* Total number of constraint conditions in the global reference frame.
+This may differ form the number of entries currently present in matrix
+ConstrCond, if some constraint conditions are specified in a generically
+rotated reference frame, and it is equal to the length of ConstrIndices. */
+
+nVinc : length(ConstrIndices) $
+
+
+Kvinctemp : matrix()$
+for _i in ConstrIndices do
+	Kvinctemp : addrow(Kvinctemp,row(K,_i))$
+
+
+/* Note: copy is necessary to avoid modifications
+after constraint conditions imposition */
+
+Kvinc1 : copy(apply(submatrix, cons(Kvinctemp,ConstrIndices)))$
+
+Kvinc2 : matrix()$
+for _i in ConstrIndices do
+	Kvinc2 : addcol(Kvinc2,col(Kvinctemp,_i))$
+
+_fvinc : copy(_f) $
+
+Rvinc : matrix()$
+for _i in ConstrIndices do
+	Rvinc : addrow(Rvinc,row(_fvinc,_i))$
+
+
+
+/*------------------------------
+    CONCENTRATED DISTORTIONS
+-------------------------------*/
+
+/* Checks */
+
+for _i:1 thru length(ConcDist) do (
+	_ii : ConcDist[_i,1],
+	_jj : ConcDist[_i,2],
+
+	/* a concentrated distortion can be defined only between nodes
+	 belonging to one only beam */
+	if length(NodeInBeams[_ii,2]) > 1 or length(NodeInBeams[_jj,2]) > 1 then error(
+"Error: nodes defining a concentrated distortion must belong each to one only beam.
+Node",_ii,"or node",_jj,"belongs to more than one beam"),
+
+	_beam1 : NodeInBeams[_ii,2][1],
+	_beam2 : NodeInBeams[_jj,2][1],
+
+	/* a concentrated distortion can only be defined between beams having
+	the same rotation in the global reference frame: beams axes must be
+	aligned, and this means they can have a relative angle either of 0 or %pi */
+	
+	_alpha1 : BeamRotation[_beam1],
+	_alpha2 : BeamRotation[_beam2],
+
+	if (_alpha1 - _alpha2) # 0 and abs((_alpha1 - _alpha2)) # %pi then error(
+"Error: a concentrated distortion has been defined between beams",_beam1,"and",_beam2,", but their axes have not the same angle in the global reference frame")
+	)
+$
+
+
+/* Global stiffness matrix and global nodal loads vector modification
+in the event of concentrated distortions */
+
+for i:1 thru length(ConcDist) do (
+	/* all relations must be written in the local reference frame, while
+	the imposition of linear dependency relations must be done over the
+	global stiffness matrix, in the global reference frame */
+	for j:1 thru nBeams do
+		if IncMatrix[ConcDist[i,1],j] = 1 then 
+			_alpha : BeamRotation[j],
+	_comp : ConcDist[i,3],
+	_i : 3*(ConcDist[i,2]-1) + 1,
+	_j : 3*(ConcDist[i,1]-1) + 1,
+	_modify_K : zeromatrix(1,nVars),
+
+	/* axial distortion */
+	if _comp=1 then (
+		_modify_K[1,_i] : _bk*cos(_alpha),
+		_modify_K[1,_i+1] : _bk*sin(_alpha),
+		_modify_K[1,_j] : - _bk*cos(_alpha),
+		_modify_K[1,_j+1] : - _bk*sin(_alpha),
+
+		/* imposition of linear dependency relations */
+		for _ii:1 thru nVars do (
+			K[_i,_ii] : K[_i,_ii] + _modify_K[1,_ii],
+			K[_i+1,_ii] : K[_i+1,_ii] + _modify_K[1,_ii],
+			K[_j,_ii] : K[_j,_ii] - _modify_K[1,_ii],
+			K[_j+1,_ii] : K[_j+1,_ii] - _modify_K[1,_ii]
+		),
+		_dist : _bk*ConcDist[i,4]*(cos(_alpha)+sin(_alpha)),
+		_f[_i] : _f[_i] + _dist,
+		_f[_i+1] : _f[_i+1] + _dist,
+		_f[_j] : _f[_j] - _dist,
+		_f[_j+1] : _f[_j+1] - _dist,
+
+		/* imposition of equality among the other displacement components, done
+		by adding a double pendulum with axes rotated by %pi/2 with respect to beam axis */
+		Disconnections : addrow(Disconnections,[4,[ConcDist[i,1],ConcDist[i,2]],[],_alpha+%pi/2])
+	)
+
+	/* shear distortion */
+	elseif _comp=2 then (
+		_modify_K[1,_i] : _bk*sin(_alpha),
+		_modify_K[1,_i+1] : - _bk*cos(_alpha),
+		_modify_K[1,_j] : - _bk*sin(_alpha),
+		_modify_K[1,_j+1] : _bk*cos(_alpha),
+
+		/* imposition of linear dependency relations */
+		for _ii:1 thru nVars do (
+			K[_i,_ii] : K[_i,_ii] + _modify_K[1,_ii],
+			K[_i+1,_ii] : K[_i+1,_ii] - _modify_K[1,_ii],
+			K[_j,_ii] : K[_j,_ii] - _modify_K[1,_ii],
+			K[_j+1,_ii] : K[_j+1,_ii] + _modify_K[1,_ii]
+		),
+		_dist : _bk*ConcDist[i,4]*(cos(_alpha)-sin(_alpha)),
+		_f[_i] : _f[_i] + _dist,
+		_f[_i+1] : _f[_i+1] - _dist,
+		_f[_j] : _f[_j] - _dist,
+		_f[_j+1] : _f[_j+1] + _dist,
+
+		/* imposition of equality among the other displacement components, done
+		by adding a double pendulum with axes oriented in the same directions of beam axis*/
+		Disconnections : addrow(Disconnections,[4,[ConcDist[i,1],ConcDist[i,2]],[],_alpha])
+	)
+
+	/* rotational distortion */
+	elseif _comp=3 then (
+		/* here no trasformation of reference frame is needed */
+
+		/* imposition of linear dependency relations */
+		K[_i+2,_i+2] : K[_i+2,_i+2] + _bk,
+		K[_i+2,_j+2] : K[_i+2,_j+2] - _bk,
+		K[_j+2,_i+2] : K[_j+2,_i+2] - _bk,
+		K[_j+2,_j+2] : K[_j+2,_j+2] + _bk,
+
+		_f[_i+2] : _f[_i+2] -_bk*ConcDist[i,4],
+		_f[_j+2] : _f[_j+2] + _bk*ConcDist[i,4],
+
+		/* imposition of equality among the other displacement components, done
+		by adding a hinge */
+		Disconnections : addrow(Disconnections,[3,[ConcDist[i,1],ConcDist[i,2]],[],[]])
+	)
+	else error (
+"Error: bad displacement component in matrix ConcDist")
+)$
+
+
+/*---------------------------
+   INTERNAL DISCONNECTIONS
+-----------------------------*/
+
+/* Global stiffness matrix modification in the event of 
+internal disconnections */
+
+constr_ind : 0 $
+for _i:1 thru length(Disconnections) do (
+	constr_ind : constr_ind + 1,
+	type : Disconnections[_i,1],
+	if member(type,[2,3,5]) then
+		kDisc : internal_constraint(type,constr_ind)
+	elseif member(type,[1,4,6]) then (
+		RM : rot_matrix(Disconnections[_i,4]),
+		kDisc : transpose(RM).internal_constraint(type,constr_ind).RM)
+	else
+		error("Bad internal constraint definition"),
+
+	for _j:1 thru length(Disconnections[_i,2]) -1 do (
+		_ii : Disconnections[_i,2][_j],
+		_jj : Disconnections[_i,2][_j+1],
+		for _kk:1 thru 3 do (
+			for _kkk:1 thru 3 do (
+				K[3*(_ii-1)+_kk,3*(_ii-1)+_kkk] : K[3*(_ii-1)+_kk,3*(_ii-1)+_kkk]+ kDisc[_kk,_kkk],
+				K[3*(_ii-1)+_kk,3*(_jj-1)+_kkk] : K[3*(_ii-1)+_kk,3*(_jj-1)+_kkk]+ kDisc[_kk,_kkk+3],
+				K[3*(_jj-1)+_kk,3*(_ii-1)+_kkk] : K[3*(_jj-1)+_kk,3*(_ii-1)+_kkk]+ kDisc[_kk+3,_kkk],
+				K[3*(_jj-1)+_kk,3*(_jj-1)+_kkk] : K[3*(_jj-1)+_kk,3*(_jj-1)+_kkk]+ kDisc[_kk+3,_kkk+3]
+			)
+		)
+	)
+)$
+
+
+
+/*-------------------------------------
+   CONSTRAINT CONDITIONS IMPOSITION
+---------------------------------------*/
+
+print("Imposing constraint conditions...");
+
+/* Global stiffness matrix modification in the event of
+elastic external constraints */
+
+for _i:1 thru length(ElasticConstrCond) do (
+	RM : submatrix(1,2,3,rot_matrix(ElasticConstrCond[_i,5]),1,2,3),
+	kElVinc : transpose(RM).el_ext_constraint(_i).RM,
+	node : ElasticConstrCond[_i,1],
+	for _ii:1 thru 3 do
+		for _jj:1 thru 3 do
+			K[3*(node-1)+_ii,3*(node-1)+_jj] : K[3*(node-1)+_ii,3*(node-1)+_jj]+ kElVinc[_ii,_jj]
+	)
+$
+
+
+for _i:1 thru length(ConstrCond) do (
+	if ConstrCond[_i,4] = 0 or ConstrCond[_i,2] = 3 then (
+	/* displacement constraint is either assigned in the global frame
+	reference, or it is a rotation */
+		_ii : 3*(ConstrCond[_i,1]-1) + ConstrCond[_i,2],
+		for _j:1 thru nVars do
+			_f[_j,1] : _f[_j,1] - K[_j,_ii]*ConstrCond[_i,3],
+		_f[_ii,1] : ConstrCond[_i,3],
+		for _j:1 thru nVars do (
+			K[_ii,_j] : 0,
+			K[_j,_ii] : 0),
+		K[_ii,_ii] :1
+	)
+	elseif ConstrCond[_i,4] # 0 and ConstrCond[_i,2] = 1 then (
+	/* displacement constraint is assigned along the x axis of a
+	skewed reference frame */
+	_alpha : ConstrCond[_i,4],
+	_ii : 3*(ConstrCond[_i,1]-1) + 1, /* x index */
+	_jj : _ii + 1, /* y index */
+	K[_ii,_ii] : K[_ii,_ii] + _bk*(cos(_alpha))^2,
+	K[_ii,_jj] : K[_ii,_jj] + _bk*sin(_alpha)*cos(_alpha),
+	K[_jj,_ii] : K[_jj,_ii] + _bk*sin(_alpha)*cos(_alpha),
+	K[_jj,_jj] : K[_jj,_jj] + _bk*(sin(_alpha))^2,
+	_f[_ii,1] : _f[_ii,1] + _bk*cos(_alpha)*ConstrCond[_i,3],
+	_f[_jj,1] : _f[_jj,1] + _bk*sin(_alpha)*ConstrCond[_i,3]
+	)
+	elseif ConstrCond[_i,4] # 0 and ConstrCond[_i,2] = 2 then (
+	/* displacement constraint is assigned along the y axis of a
+	skewed reference frame */
+	_alpha : ConstrCond[_i,4],
+	_ii : 3*(ConstrCond[_i,1]-1) + 1, /* x index */
+	_jj : _ii + 1, /* y index */
+	K[_ii,_ii] : K[_ii,_ii] + _bk*(sin(_alpha))^2,
+	K[_ii,_jj] : K[_ii,_jj] - _bk*sin(_alpha)*cos(_alpha),
+	K[_jj,_ii] : K[_jj,_ii] - _bk*sin(_alpha)*cos(_alpha),
+	K[_jj,_jj] : K[_jj,_jj] + _bk*(cos(_alpha))^2,
+	_f[_ii,1] : _f[_ii,1] - _bk*sin(_alpha)*ConstrCond[_i,3],
+	_f[_jj,1] : _f[_jj,1] + _bk*cos(_alpha)*ConstrCond[_i,3]
+	)
+)$
+
+
+
+/*----------------------------------
+   CHECK ABOUT STRUCTURE LABILITY
+------------------------------------*/
+
+/* Stiffness matrix has to be non-singular.
+If internal disconnections or elastic constraints are present 
+(no matter if they are internal or external), even if calculation
+of limits on displacement components is made after system resolution
+(and this is mandatory, otherwise there will be divisions by zero or
+infinity), to correctly compute the rank of stiffness matrix is necessary,
+but only for this purpose, to apply to it these limits. Anyway, stiffness
+matrix won't be modified.
+This check is necessary because structure could have labilities due to
+a constraint stiffness that approaches to zero. Otherwise, this lability
+will cause a division by zero or an infinite displacement component. */
+
+print("Checking if structure is well defined...")$
+
+/* If there are no internal constraints, we check that external
+constraints are sufficient */
+
+if ( length(Disconnections)=0 and length(ElasticConstrCond)=0 ) then (
+	if rank(K) < length(K) then
+		error("Error: structure is labile"))
+else (
+	K2 : copy(K),
+	if length(Disconnections)>0 then (
+		for _i:1 thru length(Disconnections) do (
+			if (Disconnections[_i,1]=5 or Disconnections[_i,1]=6) then
+				K2 : matrixmap(lambda([e],if e=0 then 0 else limit(e,concat(br_,_i),Disconnections[_i,3])), K2)
+		)
+	),
+	if length(ElasticConstrCond)>0 then (
+		for _i:1 thru length(ElasticConstrCond) do (
+			K2 : matrixmap(lambda([e],if e=0 then 0 else limit(e,concat(ebn_,_i),ElasticConstrCond[_i,2])), K2),
+			K2 : matrixmap(lambda([e],if e=0 then 0 else limit(e,concat(ebt_,_i),ElasticConstrCond[_i,3])), K2),
+			K2 : matrixmap(lambda([e],if e=0 then 0 else limit(e,concat(ebr_,_i),ElasticConstrCond[_i,4])), K2)
+		)
+	),
+	if rank(K2) < length(K2) then
+		error("Error: structure is labile")
+)$
+
+
+
+/*-----------------------------
+    SYSTEM RESOLUTION
+-------------------------------*/
+
+print("Solving system and calculating nodal displacements...");
+
+/* System resolution is performed with linsolve, that is faster
+and leads to much more simpler final expressions than other methods,
+such as a manual writing of the Gauss' method */
+
+/* algebraic must be set to true for a complete simplification
+of the results */
+
+algebraic:true $
+
+/* Creation of a list of unknowns
+Note that the quote inside concat is necessary, otherwise the elements 
+of the list will not be symbols, needed for the matrix multiplication */
+
+_unknowns_list : makelist(concat('_x,_i),_i,1,nVars) $
+
+/* the above list is copied into a matrix of final unknowns */
+u : zeromatrix(nVars,1) $
+for _i:1 thru nVars do
+	u[_i,1] : _unknowns_list[_i] $
+
+/* creation of a list of equations */
+_eq_matrix : K.u $
+_eq_list : makelist(_eq_matrix[_i,1]=_f[_i,1],_i,1,nVars) $
+
+/* system resolution */
+_sol_list : linsolve(_eq_list,_unknowns_list) $
+for _i:1 thru nVars do
+	u[_i,1] : rhs(_sol_list[_i]) $
+
+/* simplification of computed displacements */
+
+u : expand(trigsimp(ratsimp(u)))$
+
+u_full_unl : copy(u) $
+
+
+/* Limits of u for given constraint conditions */
+
+/* limits to impose linear dependency relations */
+
+if member(_bk,listofvars(u)) then
+	u : matrixmap(lambda([e],tlimit(e,_bk,inf)),u) $
+
+
+/* limits for given stiffnesses of internal constraints */
+
+constr_ind : 0 $
+for _i:1 thru length(Disconnections) do (
+	constr_ind : constr_ind + 1,
+	if (Disconnections[_i,1]=5 or Disconnections[_i,1]=6) then
+		u : matrixmap(lambda([e], limit(e,concat(br_,constr_ind),Disconnections[_i,3])),u)
+	)
+$
+
+
+/* limits for given stiffnesses of external elastic constraint conditions */
+
+for _i:1 thru length(ElasticConstrCond) do (
+	u : matrixmap(lambda([e], limit(e,concat(ebn_,_i),ElasticConstrCond[_i,2])),u),
+	u : matrixmap(lambda([e], limit(e,concat(ebt_,_i),ElasticConstrCond[_i,3])),u),
+	u : matrixmap(lambda([e], limit(e,concat(ebr_,_i),ElasticConstrCond[_i,4])),u)
+	)
+$
+
+uunl : copy(u) $
+
+
+
+/*---------------------------------
+    DEFORMABILITY HYPOTHESES
+----------------------------------- */
+
+print("Applying deformability hypotheses...");
+
+/* Creation of some lists:
+BigArea: contains areas of beams for wich axial deformability is
+negligible with respect to the inflectional one (namely A>>I)
+BigInertia: contains moment of inertia of beams for wich inflectional
+deformability is negligible with respect to the axial one (I>>A)
+InfArea: areas assumed to be -> infinite
+InfInertia: Momentum of inertia assumed to be -> infinite
+Areas: list of unique areas
+Inertia: list of unique moment of inertia */
+
+BigArea : [] $
+SmallInertia : [] $
+
+for _i:1 thru nBeams do (
+	if Def[_i,1] = negl then (
+		BigArea : append(BigArea, [BeamCar[_i,2]]),
+		SmallInertia : append(SmallInertia, [BeamCar[_i,3]])
+	)
+)$
+
+
+BigArea : unique(BigArea) $
+SmallInertia : unique(SmallInertia) $
+
+BigInertia : [] $
+SmallArea : [] $
+
+for _i:1 thru nBeams do (
+	if Def[_i,2] = negl then (
+		BigInertia : append(BigInertia, [BeamCar[_i,3]]),
+		SmallArea : append(SmallArea, [BeamCar[_i,2]])
+	)
+)$
+
+BigInertia : unique(BigInertia) $
+SmallArea : unique(SmallArea) $
+
+InfArea : [] $
+
+for _i:1 thru nBeams do
+	if Def[_i,1] = null then
+		InfArea : append(InfArea, [BeamCar[_i,2]])$
+
+InfArea : unique(InfArea) $
+
+InfInertia : [] $
+
+for _i:1 thru nBeams do
+	if Def[_i,2]=null then
+		InfInertia : append(InfInertia, [BeamCar[_i,3]])$
+
+InfInertia : unique(InfInertia) $
+
+
+/* APPLICATION OF DEFORMABILITY HYPOTHESES AND ELIMINATION OF NEGLIGIBLE DISPLACEMENTS */
+
+
+/* elimination of displacement components related to negligible axial deformability */
+
+for _i:1 thru length(BigArea) do
+	u : matrixmap(lambda([e], if freeof_var(BigArea[_i],e) or freeof_var(SmallInertia[_i],e) then e else limit(e, BigArea[_i], inf)), u)$
+
+
+/* elimination of displacement components related to negligible flectional deformability */
+
+for _i:1 thru length(BigInertia) do
+	u : matrixmap (lambda([e], if freeof_var(BigInertia[_i],e) or freeof_var(SmallArea[_i],e) then e else limit(e, BigInertia[_i], inf)), u)$
+
+/* elimination of displacement components related to infinite axial stiffness */
+
+for _i in InfArea do
+	u : matrixmap(lambda([e], limit(e, _i, inf)), u)$
+
+
+/* elimination of displacement components related to infinite flectional stiffness */
+
+for _i in InfInertia do
+	u : matrixmap(lambda([e], limit(e, _i, inf)), u)$
+
+u : expand(u) $
+
+
+/* Here, a more human-readable version of u is created.
+Matrix u_comp shows also node number and displacement component.
+Structure: node, displacement component, displacement value */
+
+u_comp : matrix() $
+
+for _i:1 thru nNodes do (
+	for _j:1 thru ndofn do (
+		u_comp : addrow(u_comp, [_i, _j, u[3*(_i-1)+_j,1]])
+	)
+) $
+
+
+/*-----------------------------
+   CONSTRAINT REACTIONS
+------------------------------*/
+
+print("Calculating constraint reactions...");
+
+/* It is necessary to use the original displacements vector, otherwise,
+by using the limited one, that is NOT the real solution of the system, the
+global equilibrium of the structure is not guaranteed */
+
+ufree_full_unl : apply(submatrix, endcons(u_full_unl,ConstrIndices))$
+ufree : apply(submatrix, endcons(u,ConstrIndices))$
+
+uvinc : zeromatrix(nVinc,1) $
+for _i:1 thru length(ConstrIndices) do
+	uvinc[_i,1] : u[ConstrIndices[_i],1] $
+
+
+/* If all the displacement components are constrained, it is 
+necessary to give Kvinc1 and ufree_full_unl a dimension, otherwise they
+remain generic matrices and their product cannot be computed 
+(see formula below). Their product must be a nVinc x 1 matrix. */
+
+if matrix_size(Kvinc1)[2] = 0 then (
+	Kvinc1 : zeromatrix(nVinc,1),
+	ufree_full_unl : zeromatrix(1,1))$
+
+
+/* Constraint reactions computation */
+
+ConstrReact : Kvinc1.ufree_full_unl + Kvinc2.uvinc - Rvinc$
+
+
+/* limits related to the imposition of linear dependency relations */
+
+if member(_bk,listofvars(ConstrReact)) then
+	ConstrReact : matrixmap(lambda([e],tlimit(e,_bk,inf)),ConstrReact) $
+
+/* limits for given values of elastic constraints stiffnesses */
+
+for _i:1 thru length(ElasticConstrCond) do (
+	ConstrReact : matrixmap(lambda([e],if e=0 then 0 else limit(e,concat(ebn_,_i),ElasticConstrCond[_i,2])), ConstrReact),
+	ConstrReact : matrixmap(lambda([e],if e=0 then 0 else limit(e,concat(ebt_,_i),ElasticConstrCond[_i,3])), ConstrReact),
+	ConstrReact : matrixmap(lambda([e],if e=0 then 0 else limit(e,concat(ebr_,_i),ElasticConstrCond[_i,4])), ConstrReact)
+)$
+
+
+/* Limits for given deformability hypotheses */
+
+/* elimination of terms related to negligible axial deformability */
+
+for _i:1 thru length(BigArea) do
+	ConstrReact : matrixmap(lambda([e], if freeof_var(BigArea[_i],e) or freeof_var(SmallInertia[_i],e) then e else limit(e, BigArea[_i], inf)), ConstrReact)$
+
+
+/* elimination of terms related to negligible flectional deformability */
+
+for _i:1 thru length(BigInertia) do
+	ConstrReact : matrixmap (lambda([e], if freeof_var(BigInertia[_i],e) or freeof_var(SmallArea[_i],e) then e else limit(e, BigInertia[_i], inf)), ConstrReact)$
+
+
+/* elimination of terms related to infinite axial stiffness */
+
+for _i in InfArea do
+	ConstrReact : matrixmap(lambda([e], limit(e, _i, inf)), ConstrReact)$
+
+
+/* elimination of terms related to infinite flectional stiffness */
+
+for _i in InfInertia do
+	ConstrReact : matrixmap(lambda([e], limit(e, _i, inf)), ConstrReact)$
+
+
+
+/* simplification of calculated expressions */
+
+ConstrReact : expand(trigsimp(ratsimp(ConstrReact)))$
+
+/* Here, matrix ConstrReact is modified to display also
+node and displacement component related to the calculated force.
+Structure: node, component, constraint reaction value */
+
+ConstrReact : expand(ConstrReact) $
+
+_comp_matrix : matrix() $
+for _i in ConstrIndices do (
+	_node : floor((_i-1)/ndofn + 1),
+	_comp :  _i - ndofn*(_node-1),
+	_comp_matrix : addrow(_comp_matrix, [_node,_comp])
+)$
+
+ConstrReact : addcol(_comp_matrix,ConstrReact) $
+
+
+
+/*---------------------------------------------------
+   STRAINS AND ELASTIC DEFORMED SHAPES CALCULATION
+-----------------------------------------------------*/
+
+print("Calculating strains and elastic deformed shapes...");
+
+/* FIRST PART: STRAINS CALCULATION */
+
+/* Here, as done before in the computation of constraint reactions,
+the nodal displacements vector without deformability hypotheses must
+be used to perform a first computation of the nodal forces vector, otherwise
+local stiffness matrices coul be inconsistent with displacements, since
+the former contains all the terms, while the latter have been limited
+with the application of deformability hypotheses. This can lead to an
+unequilibrated structure. Only in a second time, application of
+deformability hypotheses on the nodal forces vectors can be performed.
+The only difference with the computation af constratint reactions is
+that, instead of using the u_full_unl vector, the uunl
+vector can be used, because here we are working with local stiffness
+matrices and we need the displacement vector to take into account the
+effective stiffnesses of internal and external constrains, if they
+are present. */
+
+
+for _i:1 thru nBeams do (
+
+	/* Nodal displacements of each beam in the global reference frame.
+	These are displacements WITHOUT deformability hypotheses applyed */
+
+	uunlBeamG[_i] : extract_ubeam(_i,ConnectMatrix,uunl),
+
+	/* nodal displacements in the local reference frame */
+
+	RM : rot_matrix(BeamRotation[_i]),
+	uunlBeam[_i] : RM.uunlBeamG[_i],
+
+	/* nodal forces vector */
+	S[_i] : ratsimp( _k[_i].uunlBeam[_i] - Rlocal[_i] )
+)$
+
+/* elimination of terms related to negligible axial deformability */
+
+for _i:1 thru length(BigArea) do (
+	for _j:1 thru nBeams do (
+		S[_j] : matrixmap(lambda([e], if freeof_var(BigArea[_i],e) or freeof_var(SmallInertia[_i],e) then e else limit(e, BigArea[_i], inf)), S[_j])
+	)
+)$
+
+/* elimination of terms related to negligible flectional deformability */
+
+for _i:1 thru length(BigArea) do (
+	for _j:1 thru nBeams do (
+		S[_j] : matrixmap(lambda([e], if freeof_var(BigArea[_i],e) or freeof_var(SmallInertia[_i],e) then e else limit(e, BigArea[_i], inf)), S[_j])
+	)
+)$
+
+/* elimination of terms related to infinite axial stiffness */
+
+for _i in InfArea do (
+	for _j:1 thru nBeams do (
+	S[_j] : matrixmap(lambda([e], limit(e, _i, inf)), S[_j])
+	)
+)$
+
+/* elimination of terms related to infinite flectional stiffness */
+
+for _i in InfInertia do (
+	for _j:1 thru nBeams do (
+	S[_j] : matrixmap(lambda([e], limit(e, _i, inf)), S[_j])
+	)
+)$
+
+
+/* Initialization of terms related to thermal loads, needed for the
+indefinite equilibrium equations */
+
+for _i:1 thru nBeams do (
+	dphit[_i] : 0,
+	dut[_i] : 0
+)$
+
+for _i:1 thru length(ThermalLoads) do block([h,a,t1,t2,tg],
+	_j : ThermalLoads[_i,1],
+	h : BeamCar[_j,4],
+	a : BeamCar[_j,5],
+	t1 : ThermalLoads[_i,2],
+	t2 : ThermalLoads[_i,3],
+	tg : (t1+t2)/2,
+	dut[_j] : dut[_j] + a*tg,
+	dphit[_j] : dphit[_j] + a*(t2-t1)/h)$
+
+
+
+/* INTEGRATION OF THE INDEFINITE EQUILIBRIUM EQUATIONS */
+
+for _i:1 thru nBeams do (
+	block([E:BeamCar[_i,1], A:BeamCar[_i,2], I:BeamCar[_i,3], l:beamlength[_i]],
+
+	/* shear */
+	_shear_gen_int : ode2('diff(_shear,x) = LocalDistributedLoads[_i,3], _shear, x),
+	_shear_sol : rhs(ic1(_shear_gen_int, x=0, _shear=S[_i][2,1])),
+
+	T[_i] : expand(''_shear_sol),
+
+	/* bending moment */
+	_moment_gen_int : ode2('diff(_moment,x) = _shear_sol - LocalDistributedMoments[_i,3], _moment, x),
+	_moment_sol : rhs(ic1(_moment_gen_int, x=0, _moment=-S[_i][3,1])),
+
+	M[_i] : expand(''_moment_sol),
+
+
+	/* axial force */
+	_axial_force_gen_int : ode2('diff(_axial,x) = - LocalDistributedLoads[_i,2], _axial, x),
+	_axial_force_sol : rhs(ic1(_axial_force_gen_int, x=0, _axial=-S[_i][1,1])),
+
+	N[_i] : expand(''_axial_force_sol)
+	)
+)$	
+
+
+
+/* SECOND PART: ELASTIC DEFORMED SHAPES CALCULATION */
+
+/* Here, deformability hypotheses must be used. Nodal forces are
+recomputed using the final displacements vector, with all the hypotheses
+applyed. Since rotations and displacements are calculated from the
+equations of strains, we need to use a trick: strains are newely 
+computed with the final nodal displacements vector u, so in this case
+equilibrium is not guaranteed, while congruence is. This is needed to
+(hopefully) correctly handle the deformability hypotheses */
+
+
+for _i:1 thru nBeams do (
+
+	/* Nodal displacements of each beam in the global reference frame.
+	These are displacements WITH deformability hypotheses applyed */
+
+	uBeamG[_i] : extract_ubeam(_i,ConnectMatrix,u),
+
+	/* nodal displacements in the local reference frame */
+
+	RM : rot_matrix(BeamRotation[_i]),
+	uBeam[_i] : RM.uBeamG[_i],
+
+	/* nodal forces vector */
+	S2[_i] : ratsimp( _k[_i].uBeam[_i] - Rlocal[_i] )
+)$
+
+
+
+for _i:1 thru nBeams do (
+	block([E:BeamCar[_i,1], A:BeamCar[_i,2], I:BeamCar[_i,3], l:beamlength[_i]],
+
+	/* shear 2 */
+	_shear_gen_int2 : ode2('diff(_shear,x) = LocalDistributedLoads[_i,3], _shear, x),
+	_shear_sol2 : rhs(ic1(_shear_gen_int2, x=0, _shear=S2[_i][2,1])),
+
+	/* bending moment */
+	_moment_gen_int2 : ode2('diff(_moment,x) = _shear_sol2 - LocalDistributedMoments[_i,3], _moment, x),
+	_moment_sol2 : rhs(ic1(_moment_gen_int2, x=0, _moment=-S2[_i][3,1])),
+
+	/* rotation */
+	_rot_gen_int : ode2('diff(_rotation,x) = _moment_sol2/(E*I) + dphit[_i], _rotation, x),
+	_rot_sol : rhs(ic1(_rot_gen_int, x=0, _rotation=uBeam[_i][3,1])),
+
+	/* displacement */
+	_displ_gen_int : ode2('diff(_elastline,x)=_rot_sol, _elastline, x),
+	_displ_sol : rhs(ic1(_displ_gen_int, x=0, _elastline=uBeam[_i][2,1])),
+
+	phi[_i] : expand(''_rot_sol),
+	v[_i] : expand(''_displ_sol),
+
+
+	/* axial force */
+	_axial_force_gen_int2 : ode2('diff(_axial,x) = - LocalDistributedLoads[_i,2], _axial, x),
+	_axial_force_sol2 : rhs(ic1(_axial_force_gen_int2, x=0, _axial=-S2[_i][1,1])),
+
+	/* axial displacement */
+	_axial_displ_gen_int : ode2('diff(_w,x) = _axial_force_sol2/(E*A) + dut[_i], _w, x),
+	_axial_displ_sol : rhs(ic1(_axial_displ_gen_int, x=0, _w=uBeam[_i][1,1])),
+
+	w[_i] : expand(''_axial_displ_sol)
+	)
+)$
+
+kill(S2) $
+
+
+/* Simplification of the above quantities */
+
+for _j:1 thru nBeams do (
+	M[_j] : ratsimp(M[_j]),
+	T[_j] : ratsimp(T[_j]),
+	N[_j] : ratsimp(N[_j]),
+	phi[_j] : ratsimp(phi[_j]),
+	v[_j] : ratsimp(v[_j]),
+	w[_j] : ratsimp(w[_j])
+)$
+
+
+
+for _j:1 thru nBeams do (
+	M[_j] : expand(M[_j]),
+	T[_j] : expand(T[_j]),
+	N[_j] : expand(N[_j]),
+	phi[_j] : expand(phi[_j]),
+	v[_j] : expand(v[_j]),
+	w[_j] : expand(w[_j])
+)$ 
+

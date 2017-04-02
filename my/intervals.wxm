@@ -1,0 +1,618 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 14.09.0 ] */
+
+/* [wxMaxima: input   start ] */
+simp:true; kill(a, b, c, d, x, y, m, ans)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+"direct translation of kahans rules";
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([list]):=block([x, y, m, a, b, c, d, ans:[], simp], 
+load(intervalArithmetic), 
+simp:false, 
+x:if(listp(list[2]) and numberp(list[1]) and (list[1]=0)) then [0, 0] else if(numberp(list[1])) then [list[1], list[1]] else list[1], 
+y:if(listp(list[1]) and numberp(list[2]) and (list[2]=0)) then [0, 0] else if(numberp(list[2])) then [list[2], list[2]] else list[2], 
+a:x[1], b:x[2], 
+c:y[1], d:y[2],  
+if((c=inf and d=inf) or (c=minf and d=minf)) then 
+ans:[] else 
+subst([1/inf=0, 1/minf=0, a*inf=minf, a*minf=minf, b*inf=inf, b*minf=inf, b/inf=0, b/minf=-0], 
+block( 
+if(not(c<0 and 0<d)) then 
+(ans:intervalProduct(x, [subst([1/0=inf, 1/inf=0, 1/minf=0], 1/d), 
+                                subst([1/0=inf, 1/inf=0, 1/minf=0], 1/c)]), simp:false), 
+if((a<0 and 0<b) and (c<0 and 0<d)) then 
+ans:[minf, inf], 
+if((b<0) and ((c<d) and (d=0))) then 
+ans:[b/c, inf], simp:false, 
+if((b<0) and (c<0 and 0<d)) then 
+ans:[[minf, b/d], [b/c, inf]], simp:false, 
+if((b<0) and ((c=0) and (c<d))) then 
+ans:[minf, b/d], simp:false, 
+if((0<a) and ((c<d) and (d=0))) then 
+ans:[minf, a/c], simp:false, 
+if((0<a) and ((c<0) and (0<d))) then 
+ans:[[minf, a/c], [a/d, inf]], simp:false, 
+if((a<0) and ((c=0) and (c<d))) then 
+ans:[a/d, inf], simp:false, 
+if(not((a<0) and (0<b)) and ((c=0) and (d=0))) then 
+ans:[], simp:false, 
+ans)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([1, 2], [-2, -1]), simp;
+intervalDivide([-2, -1], [1, 2]), simp;
+intervalDivide([-2, 1], [-1, 2]), simp;
+intervalDivide([-1, 2], [-2, 1]), simp;
+intervalDivide([-2, -1], [-2, 0]), simp;
+intervalDivide([-2, -1], [-2, 1]), simp;
+intervalDivide([-2, -1], [0, 1]) ,simp;
+intervalDivide([2, 3], [-1, 0]), simp;
+intervalDivide([2, 3], [-1, 1]), simp;
+intervalDivide([-1,1], [0,1]), simp;
+intervalDivide([1, 2], [0, 0]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([1, 2], [-2, -1]), simp;
+intervalDivide([-2, -1], [1, 2]), simp;
+intervalDivide([-2, 1], [-1, 2]), simp;
+intervalDivide([-1, 2], [-2, 1]), simp;
+intervalDivide([-2, -1], [-2, 0]), simp;
+intervalDivide([-2, -1], [-2, 1]), simp;
+intervalDivide([-2, -1], [0, 1]) ,simp;
+intervalDivide([2, 3], [-1, 0]), simp;
+intervalDivide([2, 3], [-1, 1]), simp;
+intervalDivide([-1, 1],[2, 3]), simp;
+intervalDivide([-1,1], [0,1]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([1, 2], [0, 0]), simp;
+intervalDivide( [-2, -1], [0, 0]), simp;
+intervalDivide([-1, -2], [0, 0]), simp;
+intervalDivide([0, 0], [-1, 2]), simp;
+intervalDivide([0, 0], [-2, -1]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([1, 2], 0), simp;
+intervalDivide(0, [1, 2]), simp;
+intervalDivide(0, [-1, 1]), simp;
+intervalDivide([-1, 1], 0), simp;
+intervalDivide([-2, -1], 0), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([2, 3], [-3, 4]);
+intervalDivide([2, 3], [-3, 4]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([1,2], [2,3]), simp;
+intervalDivide([-2, -1],[1, 2]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([1, 2], [-2, -1]), simp;
+intervalDivide([-2, -1], [1, 2]), simp;
+intervalDivide([-2, 1], [-1, 2]), simp;
+intervalDivide([-1, 2], [-2, 1]), simp;
+intervalDivide([-2, -1], [-2, 0]), simp;
+intervalDivide([-2, -1], [-2, 1]), simp;
+intervalDivide([-2, -1], [0, 1]) ,simp;
+intervalDivide([2, 3], [-1, 0]), simp;
+intervalDivide([2, 3], [-1, 1]), simp;
+intervalDivide([-1, 1],[2, 3]), simp;
+intervalDivide([-1,1], [0,1]), simp;
+intervalDivide([1, 2], [0, 0]), simp;
+intervalDivide( [-2, -1], [0, 0]), simp;
+intervalDivide([-1, -2], [0, 0]), simp;
+intervalDivide([0, 0], [-1, 2]), simp;
+intervalDivide([0, 0], [-2, -1]), simp;
+intervalDivide([1, 2], 0), simp;
+intervalDivide(0, [1, 2]), simp;
+intervalDivide(0, [-1, 1]), simp;
+intervalDivide([-1, 1], 0), simp;
+intervalDivide([-2, -1], 0), simp;
+intervalDivide([-1, 1], 0), simp;
+intervalDivide([-1, 1], [inf, inf]), simp;
+intervalDivide([-1, 1], [minf, inf]), simp;
+intervalDivide([-2, -1], [minf, inf]), simp;
+intervalDivide([2, 3], [-3, 4]);
+intervalDivide([1, 2], [0, 0]), simp;
+intervalDivide([0, 0], [1, 2]), simp;
+intervalDivide([-2, -1], [0, 0]), simp;
+intervalDivide([0, 0], [-2, -1]), simp;
+intervalDivide([-2, 1], [0, 0]), simp;
+intervalDivide([0, 0], [-2, 1]), simp;
+intervalDivide([0, 0], [0, 0]), simp;
+intervalDivide([-2, 1], [0, 1]), simp;
+intervalDivide([-2, 1], [0, 0]), simp;
+intervalDivide([1, 2], [0, 1]), simp;
+intervalDivide([-2, -1], [1, 0]), simp;
+intervalDivide([-2, -1], [0, 1]), simp;
+intervalDivide([1, 2], [0, 0]);
+intervalDivide([0, 0], [0, 0]);
+intervalDivide([0, 0], [1, 2]), simp;
+intervalDivide([0, 0], [-2, 1]), simp;
+intervalDivide([1, 1], [1, inf]), simp;
+intervalDivide([1, 1], [1, inf]), simp;
+intervalDivide([1, 1], [0, inf]), simp;
+intervalDivide([1, 1], [2, inf]), simp;
+intervalDivide([1, 1], [minf, inf]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([1, 2], [-2, -1]), simp;
+intervalDivide([-2, -1], [1, 2]), simp;
+intervalDivide([-2, 1], [-1, 2]), simp;
+intervalDivide([-1, 2], [-2, 1]), simp;
+intervalDivide([-2, -1], [-2, 0]), simp;
+intervalDivide([-2, -1], [-2, 1]), simp;
+intervalDivide([-2, -1], [0, 1]) ,simp;
+intervalDivide([2, 3], [-1, 0]), simp;
+intervalDivide([2, 3], [-1, 1]), simp;
+intervalDivide([-1, 1],[2, 3]), simp;
+intervalDivide([-1,1], [0,1]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([1, 2], [0, 0]), simp;
+intervalDivide( [-2, -1], [0, 0]), simp;
+intervalDivide([-1, -2], [0, 0]), simp;
+intervalDivide([0, 0], [-1, 2]), simp;
+intervalDivide([0, 0], [-2, -1]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([1, 2], 0), simp;
+intervalDivide(0, [1, 2]), simp;
+intervalDivide(0, [-1, 1]), simp;
+intervalDivide([-1, 1], 0), simp;
+intervalDivide([-2, -1], 0), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([-1, 1], 0), simp;
+intervalDivide([-1, 1], [inf, inf]), simp;
+intervalDivide([-1, 1], [minf, inf]), simp;
+intervalDivide([-1, 1], [inf, minf]), simp;
+intervalDivide([-2, -1], [minf, inf]), simp;
+intervalDivide([-2, -1], [inf, inf]), simp;
+intervalDivide([1, 2], [inf, inf]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([minf, inf], [inf, inf]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([1, 2], [inf, inf]), simp;
+intervalDivide([1, 2], [inf, minf]), simp;
+intervalDivide([1, 2], [minf, inf]), simp;
+intervalDivide([1, 2], [minf, minf]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([-1, 1], [inf, inf]), simp;
+intervalDivide([1, 1], [minf, inf]), simp; 
+"R\\{0} i.e. 0 not element of neither interval in the result";
+intervalDivide([1, 1], [-1, 1]), simp;
+intervalDivide([1, 1], [-1, inf]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+"[a, b] does not tell us whether the endpoints are inclusive/exclusive, it just looks like inclusive!";
+"we need another representation for that!";
+"since we can't use (a, b), [a, b), (a, b], [a, b] notation yet!";
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([0, 1],[0, 1]), simp;
+intervalDivide([0, 1],[1, 0]), simp;
+intervalDivide([1, 0],[0, 1]), simp;
+intervalDivide([1, 0],[1, 0]), simp;
+intervalDivide([1, 1],[-1, 1]), simp;
+intervalDivide([1, 1],[-1, inf]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([1, 2], 0), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([-2, -1], [minf, inf]), simp;
+intervalDivide([-3, -2], [minf, inf]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([2, 3], [-3, 4]);
+intervalDivide([2, 3], [-3, 4]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([1, 2], [0, 0]), simp;
+intervalDivide([0, 0], [1, 2]), simp;
+intervalDivide([-2, -1], [0, 0]), simp;
+intervalDivide([0, 0], [-2, -1]), simp;
+intervalDivide([-2, 1], [0, 0]), simp;
+intervalDivide([0, 0], [-2, 1]), simp;
+intervalDivide([0, 0], [0, 0]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([-2, 1], [0, 1]), simp;
+intervalDivide([-2, 1], [0, 0]), simp;
+intervalDivide([1, 2], [0, 1]), simp;
+intervalDivide([-2, -1], [1, 0]), simp;
+intervalDivide([-2, -1], [0, 1]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalProduct([1, 2], [inf, 1]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([1, 2], [0, 0]);
+intervalDivide([0, 0], [0, 0]);
+intervalDivide([0, 0], [1, 2]), simp;
+intervalDivide([0, 0], [-2, 1]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([1, 1], [1, inf]), simp;
+intervalDivide([1, 1], [0, inf]), simp;
+intervalDivide([1, 1], [2, inf]), simp;
+intervalDivide([1, 1], [minf, inf]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Interval(a, b, [bounds]):=block([a:a, b:b, 
+incl:if(not(emptyp(bounds))) then 
+          if(emptyp(bounds[1])) then [] else bounds[1], 
+excl:if(not(emptyp(bounds))) then 
+          if(emptyp(bounds[2])) then [] else bounds[2], 
+int:[], ans:[]], 
+
+/* degenerate cases first a)*/
+if((a=b) and (incl=[a, a] or incl=[b, b]) and excl=[]) then 
+ans:printf(false, "[~a]", a) else 
+
+/* degenerate cases first b) */
+if((a=b) and (incl=[]) and (excl=[a, a] or excl=[b, b])) then 
+ans:[] else 
+
+if(incl=a and excl=b) then 
+ans:printf(false, "[~a, ~a)", a, b) else
+
+if(incl=b and excl=a) then 
+ans:printf(false, "(~a, ~a]", a, b) else
+
+if(incl=[a, b] and excl=[]) then 
+ans:printf(false, "[~a, ~a]", a, b) else 
+
+if(incl=[] and excl=[a, b]) then 
+ans:printf(false, "(~a, ~a)", a, b) else 
+
+/* default is inclusive */
+ans:printf(false, "[~a, ~a]", a, b), return(ans));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[1, 2]+[3, 4];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+props;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Interval(a, b, [a, b], []);
+Interval(a, b, a, b);
+Interval(a, b, b, a);
+Interval(a, b, [], [a, b]);
+
+Interval(a, b);
+Interval(a, b, [], []);
+Interval(a, b, b, []);
+Interval(a, b, [], a);
+
+Interval(minf, inf);
+Interval(minf, inf, [minf, inf], []);
+Interval(minf, inf, [], [minf, inf]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+m:interval(minf, inf);
+k:interval(minf, inf, [], [minf, inf]);
+h:interval(minf, inf, minf,inf);
+j:interval(minf, inf, inf, minf);
+n:interval(a, b);
+o:interval(a,b, [], [a, b]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+interval(a, a, [a, a],  []);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+interval(a, a, [], [a, a]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+interval(a, a, [a, a], []);
+"==  [2]";
+interval(a, a, [], [a, a]);
+"== []";
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+m; k;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+interval(m, k, [m, k],[]);
+interval(m, k, [], [m, k]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+map(intervalp, [m, k, h, j, n, o]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalp([a,b]); intervalp([2,3]), simp;
+interval(2, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??interval;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??intervalp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+atom("[a, b]");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+m; 
+part(tokens(m), 0); 
+part(tokens(m), 1); 
+part(tokens(m), 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+tokens(m);
+tokens(k);
+tokens(h);
+tokens(j);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+parse_string(m); 
+parse_string(k);
+parse_string(h);
+parse_string(j);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??alphabetic;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+activecontexts; contexts;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+declare()
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+list:cons("[", [")"]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+atom(list);
+listp(list);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+list2:\[\a\,b\);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+atom(list2); listp(list2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+list;
+list[1]; list[2];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+atom(list); listp(list); stringp(list);
+stringp(list[1]);stringp(list[2]);
+tokens(list[1]); tokens(list[2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+stringp(list[1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+parse_string(concat(list[1], "]"));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(a, b)$
+test(a,b):=map(lambda([x], [list[1], first(x), list[2]]), [[a], [b]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+test(a, b);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+part(test(a,b), 0); 
+part(test(a, b), 1);
+part(part(test(a,b), 1), 1);
+part(part(test(a,b), 1), 2);
+part(part(test(a,b), 1), 3);
+part(test(a,b)[1] [1]);
+part(test(a,b)[1][2]);
+part(test(a,b)[1][3]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[part(test(a,b)[1][1]), part(test(a,b)[1][2]), part(test(a,b)[1][3])];
+part(test(a,b)[1]);
+part(test(a,b)[2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+["[a)"];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+m:Interval(0, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+m;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Interval(c, r):=block([center:c, radius:r, ans:[]], 
+/* this one does not give as any more benefit than the other one */
+/* since we need to put in the inclusive exclusive information anyway */
+/* it is only explicit for two cases just the [] and the () cases, where any r[0]<r */
+/* will give the () case and any r[0]>r will give the [] case, but the other cases */
+/* will have to be explicit too and it really does not give us a shorter way to state */
+/* what we wanted to state about the bounds and gets even messier */ 
+ans:[c-r, c+r]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Interval(1/2, 1/2);
+"in this one [0,1] is not contained";
+Interval(1/2, 0.49); 
+"as is in this one!";
+Interval(1/2, 0.499);
+"this one sureley encapsulates [0, 1]";
+Interval(1/2, 0.51);
+"as does this one !";
+Interval(1/2, 0.511);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+a:2$ b:3$
+m:[\[\0,\1\)]; 
+first(m); atom(first(m)); 
+"maybe we should use atomic!, then the info is attached to the atom at hand";
+second(m); atom(second(m));
+a:2$ b:3$
+m:[\[a,b\)], simp;
+listp(m); first(m); second(m);
+"but now we lost interpolation of the symbol value";
+m:["[",a,b,")"];
+m; 
+first(m); 
+second(m); 
+third(m);
+left_bound:concat(first(m), second(m));
+right_bound:concat(third(m), fourth(m));
+left_bound;
+left_bound[0]; 
+left_bound[1];
+"obviously we are better at using a mixed approach with strings and values!";
+parse_string("a");a;
+eval_string("a");
+"ok maybe we just need strings only!";
+m:["[a,b)"];
+stringp(m[1]);
+stringp(m[1][1]);
+stringp(m[1][2]);
+listp(m[1][1]);
+atom(m[1][1]);
+"so this approach is not so good it seems!";
+m:["[","a","b",")"];
+[m[1], m[2], m[3], m[4]];
+[m[1], eval_string(m[2]), eval_string(m[3]),m[4]];
+m:["[a,b)"];
+stringp(m[1]);
+m[1][1];
+[m[1][0], m[1][1], m[1][3], m[1][4]];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+m:["[", "a","b", ")"];
+m[1]; m[2]; m[3]; m[4];
+k:[m[1],m[2],m[3],m[4]];
+k;
+map(eval_string, [k[2], k[3]]);
+first(map(eval_string, [k[2], k[3]]));
+second(map(eval_string, [k[2], k[3]]));
+map(lambda([x], [x]), map(eval_string, [k[2], k[3]]));
+
+ans:map(eval_string, [k[2], k[3]]);
+ans;
+bounds:[map(first, [k]), map(last, [k])];
+first(bounds); second(bounds);
+"ok it seems we don't need to deal with strings as we can encode each info in it's own list";
+"we can just code the left bound as in [[] or [(] and the same for the right bound and we can";
+"even do the same for the values i.e. [a], [b] instead of just a, b, our overall list is a list of lists";
+"each holding info as in [[the left_bound], [value1], [value2], [right_bound]], that way we can";
+"deal with the bounds and values independently!";
+"that's just for output tho, for input we need something else it seems!";
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[a, b, c, d];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+["[", a, b, ")"];
+[a, b, []];
+[[], a, b, []];
+[["["], [a], [b], [")"]];
+test:[["["], [a], [b], [")"]];
+test[1]; test[1][1]; stringp(test[1][1]);
+"seems we need to use strings for the bounds anyway for input!";
+"without string notation it does not work, even when it is a sublist!";
+"at least not without additional work like declaring a working context where ";
+"[ and ) and ] ) are alphabetic!";
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[[];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+["[", a, b, ")"];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[k[1], ans, k[4]];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??eval_string;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+concat(parse_string("["), "]");
+concat(parse_string("["), parse_string("]"));
+k:concat("[", ")");
+stringp(k);
+k[0]; k[1];
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

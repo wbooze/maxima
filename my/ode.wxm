@@ -1,0 +1,61 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 12.09.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(k, x, A);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+de:'diff(x, t)+k*x;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(%c=A, ode2(de=0, x, t));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst([t=10, x=0.99876*A, A=1], %), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+log(%);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+k:solve(%), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+k;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(%c=A, ode2(de=0, x, t));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+0.145*A = subst(k, rhs(%));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+%/A;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+log(%);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+solve(%), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+-1.9310 = -0.000124*t;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+solve(%), numer;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

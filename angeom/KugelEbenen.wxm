@@ -1,0 +1,313 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load(angeom);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Ermitteln Sie je eine Gleichung der Ebenen, die die Kugel K in den 
+Punkten Sx,Sy,Sz und 0 berühren! Diese Ebenen begrenzen eine dreiseitige Pyramide. 
+Ermitteln sie das Volumen V2 dieser Pyramide. 
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+KM:[3/2,-3/4,3/2]; KF:([x,y,z]-KM)^^2-5.0525$ KF:KF[1][1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+SX:[3,0,0]; SY:[0,-1.5,0]; SZ:[0,0,3];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S_Enhanced:false$ S_Qvox:14$
+O:[KM,SX,SY,SZ]$ PLOTT_S(KF,"","","","","",-1,3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+MSX:SX-KM; MSY:SY-KM; MSZ:SZ-KM;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+NFESx:MSX.([x,y,z]-SX), ratsimp;
+NFESy:MSY.([x,y,z]-SY), ratsimp;
+NFESz:MSZ.([x,y,z]-SZ), ratsimp;
+NFEO:KM.([x,y,z]), ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S_Enhanced:false$ S_Qvox:12$
+O:[KM,SX,SY,SZ]$ PLOTT_S(NFESz,NFESx,NFESy,"","","",-3,5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gt:schnitt2Ebenen(NFESz,NFESy, t);
+gr:schnitt2Ebenen(NFESx,NFESy, r);
+gk:schnitt2Ebenen(NFEO,NFESy, k);
+gh:schnitt2Ebenen(NFEO,NFESx, h);
+gl:schnitt2Ebenen(NFEO,NFESz, l);
+go:schnitt2Ebenen(NFESz,NFESx, o);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_Splus(_NF1,_NF2,_NF3,_NF4,_g1,_g2,_g3,_g4,_g5,_g6,_Rxu,_Rxo):=
+
+
+draw3d(
+
+
+user_preamble="set ticslevel 0", 
+
+
+xrange=[_Rxu-1,_Rxo+1],
+
+
+yrange=[_Rxu-1,_Rxo+1],
+
+
+zrange=[_Rxu-1,_Rxo+1],
+
+
+rot_vertical   = 80,
+
+
+rot_horizontal = 100,
+
+
+enhanced3d   = S_Enhanced,
+
+
+x_voxel      = S_Qvox,
+
+
+y_voxel      = S_Qvox,
+
+
+z_voxel      = S_Qvox,
+
+
+colorbox     = false,
+
+
+if _Rxo-_Rxu < 21 then (
+
+
+	xtics = 1, ytics = 1, ztics = 1
+
+
+)else(
+
+
+	xtics = auto, ytics = auto, ztics = auto
+
+
+),
+
+
+key="Ebenen",
+
+
+color=dark-green,
+
+
+line_width = 2,
+
+
+vector(PlottVektor[1],PlottVektor[2]), 
+
+
+line_width = 0.5,
+
+
+color = "#ffb2c8", key = string(_NF1), ebene(_NF1,_Rxu-1,_Rxo+1),
+
+
+color = "#c8c3fa", key = string(_NF2), ebene(_NF2,_Rxu-1,_Rxo+1),
+
+
+color = "#cfcfcf", key = string(_NF3), ebene(_NF3,_Rxu-1,_Rxo+1),
+
+
+color = "#7fcfcf", key = string(_NF4), ebene(_NF4,_Rxu-1,_Rxo+1),
+
+
+
+
+
+key="Geraden",
+
+
+color=dark-green, line_width = 2,
+
+
+vector(PlottVektor1[1],PlottVektor1[2]),
+
+
+color=red, key = string(_g1), gerade(_g1,_Rxu-1,_Rxo+1),
+
+
+color=orange, key = string(_g2), gerade(_g2,_Rxu-1,_Rxo+1),
+
+
+color=blue, key = string(_g3), gerade(_g3,_Rxu-1,_Rxo+1),
+
+
+color=green, key = string(_g4), gerade(_g4,_Rxu-1,_Rxo+1),
+
+
+color=black, key = string(_g5), gerade(_g5,_Rxu-1,_Rxo+1),
+
+
+color=magenta, key = string(_g6), gerade(_g6,_Rxu-1,_Rxo+1),
+
+
+key="", line_width = 1,
+
+
+color=brown, geradeOV(_g1),geradeOV(_g2),geradeOV(_g3),
+
+
+
+
+
+key="",
+
+
+color=dark-grey, line_width = 2,
+
+
+vector([_Rxu-0.5,0,0],[_Rxo-_Rxu+1,0,0]),
+
+
+vector([0,_Rxu-0.5,0],[0,_Rxo-_Rxu+1,0]),
+
+
+vector([0,0,_Rxu-0.5],[0,0,_Rxo-_Rxu+1]),
+
+
+color=yellow,
+
+
+point_type = filled_circle ,
+
+
+point_size = 0.2,
+
+
+achsen(_Rxu,_Rxo),
+
+
+
+
+
+key = "Punkte",
+
+
+color=magenta,
+
+
+point_type = circle,
+
+
+point_size = 1,
+
+
+points(O,0.2,1),
+
+
+
+
+
+key="",
+
+
+color=dark-green,
+
+
+vector(PlottVektor2[1],PlottVektor2[2]),
+
+
+key="Vektoren",
+
+
+vector(PlottVektor3[1],PlottVektor3[2]),
+
+
+
+
+
+grid = true,
+
+
+zlabel = "z",
+
+
+ylabel = "y",
+
+
+xlabel = "x",
+
+
+surface_hide=true
+
+
+)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S_Enhanced:false$ S_Qvox:6$
+O:[KM,SX,SY,SZ]$ PLOTT_Splus(NFEO,NFESz,NFESy,NFESx,gk,gt,gr,gh,gl,go,-5,6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A:lageUntersuchungGeraden(gk,gr);
+B:lageUntersuchungGeraden(gr,gt);
+C:lageUntersuchungGeraden(gk,gt);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S:lageUntersuchungGeraden(gl,go);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+V:spatProdukt(A-B,C-B,S-B)/3, ratsimp, numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Welche Punkte der Geraden gt  haben vom Punkt P den Abstand d = sqrt(7.25)
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+gt:[-1,4.5,1]+t*[1,-2,1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+P:[1,0,2];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[P]$ PLOTT_S("","",KF,"",gt,"",-2.5,3.5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+dd:sqrt(7+1/4); KF:([x,y,z]-P)^^2-dd^2$ KF:KF[1][1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+GLS:ev(KF,x=gt[1],y=gt[2],z=gt[3]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+LSG:solve(GLS,t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+P1:ev(gt,LSG[1]); P2:ev(gt,LSG[2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[P,P1,P2]$ PLOTT_S("","",KF,"",gt,"",-5,3.5);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

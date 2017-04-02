@@ -1,0 +1,115 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 14.12.1 ] */
+
+/* [wxMaxima: input   start ] */
+eq:diff(r(t), t, 2)+c*r(t);
+forget(facts())$
+assume(c>0)$
+ode2(eq, r(t), t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq2:diff(r(t), t, 2)+c*r(t);
+forget(facts())$
+assume(c<0)$
+ode2(eq2, r(t), t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq3:diff(r(t), t, 2)+c*r(t);
+forget(facts())$
+assume(equal(c, 0))$
+ode2(eq3, r(t), t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq4:diff(r(t), t, 2)-c*r(t);
+forget(facts())$
+assume(c>0)$
+ode2(eq4, r(t), t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq5:diff(r(t), t, 2)-c*r(t);
+forget(facts())$
+assume(c<0)$
+ode2(eq5, r(t), t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq5:diff(r(t), t, 2)-c*r(t);
+forget(facts())$
+assume(equal(c,0))$
+ode2(eq5, r(t), t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq6:diff(r(t), t, 2)+r(t);
+forget(facts())$
+ode2(eq6, r(t), t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq7:diff(r(t), t, 2)-r(t);
+forget(facts())$
+ode2(eq7, r(t), t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot2d([sin(t)+cos(t)], [t, -10, 10]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot2d([parametric, sin(t), cos(t), [t, -%pi, %pi]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot2d(%e^t+%e^-t, [t, -5, 5]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot2d(-%e^t-%e^-t, [t, -5, 5]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot2d([parametric, %e^t, %e^-t, [t, -%pi/2, %pi/2]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+load(draw)$
+wxdraw2d(
+nticks=100,
+parametric(sin(t)+cos(t), t, t, -10, 10));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+load(ineqgraph);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for k:0 thru 20 step 0.1 do
+draw3d(
+xrange=[-2,2], yrange=[-2,2], zrange=[0,100],
+nticks=100,
+parametric(cos(t), sin(t), (sin(k)+1.2)*t, t, 0, 30));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for k : 0 thru 20 step .1 do draw3d(xrange=[-2,2],yrange=[-2,2],zrange=[0,70], nticks=100, parametric(cos(t),sin(t),(sin(k)+1.2)*t,t,0,8*%pi));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for k:0 thru 20 step 0.1 do
+draw3d(
+xrange=[-2,2], yrange=[-2,2], zrange=[0,100],
+nticks=100,
+parametric(cos(t), sin(t), (sin(k)+1)*t, t, 0, 30));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxdraw3d(view =[170, 360],
+explicit(sin(x^2+y^2),x,-2,2,y,-2,2) )$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

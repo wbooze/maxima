@@ -1,0 +1,117 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load(angeom);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Ermitteln Sie je eine Gleichung der Ebenen, die die Kugel K in den 
+Punkten Sx,Sy,Sz und 0 berühren! Diese Ebenen begrenzen eine dreiseitige Pyramide. 
+Ermitteln sie das Volumen V2 dieser Pyramide. 
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+KM:[3/2,-3/4,3/2]; KF:([x,y,z]-KM)^^2-5.0525$ KF:KF[1][1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+SX:[3,0,0]; SY:[0,-1.5,0]; SZ:[0,0,3];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S_Enhanced:false$ S_Qvox:14$
+O:[KM,SX,SY,SZ]$ PLOTT_S(KF,"","","","","",-1,3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+MSX:SX-KM; MSY:SY-KM; MSZ:SZ-KM;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+NFESx:MSX.([x,y,z]-SX), ratsimp;
+NFESy:MSY.([x,y,z]-SY), ratsimp;
+NFESz:MSZ.([x,y,z]-SZ), ratsimp;
+NFEO:KM.([x,y,z]), ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S_Enhanced:false$ S_Qvox:12$
+O:[KM,SX,SY,SZ]$ PLOTT_S(NFESz,NFESx,NFESy,"","","",-3,5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gt:schnitt2Ebenen(NFESz,NFESy, t);
+gr:schnitt2Ebenen(NFESx,NFESy, r);
+gk:schnitt2Ebenen(NFEO,NFESy, k);
+gh:schnitt2Ebenen(NFEO,NFESx, h);
+gl:schnitt2Ebenen(NFEO,NFESz, l);
+go:schnitt2Ebenen(NFESz,NFESx, o);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S_Enhanced:false$ S_Qvox:6$
+O:[KM,SX,SY,SZ]$ PLOTT_L([NFEO,NFESz,NFESy,NFESx],[gk,gt,gr,gh,gl,go],-5,6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A:lageUntersuchungGeraden(gk,gr);
+B:lageUntersuchungGeraden(gr,gt);
+C:lageUntersuchungGeraden(gk,gt);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S:lageUntersuchungGeraden(gl,go);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+V:spatProdukt(A-B,C-B,S-B)/3, ratsimp, numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Welche Punkte der Geraden gt  haben vom Punkt P den Abstand d = sqrt(7.25)
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+gt:[-1,4.5,1]+t*[1,-2,1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+P:[1,0,2];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S_Qvox:16$
+O:[P]$ PLOTT_S("","",KF,"",gt,"",-2.5,3.5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+dd:sqrt(7+1/4); KF:([x,y,z]-P)^^2-dd^2$ KF:KF[1][1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+GLS:ev(KF,x=gt[1],y=gt[2],z=gt[3]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+LSG:solve(GLS,t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+P1:ev(gt,LSG[1]); P2:ev(gt,LSG[2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[P,P1,P2]$ PLOTT_S("","",KF,"",gt,"",-5,3.5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T1: x^2 + y^2 - (sqrt(r[1]^2-z^2)+r[2])^2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+r:[3,5]; PLOTT_L([x^2+y^2-x*z-z-5, (sqrt(x^2+y^2)-r[2])^2 + z^2 - r[1]^2 ],[],-10,10);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

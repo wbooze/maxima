@@ -1,0 +1,1183 @@
+/*
+mac bibliothek implements vector geometrie handling
+2008 (GPL) Hans Werner Hofmann
+
+This library is free software; you can redistribute it and/or modify it
+under the terms of the GNU Library General Public License as published
+by the Free Software Foundation; either version 2 of the License, or (at
+your option) any later version.
+
+This library is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+Coded by HW hw@lemitec.de 4.2008 V0.7
+My first steps programming LISP/Maxima many thanks to Volker van Nek for help (08)hw 
+
+V0.71 with_slider_draw3d: now wx_Scene deleted by varlist 
+	  add streckeLaenge();
+	  err untersucheLage3Punkte(); 
+		print(if..triangle square)
+		add return schwerPunkt
+		return Fläche
+V0.80 add lotFusspunkt()
+	  err schnittwinkelEbeneGerade(), _r:
+	  add winkelHalbierendeAB()
+	  PLOTT_L, PLOTT_S/PLOTT_wx; 
+		(S,wx)_Enhanced (S,wx)_Qvox
+		user_preamble, ticslevel
+		x(yz)tics = 1/auto
+		S_Labels
+		abc_Labels(), pqr_Labels(), clear_Labels()
+		clearPlottVektors()
+V0.90 add gaussLinGLS(), det(), m2l()
+	  err load(vect) 
+	  err varlist(filter parameter variables [g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w])
+	  err paramForm uses kovarlist
+	  add PLOTT_D replace PLOTT_wx
+	  add plottVektorS(vec)
+	  add parametric_suface (plot Ebenen in Parameterform)
+0.91 add PLOTT_D dimension, view to maxima version >=5.23
+		
+reverses the displayed order of arguments
+*/
+powerdisp:false;
+load("draw");
+unorder(); ordergreat(x,y,z);
+ratprint:false; 
+debugprint:false;
+
+
+/* vektor  list  defaults    misc						 						*/
+/*------------------------------------------------------------------------------*/
+
+O:[[0,0,0]]$
+
+PlottVektor:[[0,0,0],[0,0,0]]$
+PlottVektor1:[[0,0,0],[0,0,0]]$
+PlottVektor2:[[0,0,0],[0,0,0]]$
+PlottVektor3:[[0,0,0],[0,0,0]]$
+PlottVektor4:[[0,0,0],[0,0,0]]$
+PlottVektor5:[[0,0,0],[0,0,0]]$
+PlottVektor6:[[0,0,0],[0,0,0]]$
+PlottVektor7:[[0,0,0],[0,0,0]]$
+PlottVektor8:[[0,0,0],[0,0,0]]$
+PlottVektor9:[[0,0,0],[0,0,0]]$
+PlottVektor10:[[0,0,0],[0,0,0]]$
+PlottVektor11:[[0,0,0],[0,0,0]]$
+PlottVektor12:[[0,0,0],[0,0,0]]$
+PlottVektor13:[[0,0,0],[0,0,0]]$
+PlottVektor14:[[0,0,0],[0,0,0]]$
+PlottVektor15:[[0,0,0],[0,0,0]]$
+PlottVektor16:[[0,0,0],[0,0,0]]$
+
+
+clearPlottVektors():=block(
+PlottVektor:[[0,0,0],[0,0,0]],
+PlottVektor1:[[0,0,0],[0,0,0]],
+PlottVektor2:[[0,0,0],[0,0,0]],
+PlottVektor3:[[0,0,0],[0,0,0]],
+PlottVektor4:[[0,0,0],[0,0,0]],
+PlottVektor5:[[0,0,0],[0,0,0]],
+PlottVektor6:[[0,0,0],[0,0,0]],
+PlottVektor7:[[0,0,0],[0,0,0]],
+PlottVektor8:[[0,0,0],[0,0,0]],
+PlottVektor9:[[0,0,0],[0,0,0]],
+PlottVektor10:[[0,0,0],[0,0,0]],
+PlottVektor11:[[0,0,0],[0,0,0]],
+PlottVektor12:[[0,0,0],[0,0,0]],
+PlottVektor13:[[0,0,0],[0,0,0]],
+PlottVektor14:[[0,0,0],[0,0,0]],
+PlottVektor15:[[0,0,0],[0,0,0]],
+PlottVektor16:[[0,0,0],[0,0,0]]
+)$
+
+solve_inconsistent_error:false$
+
+prefix("°");
+"°"(_a_):=apply(matrix,map("[",_a_));
+
+postfix("^T");
+"^T"(_a_):=if listp(_a_) then  apply(matrix,map("[",_a_)) else transpose(_a_) $
+
+summe(L):=apply("+",L);
+
+prefix("|")$
+"|"(_a_):=block([n:_a_[1], _A_:matrix()],
+for i:1 thru (length(_a_)-1)/n do(
+    _A_:addrow(_A_,create_list(_a_[k],k,(i-1)*n+2,n*i+1))
+),
+return(_A_)
+)$
+
+/*Vektorprodukt für Listen und Vect */
+
+infix("><",110);
+"><"(_a_,_b_):=block(
+if op(_a_)=matrix then _a_:flatten(args(_a_)), 
+if op(_b_)=matrix then _b_:flatten(args(_b_)), 
+[_a_[2]*_b_[3]-_a_[3]*_b_[2],_a_[3]*_b_[1]-_a_[1]*_b_[3],_a_[1]*_b_[2]-_a_[2]*_b_[1]]
+)$
+
+infix("~",110);
+"~"(_a_,_b_):=block(_b_-_a_)$
+
+prefix("&");
+"&"(_a_):=if op(_a_)=matrix then flatten(args(_a_))$
+
+infix("aus");
+"aus"(_a_,_b_):=if _b_=[] then [] else assoc(_a_,flatten(_b_));
+
+
+varlist(_o_):=block(
+[vars:[g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w],ret:[]],
+for i:1 thru length(vars) do if member(vars[i],listofvars(_o_)) then ret:append(ret,[vars[i]]),
+ret
+);
+
+/*[ret:listofvars(_o_)],
+for i:1 thru 7 do ret:delete([a,b,c,d,e,f,wx_Scene][i],ret),
+ret
+)$
+*/
+
+
+kovarlist(_o_):=block(
+[ret:[]],
+for i:1 thru 3 do if member([x,y,z][i],listofvars(_o_)) then ret:append(ret,[[x,y,z][i]]),
+ret
+)$
+
+
+m2l(M):=list_matrix_entries(M)$
+/*makelist(M[i,1],i,1,length(M))$*/
+
+
+defPunkte(_PL):=block(
+[_L:tokens(_PL)],
+for i:1 thru length(_L) step 4 do (
+    eval_string(concat(_L[i] , ":[" , _L[i+1] , "," , _L[i+2], "," ,_L[i+3] , "]" ))
+)
+)$
+
+
+defGeradeRV(L):=block(
+[_L:tokens(L)],
+eval_string(concat(_L[1],":",_L[3],"+",_L[2],"*",_L[4]))
+)$
+
+
+defGeradeAB(L):=block(
+[_L:tokens(L)],
+eval_string(concat(_L[1],":",_L[3],"+",_L[2],"*(",_L[4],"-",_L[3],")" ))
+)$
+
+
+defEbeneRV(L):=block(
+[_L:tokens(L)],
+eval_string(concat(_L[1],":",_L[4],"+",_L[2],"*",_L[5],"+",_L[3],"*",_L[6] ))
+)$
+
+
+defEbeneABC(L):=block(
+[_L:tokens(L)],
+eval_string(concat(_L[1],":",_L[4],"+",_L[2],"*(",_L[5],"-",_L[4],")+",_L[3],"*(",_L[6],"-",_L[4],")" ))
+)$
+
+
+defEbeneNF(L):=block(
+[_L:tokens(L)],
+    if length(_L)=3 then(
+        ratsimp(eval_string(concat(_L[1],":",_L[2],".( [x,y,z]-",_L[3],")")))
+    )else(
+        ratsimp(eval_string(concat(_L[1],":(",_L[2],"-",_L[4],")><(",_L[3],"-",_L[4],").( [x,y,z] -",_L[3],")")))
+    )
+)$
+
+
+defKugel(L):=block(
+[_L:tokens(L)],
+(eval_string(concat(_L[1],":((","[x,y,z]-",_L[2],")^^2 - ",_L[3],"^2)[1][1]")))
+)$
+
+
+defWuerfel(a,M):=block(
+defPunkte("A -a/2 a/2 -a/2 B -a/2 -a/2 -a/2 C a/2 -a/2 -a/2 D a/2 a/2 -a/2 E -a/2 a/2 a/2 F -a/2 -a/2 a/2 G a/2 -a/2 a/2 H a/2 a/2 a/2"),
+A:A+M,B:B+M,C:C+M,D:D+M,E:E+M,F:F+M,G:G+M,H:H+M,
+mesh([H,G],[E,F],[F,B],[G,C],[C,D],[G,H],[H,E],[D,A],[A,B],[E,F])
+)$
+
+
+defPyramide(a,b,h,M):=block(
+defPunkte("A -a/2 b/2 -h/2 B -a/2 -b/2 -h/2 C a/2 -b/2 -h/2 D a/2 b/2 -h/2"),
+E:[0,0,h/2]+M,A:A+M,B:B+M,C:C+M,D:D+M,
+mesh([A,B,C,D,A],[E,E,E,E,E])
+)$
+
+
+defPrisma(a,h,M):=block(
+if h=0 then h:sqrt(13/16)*a,
+defPunkte("A 0 sqrt(3/4)*a/2 -h/2 B a/2 -sqrt(3/4)*a/2 -h/2 C -a/2 -sqrt(3/4)*a/2 -h/2"),
+D:[0,0,h/2]+M,A:A+M,B:B+M,C:C+M,
+mesh([A,B,C,A],[D,D,D,D])
+)$
+
+
+defQuader(a,b,c,M):=block(
+defPunkte("A -a/2 b/2 -c/2 B -a/2 -b/2 -c/2 C a/2 -b/2 -c/2 D a/2 b/2 -c/2 E -a/2 b/2 c/2 F -a/2 -b/2 c/2 G a/2 -b/2 c/2 H a/2 b/2 c/2"),
+A:A+M,B:B+M,C:C+M,D:D+M,E:E+M,F:F+M,G:G+M,H:H+M,
+mesh([H,G],[E,F],[F,B],[G,C],[C,D],[G,H],[H,E],[D,A],[A,B],[E,F])
+)$
+
+
+defMatrix(L):=block(
+[_L: map(eval_string,tokens(L))], 
+_n:sqrt(length(_L)),
+kill(_m),
+_m[_z,_s]:=_L[(_z-1)*_n+_s], 
+genmatrix(_m,_n,_n)
+);
+
+
+eigenWert(A):=block(
+[E:ident(length(A))],
+print(ratsimp(det(A-l*E))),
+solve(det(A-l*E),l));
+
+
+eigenVektor(A,l):=block(
+[_GLS_,E:ident(length(A))],
+if length(A)=2 then( 
+    _GLS_:[(A-l*E)[1].[x,y],(A-l*E)[2].[x,y]],
+    solve(_GLS_,[x,y])[1]
+)else( 
+    _GLS_:[(A-l*E)[1].[x,y,z],(A-l*E)[2].[x,y,z],(A-l*E)[3].[x,y,z]],
+    solve(_GLS_,[x,y,z])[1]
+));
+
+
+F(_f,_a):=(
+if listp(_f) then
+    flatten(ev(_f,map("=",varlist(_f),_a)))
+else
+    ev(_f,map("=",[x,y,z],_a))
+)$
+
+
+show(E):=(
+if length(varlist(E))=1 then
+    print("g:",°[x,y,z],"=",°F(E,[0]),"+", varlist(E)[1],"*",°(F(E,[1])-F(E,[0])),"")
+elseif length(varlist(E))=2 then
+    print("E:",°[x,y,z],"=",°F(E,[0,0]),"+",varlist(E)[1],"*",°ratsimp(F(E,[1,0])-F(E,[0,0])),"+", varlist(E)[2],"*",°ratsimp(F(E,[0,1])-F(E,[0,0])),"")
+else 
+	print(°normalVektorNF(E),".(",°[x,y,z],"-",°paramForm(E,0,0),")=0","" )
+)$
+
+
+richtungsVektor(_E_,_a_):=coeff(map(expand,[1,1,1]*_E_),_a_);
+
+rangeBis(O):=fix(lmax(flatten(O))+1);
+rangeVon(O):=fix(lmin(flatten(O))-1);
+
+
+
+
+
+/* Punkte Vektoren   													*/
+/*----------------------------------------------------------------------*/
+
+betragLaenge(_P_):=_P_._P_/sqrt(_P_._P_)$
+
+spiegelPunkt(_LotFussPkt_,_P_):=2*_LotFussPkt_-_P_$
+
+streckeLaenge(_A_,_B_):=sqrt((_A_-_B_).(_A_-_B_))$
+
+spatProdukt(_a_,_b_,_c_):=(_a_><_b_)._c_$
+
+schwerPunktABC(_A,_B,_C):=((_A+_B+_C)/3)$
+
+winkelHalbierende(_vecA,_vecB):=(_vecA/betragLaenge(_vecA)+_vecB/betragLaenge(_vecB))$
+
+vektor2Flaeche(_vecA,_vecB):=block([n:_vecA><_vecB],(n.n)/sqrt(n.n))$
+
+
+mittelSenkrechtenDreieck(A,B,C):=(
+	/* Grundebene der 3 Punkte und Ebene durch Seitenmitte */
+	/* mit Normalvektor in Seitenrichtung senkrecht Grundebene */ 
+    [_G_:ratsimp(((B-A)><(C-A)).([x,y,z]-A)), 
+	_E_:ratsimp(((B-A)).([x,y,z]-((B+A)/2)))],
+    m_ab:schnitt2Ebenen(_E_,_G_, t),
+    _E_:ratsimp(((B-C)).([x,y,z]-((B+C)/2))),
+    m_bc:schnitt2Ebenen(_G_,_E_, l),
+    _E_:ratsimp(((A-C)).([x,y,z]-((A+C)/2))), 
+    m_ac:schnitt2Ebenen(_G_,_E_, m),
+    print("m_ab: ",m_ab),
+    print("m_bc: ",m_bc),
+    print("m_ac: ",m_ac),
+    lageUntersuchungGeraden(m_ab,m_bc)
+)$
+
+
+lageUntersuchung3Punkte(A,B,C):=untersucheLage3Punkte(A,B,C)$
+
+untersucheLage3Punkte(A,B,C):=block(
+[AB,BC,CA,F,n, alpha, beta, gamma],
+if (solve(A+r*(B-A)-C,r)=[]) then(
+    print("Es handel sich um ein Dreieck.."),
+    AB:B-A, BC:C-B, CA:A-C,
+    AB:(AB.AB)/sqrt(AB.AB),
+    BC:(BC.BC)/sqrt(BC.BC),
+    CA:(CA.CA)/sqrt(CA.CA),
+    print(if (AB.AB=CA.CA+BC.BC) or (AB.AB+BC.BC=CA.CA) or (BC.BC=CA.CA+AB.AB) then "das" else "das nicht","rechtwinkelig ist!"),
+	alpha:schnittwinkelGeraden(B+t*(C-B),B+s*(A-B)),print("Winkel alpha ABC:",float(alpha)), 
+    beta:schnittwinkelGeraden(A+t*(B-A),A+s*(C-A)),print("Winkel beta CAB:",float(beta)),
+    gamma:schnittwinkelGeraden(C+t*(B-C),C+s*(A-C)),print("Winkel gamma ACB:",float(gamma)),
+    print("Länge der Seiten:"),
+    print("AB = ",AB,"/",float(AB)),
+    print("BC = ",BC,"/",float(BC)),
+    print("CA = ",CA,"/",float(CA)),
+    n:(B-A)><(C-A),
+    print("Ebene aufgespannt von ABC (A+r*AB+s*AC):"),
+    print(A+r*(B-A)+s*(C-A)), F:normalForm(%%),
+    print("Normalform: ",F),
+    print("Abstand vom Ursprung:", A.n/sqrt(n.n)),
+	print("Schwerpunkt von A,B,C (return SPabc)"),
+	SPabc:schwerPunktABC(A,B,C),	
+	print("SPabc: ", SPabc),
+	print("Flächeninhalt: F=",(n.n)/sqrt(n.n)/2),
+    return([float([alpha,beta,gamma]),[AB,BC,CA],[F],[A.n/sqrt(n.n),SPabc,float(%%)]])
+)else(
+    print("Die Punkte ABC liegen auf der Geraden:"),
+    A+r*(B-A)
+))$
+
+
+punktInFlaechengrenzen(P,ABC):=block(
+[i,_L,_in:0,_F:append(ABC,[ABC[1]])],
+for i:1 while (i <= length(_F)-1) do(
+     _L:solve(_F[i]+_l*(_F[i+1]-_F[i])-(P+_t*(_F[2]-_F[1])),[_l,_t]),
+     if length(_L)>0 then if rhs(_L[1][2]) >= 0 then _in:_in+1    
+),
+if mod(_in,2)=1 then print("Punkt in Fläche ABC") else print("Punkt nicht in Fläche ABC"),
+is( mod(_in,2)=1)
+)$
+
+
+
+/* Geraden 																*/
+/*----------------------------------------------------------------------*/
+
+GOV(g):=F(g,[0])$
+
+GRV(g):=richtungsVektor(g,first(varlist(g)))$
+
+geradenGlchgXY(A,B):=solve((y-B[1])/(x-A[1])=(B[2]-B[1])/(A[2]-A[1]),y)$
+
+
+/* gr:[1,2,3]+r*[2,0,1]; */
+spurPunkteGerade(g):=block(
+[_l_:first(varlist(g))],
+print("Schnittpunkte mit den Koordinatenebenen:"),
+delete(g,map(ev,[g,g,g],map(solve,g,[_l_,_l_,_l_])))
+)$
+
+
+
+
+spurPunkte(g):=block(
+[_r_:first(varlist(g)),ret:[]],
+print("Schnittpunkte mit den Koordinatenebenen:"),
+_r_:map(solve,g,[_r_,_r_,_r_]),
+for i:1 thru 3 do if _r_[i]#[] then ret:append(ret,[ev(g,_r_[i])]),
+ret
+)$
+
+
+
+lageUntersuchungGeraden(_g1,_g2):=block(
+[_dOV,_RVg1,_RVg2,_d,Abstand],
+_dOV:GOV(_g1)-GOV(_g2),
+_RVg1:GRV(_g1),
+_RVg2:GRV(_g2),
+if (_d aus solve(_RVg1-_d*_RVg2,_d))#[] then(
+    print("paralle Geraden..."),
+    _d:(_dOV><_RVg2),
+    Abstand:sqrt(_d._d)/sqrt(_RVg2._RVg2),
+    if Abstand#0 then(
+        print("Abstand paralleler Geraden :",float(Abstand)),
+        Abstand
+    )else(
+        print("Beide Geraden sind identisch!",""),
+        true
+    )
+)else(
+    _d:(_RVg1><_RVg2),
+    Abstand:abs(_d._dOV)/sqrt(_d._d),
+    if float(Abstand)#0.0 then(
+        print("Abstand der windschiefen Geraden:",float(Abstand)),
+        Abstand
+    )else(
+    _d:solve(_g1-_g2,[first(varlist(_g1)),first(varlist(_g2))]),
+    _d:F(_g1,[first(varlist(_g1)) aus _d]),  
+    print("Schnittpunkt der Geraden in S", float(_d)),
+     _d  
+    )
+)
+);
+
+
+/* d=|(p-q).no| */
+abstandWindschieferGeraden(Gt, Gs):=
+(GOV(Gs)-GOV(Gt)).((GRV(Gs)><GRV(Gt)))/betragLaenge(((GRV(Gs)><GRV(Gt))));
+
+
+schnittwinkelGeraden(g1,g2):=(
+[_v1:GRV(g1),_v2:GRV(g2)],
+abs(180/%pi*acos((_v1._v2)/sqrt(_v1._v1)/sqrt(_v2._v2)) )
+)$
+
+
+lotFusspunkt2Geraden(_g1,_g2):=block(
+[_gls1,_gls2,_flp:append(varlist(_g1),varlist(_g2))],
+_gls1:(_g2-_g1).GRV(_g1)=0,
+_gls2:(_g2-_g1).GRV(_g2)=0,
+_flp:flatten(solve([_gls1,_gls2],_flp)),
+[F(_g1,[varlist(_g1)[1] aus _flp]),F(_g2,[varlist(_g2)[1] aus _flp])]
+)$
+
+
+
+lotFusspunkt(_EG_,_P_):=block(
+if listp(_EG_) then(
+    if length(varlist(_EG_)) = 1 then(
+        schnittNFEbeneGerade(GRV(_EG_).([x,y,z]-_P_),_EG_)
+    )else(
+          if length(varlist(_EG_)) = 2 then(
+				schnittNFEbeneGerade(normalForm(_EG_),_P_+l*(ERV1(_EG_)><ERV2(_EG_)))
+          )
+    )
+)else(
+    schnittNFEbeneGerade(_EG_,_P_+l*normalVektorNF(_EG_))
+))$
+
+
+
+punktAufGerade(P,g):=block(
+[mp:first(varlist(g))],
+mp:solve(g-P,mp),
+[flatten(mp),not maybe(mp=[])]
+)$
+
+
+
+abstandPunktGeradeFp(A,g):=block(
+[gls],
+gls:solve(GRV(g).(g-A),varlist(g)[1]),
+print("Lotfusspunkt auf der Geraden (return Fp)"),
+Fp:ev(g,gls),
+print("Fp:",Fp),
+betragLaenge(Fp-A)
+)$
+
+abstandPunktGerade(_p_,_o_,_r_):=block(
+[d:((_p_-_o_)._r_/(_r_._r_) * _r_ - (_p_-_o_))],
+sqrt(d.d)
+)$
+
+
+
+/* Ebenen 																*/
+/*----------------------------------------------------------------------*/
+
+ 
+EOV(E):=F(E,[0,0]);
+
+ERV1(E):=richtungsVektor(E,first(varlist(E)))$
+
+ERV2(E):=richtungsVektor(E,second(varlist(E)))$
+
+
+normalVektorNF(NFE):=map(coeff,expand(NFE)*[1,1,1],[x,y,z]);
+/*[F(NFE,[1,0,0]),F(NFE,[0,1,0]),F(NFE,[0,0,1])]-F(NFE,[0,0,0]);*/
+
+
+normalForm(E):=block(
+ratsimp((ERV1(E)><ERV2(E)).([x,y,z]-E)),
+%%*denom(%%)
+)$
+
+hesseNF(_NFE1_):=_NFE1_/betragLaenge(normalVektorNF(_NFE1_))$
+
+
+paramForm(NF,_s,_t):=block(
+ev(
+	ev([x,y,z],solve(NF,first(kovarlist(NF)))),
+	map("=",delete(first(kovarlist(NF)),[x,y,z]),[_s,_t])
+)
+/*%%*apply(denom,%%) */
+)$
+
+
+spurPunkteEbene(NF):=block(
+print("Schnittpunkte mit den Koordinatenachsen:"),
+delete([0,0,false],
+delete([0,false,0],
+delete([false,0,0],[
+[assoc(x,solve(F(NF,[x,0,0]),x)),0,0],
+[0,assoc(y,solve(F(NF,[0,y,0]),y)),0],
+[0,0,assoc(z,solve(F(NF,[0,0,z]),z))]
+])))
+)$
+
+
+schnitt2Ebenen(NF1,NF2,_t):=block(
+[_ret,s],
+if listp(NF1) then NF1:normalForm(NF1),
+if listp(NF2) then NF2:normalForm(NF2),
+_ret:flatten(solve([NF1,NF2],[x,y,z])),
+if length(%rnum_list)>0 then(
+    _ret:map(rhs,ev(_ret,%rnum_list[1]=_t)),
+    if length(%rnum_list)>1 then _ret:ev(_ret,%rnum_list[2]=s),
+    return(_ret)
+)else(
+    print("Ebenen parallel..:"),
+	[])
+)$
+
+
+lageuntersuchungEbeneGerade(_E_,_g_):=block(
+[_S:schnittEbeneGerade(_E_,_g_)],
+if _S=[] then (
+    print("Ebene parallel zur Geraden im Abstand"),
+    if listp(_E_) then _E_:normalForm(_E_),
+    F(hesseNF(_E_),GOV(_g_))
+)else(
+    print("Schnittpunkt:"),
+    _S
+));
+
+schnittEbeneGerade(E,g):=block(
+[gls],
+if listp(E) then(
+	gls:solve(E-g,append(varlist(g),varlist(E))),
+	if gls=[] then 
+		return([]) 
+	elseif
+		gls=all or length(%rnum_list)>0 then return(g)
+	else
+		F(g,[rhs(gls[1][1])])
+)else(
+	schnittNFEbeneGerade(E,g)
+))$
+
+
+
+schnittNFEbeneGerade(NF,g):=block(
+[_v,lsg],
+_v:first(varlist(g)),
+lsg:solve(F(NF,g),_v),
+if lsg=[] then return(lsg) 
+else if lsg=all then print("Gerade liegt in der Ebene...")
+	 else F(g,[assoc(_v,lsg)])
+)$
+
+
+
+abstandPunktEbene(_NFE,_P):=block(
+[_t,_nv,_g],
+_nv:normalVektorNF(_NFE),
+_g:_P+_t*_nv,
+_nv:solve(F(_NFE,_g),_t),
+betragLaenge(_P-ev(_g,_nv))
+)$
+
+
+schnittwinkelEbeneGerade(NE,g):=block(
+[_r:GRV(g), _n:if listp(NE) then ERV1(NE)><ERV2(NE) else normalVektorNF(NE)],
+float(abs(180/%pi*asin(_n._r/sqrt(_r._r)/sqrt(_n._n))))
+)$
+
+
+
+/* Plotting								*/
+/*----------------------------------------------------------------------*/
+
+ebene(_NFE,_von,_bis):=
+if string(_NFE)="" then(
+    key=""
+)else(
+	if listp(_NFE) then(
+		parametric_surface(_NFE[1],_NFE[2],_NFE[3],varlist(_NFE)[1],_von,_bis,varlist(_NFE)[2],_von,_bis)
+	)else(
+		if length(S_Ranges)=0 then(
+			implicit(_NFE=0,x,_von,_bis,y,_von,_bis,z,_von,_bis)
+		)else(
+			implicit(_NFE=0,x,S_Ranges[1],S_Ranges[2],y,S_Ranges[3],S_Ranges[4],z,S_Ranges[5],S_Ranges[6])
+		)
+	)	
+)$
+
+
+gerade(_g,_von,_bis):=block(
+[_v:-4,_b:4],
+if string(_g)="" then(
+    key=""
+)else(
+	if string(ssearch("sin",string(_g))) = "false" and string(ssearch("cos",string(_g))) = "false" then(
+		_v:sucheTIP(_g,0,_von,_bis),
+		_b:sucheTOP(_g,0,_von,_bis)
+	),
+	parametric(_g[1],_g[2],_g[3],first(varlist(_g)),_v,_b)
+))$
+
+
+geradeOV(_g):=block(
+if string(_g)="" then(
+    key=""
+)else(
+	vector([0,0,0],GOV(ev(_g,wx_Scene=1)))
+))$
+
+
+achsen(_u,_o):=block(
+[_i,_pts:[]],
+for _i:_u thru _o do _pts:append(_pts,[[_i,0,0],[0,_i,0],[0,0,_i]]),
+points(_pts)
+)$
+
+sucheTIPx(_gs,_Rg,_Rvon,_Rbis):=round(lmin(map(rhs,flatten(map(solve,_gs-[1,1,1]*_Rvon,[1,1,1]*first(varlist(_gs)))))))$
+sucheTOPx(_gs,_Rg,_Rvon,_Rbis):=round(lmax(map(rhs,flatten(map(solve,_gs-[1,1,1]*_Rbis,[1,1,1]*first(varlist(_gs)))))))$
+
+sucheTIP(_gs,_Rg,_Rvon,_Rbis):=block(
+_gs:ev(_gs,wx_S_=1),
+for _i:1 
+while (map(maybe,map(">=",F(_gs,[_Rg]),[_Rvon-1,_Rvon-1,_Rvon-1]))=[true,true,true] and 
+       map(maybe,map("<=",F(_gs,[_Rg]),[_Rbis+1,_Rbis+1,_Rbis+1]))=[true,true,true] and _Rvon-1+_i<_Rbis)
+do _Rg:_Rg-1,
+_Rg:_Rg-5
+)$
+
+
+sucheTOP(_gs,_Rg,_Rvon,_Rbis):=block(
+_gs:ev(_gs,wx_S_=1),
+for _i:1 
+while (map(maybe,map(">=",F(_gs,[_Rg]),[_Rvon-1,_Rvon-1,_Rvon-1]))=[true,true,true] and 
+       map(maybe,map("<=",F(_gs,[_Rg]),[_Rbis+1,_Rbis+1,_Rbis+1]))=[true,true,true] and _Rbis+1-_i>_Rvon)
+do _Rg:_Rg+1,
+_Rg:_Rg+5
+)$
+
+
+abc_Labels():=block(S_Labels:["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O"])$
+pqr_Labels():=block(S_Labels:["P","Q","R","S","T","U","V","W","L"])$
+clear_Labels():=block(S_Labels:[" "," "," "," "," "," "," "," "," "," "," "," "," "," "])$
+
+
+plottVektorS(vec):=block(
+	if length(vec)>1 then PlottVektor:[vec[1],vec[2]-vec[1]] else PlottVektor:[[0,0,0],[0,0,0]],
+	if length(vec)>3 then PlottVektor1:[vec[3],vec[4]-vec[3]]else PlottVektor1:[[0,0,0],[0,0,0]],
+	if length(vec)>5 then PlottVektor2:[vec[5],vec[6]-vec[5]] else PlottVektor2:[[0,0,0],[0,0,0]],
+	if length(vec)>7 then PlottVektor3:[vec[7],vec[8]-vec[7]] else PlottVektor3:[[0,0,0],[0,0,0]],
+	if length(vec)>9 then PlottVektor4:[vec[9],vec[10]-vec[9]] else PlottVektor4:[[0,0,0],[0,0,0]],
+	if length(vec)>11 then PlottVektor5:[vec[11],vec[12]-vec[11]] else PlottVektor5:[[0,0,0],[0,0,0]],
+	if length(vec)>13 then PlottVektor6:[vec[13],vec[14]-vec[13]] else PlottVektor6:[[0,0,0],[0,0,0]],
+	if length(vec)>15 then PlottVektor7:[vec[15],vec[16]-vec[15]] else PlottVektor7:[[0,0,0],[0,0,0]],
+	if length(vec)>17 then PlottVektor8:[vec[17],vec[18]-vec[17]] else PlottVektor8:[[0,0,0],[0,0,0]],
+	if length(vec)>19 then PlottVektor9:[vec[19],vec[20]-vec[19]] else PlottVektor9:[[0,0,0],[0,0,0]],
+	if length(vec)>21 then PlottVektor10:[vec[21],vec[22]-vec[21]] else PlottVektor10:[[0,0,0],[0,0,0]],
+	if length(vec)>23 then PlottVektor11:[vec[23],vec[24]-vec[23]] else PlottVektor11:[[0,0,0],[0,0,0]],
+	if length(vec)>25 then PlottVektor12:[vec[25],vec[26]-vec[25]] else PlottVektor12:[[0,0,0],[0,0,0]],
+	if length(vec)>27 then PlottVektor13:[vec[27],vec[28]-vec[27]] else PlottVektor13:[[0,0,0],[0,0,0]],
+	if length(vec)>29 then PlottVektor14:[vec[29],vec[30]-vec[29]] else PlottVektor14:[[0,0,0],[0,0,0]],
+	if length(vec)>31 then PlottVektor15:[vec[31],vec[32]-vec[31]] else PlottVektor15:[[0,0,0],[0,0,0]],
+	if length(vec)>33 then PlottVektor16:[vec[33],vec[34]-vec[33]] else PlottVektor16:[[0,0,0],[0,0,0]],
+	done
+)$
+
+
+S_Labels:["A","B","C","D","E","F","G","H","I","J","K","L","M","N","P","Q","R","S","T","U","V","W"]$
+S_Enhanced:false$
+S_Qvox:12$
+S_Ranges:[]$
+S_Figur:[]$
+S_Figur1:[]$
+S_Figur2:[]$
+S_Figur3:[]$
+S_Figur4:[]$
+S_AO:true$
+
+PLOTT_S(_NF1,_NF2,_NF3,_g1,_g2,_g3,_Rxu,_Rxo):=
+PLOTT_L(delete("",[_NF1,_NF2,_NF3]),delete("",[_g1,_g2,_g3]),_Rxu,_Rxo)$
+
+
+PLOTT_L(_NF_,_g_,_Rxu,_Rxo):=
+wxdraw3d(
+user_preamble="set ticslevel 0", 
+enhanced3d   = S_Enhanced,
+x_voxel      = S_Qvox,
+y_voxel      = S_Qvox,
+z_voxel      = S_Qvox,
+colorbox     = false,
+dimensions = [wx_Breite, wx_Hoehe], 
+
+xrange=[_Rxu-1,_Rxo+1],
+yrange=[_Rxu-1,_Rxo+1],
+zrange=[_Rxu-1,_Rxo+1],
+
+if _Rxo-_Rxu < 21 then (
+    xtics = 1, ytics = 1, ztics = 1
+)else(
+    xtics = auto, ytics = auto, ztics = auto
+),
+key="Ebenen",
+color=dark-green,
+line_width = 2,
+head_length = 1,
+head_angle  = 20,
+vector(PlottVektor[1],PlottVektor[2]), 
+line_width = 0.25,
+color = "#ffb2c8",
+if length(_NF_)>0 then key = string(_NF_[1]) else key="",
+if length(_NF_)>0 then ebene(_NF_[1],_Rxu-1,_Rxo+1) else key="",
+color = "#B2CCFF", 
+if length(_NF_)>1 then key = string(_NF_[2]) else key="",
+if length(_NF_)>1 then ebene(_NF_[2],_Rxu-1,_Rxo+1) else key="",
+color = "#c8c3fa", 
+if length(_NF_)>2 then key = string(_NF_[3]) else key="",
+if length(_NF_)>2 then ebene(_NF_[3],_Rxu-1,_Rxo+1) else key="",
+color = "#98FB98", 
+if length(_NF_)>3 then key = string(_NF_[4]) else key ="",
+if length(_NF_)>3 then ebene(_NF_[4],_Rxu-1,_Rxo+1) else key="",
+color = "#FFDAB9",
+if length(_NF_)>4 then key = string(_NF_[5]) else key="",
+if length(_NF_)>4 then ebene(_NF_[5],_Rxu-1,_Rxo+1) else key="",
+color = "#D8BFD8", 
+if length(_NF_)>5 then key = string(_NF_[6]) else key="",
+if length(_NF_)>5 then ebene(_NF_[6],_Rxu-1,_Rxo+1) else key="",
+
+key="Geraden",
+color=dark-green, line_width = 2,
+vector(PlottVektor1[1],PlottVektor1[2]),
+color=dark-red,
+if length(_g_)>0 then key = string(_g_[1]) else key="",
+if length(_g_)>0 then gerade(_g_[1],_Rxu-1,_Rxo +1) else key="",
+color=orange,
+if length(_g_)>1 then key = string(_g_[2]) else key="",
+if length(_g_)>1 then gerade(_g_[2],_Rxu-1,_Rxo +1) else key="",
+color=blue,
+if length(_g_)>2 then key = string(_g_[3]) else key="",
+if length(_g_)>2 then gerade(_g_[3],_Rxu-1,_Rxo +1) else key="",
+color=green,
+if length(_g_)>3 then key = string(_g_[4]) else key="",
+if length(_g_)>3 then gerade(_g_[4],_Rxu-1,_Rxo +1) else key="",
+color=dark-grey,
+if length(_g_)>4 then key = string(_g_[5]) else key="",
+if length(_g_)>4 then gerade(_g_[5],_Rxu-1,_Rxo +1) else key="",
+color=gold,
+if length(_g_)>5 then key = string(_g_[6]) else key="",
+if length(_g_)>5 then gerade(_g_[6],_Rxu-1,_Rxo +1) else key="",
+
+key="", line_width = 1, color=brown,
+if length(_g_)>0 then  geradeOV(_g_[1]) else key="",
+if length(_g_)>1 then  geradeOV(_g_[2]) else key="",
+if length(_g_)>2 then  geradeOV(_g_[3]) else key="",
+if length(_g_)>3 then  geradeOV(_g_[4]) else key="",
+if length(_g_)>4 then  geradeOV(_g_[5]) else key="",
+if length(_g_)>5 then  geradeOV(_g_[6]) else key="",
+
+color=blue,
+if length(S_Figur)>0 then S_Figur else key="",
+if length(S_Figur1)>0 then S_Figur1 else key="",
+if length(S_Figur2)>0 then S_Figur2 else key="",
+color=dark-green,
+if length(S_Figur3)>0 then S_Figur3 else key="",
+color=dark-red,
+if length(S_Figur4)>0 then S_Figur4 else key="",
+
+key="",
+color=dark-grey, line_width = 1,
+vector([_Rxu-0.5,0,0],[_Rxo-_Rxu+1,0,0]),
+vector([0,_Rxu-0.5,0],[0,_Rxo-_Rxu+1,0]),
+vector([0,0,_Rxu-0.5],[0,0,_Rxo-_Rxu+1]),
+color=black,
+point_type = filled_circle ,
+point_size = 0.2,
+achsen(_Rxu,_Rxo),
+
+key = "Punkte",
+color=magenta,
+point_type = circle,
+point_size = 1,
+points(O),
+if length(O)>0 and length(S_Labels)>0 then(label([S_Labels[1],O[1][1],O[1][2],O[1][3]+_Rxo/10]))else(key=""),
+if length(O)>1 and length(S_Labels)>1 then(label([S_Labels[2],O[2][1],O[2][2],O[2][3]+_Rxo/10]))else(key=""),
+if length(O)>2 and length(S_Labels)>2 then(label([S_Labels[3],O[3][1],O[3][2],O[3][3]+_Rxo/10]))else(key=""),
+if length(O)>3 and length(S_Labels)>3 then(label([S_Labels[4],O[4][1],O[4][2],O[4][3]+_Rxo/10]))else(key=""),
+if length(O)>4 and length(S_Labels)>4 then(label([S_Labels[5],O[5][1],O[5][2],O[5][3]+_Rxo/10]))else(key=""),
+if length(O)>5 and length(S_Labels)>5 then(label([S_Labels[6],O[6][1],O[6][2],O[6][3]+_Rxo/10]))else(key=""),
+if length(O)>6 and length(S_Labels)>6 then(label([S_Labels[7],O[7][1],O[7][2],O[7][3]+_Rxo/10]))else(key=""),
+if length(O)>7 and length(S_Labels)>7 then(label([S_Labels[8],O[8][1],O[8][2],O[8][3]+_Rxo/10]))else(key=""),
+if length(O)>8 and length(S_Labels)>8 then(label([S_Labels[9],O[9][1],O[9][2],O[9][3]+_Rxo/10]))else(key=""),
+if length(O)>9 and length(S_Labels)>9 then(label([S_Labels[10],O[10][1],O[10][2],O[10][3]+_Rxo/10]))else(key=""),
+if length(O)>10 and length(S_Labels)>10 then(label([S_Labels[11],O[11][1],O[11][2],O[11][3]+_Rxo/10]))else(key=""),
+if length(O)>11 and length(S_Labels)>11 then(label([S_Labels[12],O[12][1],O[12][2],O[12][3]+_Rxo/10]))else(key=""),
+if length(O)>12 and length(S_Labels)>12 then(label([S_Labels[13],O[13][1],O[13][2],O[13][3]+_Rxo/10]))else(key=""),
+if length(O)>13 and length(S_Labels)>13 then(label([S_Labels[14],O[14][1],O[14][2],O[14][3]+_Rxo/10]))else(key=""),
+if length(O)>14 and length(S_Labels)>14 then(label([S_Labels[15],O[15][1],O[15][2],O[15][3]+_Rxo/10]))else(key=""),
+if length(O)>15 and length(S_Labels)>15 then(label([S_Labels[16],O[16][1],O[16][2],O[16][3]+_Rxo/10]))else(key=""),
+if length(O)>16 and length(S_Labels)>16 then(label([S_Labels[17],O[17][1],O[17][2],O[17][3]+_Rxo/10]))else(key=""),
+if length(O)>17 and length(S_Labels)>17 then(label([S_Labels[18],O[18][1],O[18][2],O[18][3]+_Rxo/10]))else(key=""),
+if length(O)>18 and length(S_Labels)>18 then(label([S_Labels[19],O[19][1],O[19][2],O[19][3]+_Rxo/10]))else(key=""),
+if length(O)>19 and length(S_Labels)>19 then(label([S_Labels[20],O[14][1],O[14][2],O[14][3]+_Rxo/10]))else(key=""),
+if length(O)>20 and length(S_Labels)>20 then(label([S_Labels[21],O[21][1],O[21][2],O[21][3]+_Rxo/10]))else(key=""),
+if length(O)>21 and length(S_Labels)>21 then(label([S_Labels[22],O[22][1],O[22][2],O[22][3]+_Rxo/10]))else(key=""),
+
+key="",
+color=dark-green,
+vector(PlottVektor2[1],PlottVektor2[2]),
+key="Vektoren",
+vector(PlottVektor3[1],PlottVektor3[2]),
+key="", color=dark-green,
+vector(PlottVektor4[1],PlottVektor4[2]),
+vector(PlottVektor5[1],PlottVektor5[2]),
+vector(PlottVektor6[1],PlottVektor6[2]),
+vector(PlottVektor7[1],PlottVektor7[2]),
+vector(PlottVektor8[1],PlottVektor8[2]),
+vector(PlottVektor9[1],PlottVektor9[2]),
+vector(PlottVektor10[1],PlottVektor10[2]),
+vector(PlottVektor11[1],PlottVektor11[2]),
+vector(PlottVektor12[1],PlottVektor12[2]),
+vector(PlottVektor13[1],PlottVektor13[2]),
+vector(PlottVektor14[1],PlottVektor14[2]),
+vector(PlottVektor15[1],PlottVektor15[2]),
+vector(PlottVektor16[1],PlottVektor16[2]),
+
+grid = true,
+zlabel = "z",
+ylabel = "y",
+xlabel = "x",
+surface_hide=S_AO
+)$
+
+
+
+wx_Enhanced:false$
+wx_Qvox:12$
+wx_Vrot:80$
+wx_Hrot:100$
+wx_Breite:500$
+wx_Hoehe:600$
+wx_ScVon:1$
+wx_ScBis:1$
+wx_AO:true$
+
+PLOTT_wx(_NF1,_NF2,_NF3,_g1,_g2,_g3,_Rxu,_Rxo):=
+PLOTT_D(delete("",[_NF1,_NF2,_NF3]),delete("",[_g1,_g2,_g3]),_Rxu,_Rxo)$
+
+
+PLOTT_D(_NF_,_g_,_Rxu,_Rxo):=
+with_slider_draw3d(
+wx_S_, makelist(_i,_i,wx_ScVon,wx_ScBis),
+user_preamble="set ticslevel 0",
+enhanced3d   = wx_Enhanced,
+x_voxel      = wx_Qvox,
+y_voxel      = wx_Qvox,
+z_voxel      = wx_Qvox,
+colorbox     = false,
+dimensions = [wx_Breite, wx_Hoehe], 
+view = [wx_Vrot, wx_Hrot],
+
+xrange=[_Rxu-1,_Rxo+1],
+yrange=[_Rxu-1,_Rxo+1],
+zrange=[_Rxu-1,_Rxo+1],
+if _Rxo-_Rxu < 21 then (
+	xtics = 1, ytics = 1, ztics = 1
+)else(
+	xtics = auto, ytics = auto, ztics = auto
+),
+
+title=sconcat("Scene: ",wx_S_),
+key="Ebenen",
+color=dark-green,
+line_width = 2,
+head_length = 1,
+head_angle  = 20,
+vector(PlottVektor[1],PlottVektor[2]), 
+line_width = 0.25,
+color = "#ffb2c8",
+if length(_NF_)>0 then key = string(_NF_[1]) else key="",
+if length(_NF_)>0 then ebene(ev(_NF_[1],wx_Scene=wx_S_),_Rxu-1,_Rxo+1) else key="",
+color = "#B2CCFF", 
+if length(_NF_)>1 then key = string(_NF_[2]) else key="",
+if length(_NF_)>1 then ebene(ev(_NF_[2],wx_Scene=wx_S_),_Rxu-1,_Rxo+1) else key="",
+color = "#c8c3fa", 
+if length(_NF_)>2 then key = string(_NF_[3]) else key="",
+if length(_NF_)>2 then ebene(ev(_NF_[3],wx_Scene=wx_S_),_Rxu-1,_Rxo+1) else key="",
+color = "#98FB98", 
+if length(_NF_)>3 then key = string(_NF_[4]) else key ="",
+if length(_NF_)>3 then ebene(ev(_NF_[4],wx_Scene=wx_S_),_Rxu-1,_Rxo+1) else key="",
+color = "#FFDAB9",
+if length(_NF_)>4 then key = string(_NF_[5]) else key="",
+if length(_NF_)>4 then ebene(ev(_NF_[5],wx_Scene=wx_S_),_Rxu-1,_Rxo+1) else key="",
+color = "#D8BFD8", 
+if length(_NF_)>5 then key = string(_NF_[6]) else key="",
+if length(_NF_)>5 then ebene(ev(_NF_[6],wx_Scene=wx_S_),_Rxu-1,_Rxo+1) else key="",
+
+
+key="Geraden", 
+color=dark-green, line_width = 2,
+vector(PlottVektor1[1],PlottVektor1[2]),
+color=dark-red,
+if length(_g_)>0 then key = string(_g_[1]) else key="",
+if length(_g_)>0 then gerade(ev(_g_[1],wx_Scene=wx_S_),_Rxu-1,_Rxo +1) else key="",
+color=orange,
+if length(_g_)>1 then key = string(_g_[2]) else key="",
+if length(_g_)>1 then gerade(ev(_g_[2],wx_Scene=wx_S_),_Rxu-1,_Rxo +1) else key="",
+color=blue,
+if length(_g_)>2 then key = string(_g_[3]) else key="",
+if length(_g_)>2 then gerade(ev(_g_[3],wx_Scene=wx_S_),_Rxu-1,_Rxo +1) else key="",
+color=green,
+if length(_g_)>3 then key = string(_g_[4]) else key="",
+if length(_g_)>3 then gerade(ev(_g_[4],wx_Scene=wx_S_),_Rxu-1,_Rxo +1) else key="",
+color=dark-grey,
+if length(_g_)>4 then key = string(_g_[5]) else key="",
+if length(_g_)>4 then gerade(ev(_g_[5],wx_Scene=wx_S_),_Rxu-1,_Rxo +1) else key="",
+color=gold,
+if length(_g_)>5 then key = string(_g_[6]) else key="",
+if length(_g_)>5 then gerade(ev(_g_[6],wx_Scene=wx_S_),_Rxu-1,_Rxo +1) else key="",
+
+key="", line_width = 1, color=brown,
+if length(_g_)>0 then  geradeOV(_g_[1]) else key="",
+if length(_g_)>1 then  geradeOV(_g_[2]) else key="",
+if length(_g_)>2 then  geradeOV(_g_[3]) else key="",
+if length(_g_)>3 then  geradeOV(_g_[4]) else key="",
+if length(_g_)>4 then  geradeOV(_g_[5]) else key="",
+if length(_g_)>5 then  geradeOV(_g_[6]) else key="",
+
+color=blue,
+if length(S_Figur)>0 then S_Figur else key="",
+if length(S_Figur1)>0 then S_Figur1 else key="",
+if length(S_Figur2)>0 then S_Figur2 else key="",
+color=green,
+if length(S_Figur3)>0 then S_Figur3 else key="",
+color=red,
+if length(S_Figur4)>0 then S_Figur4 else key="",
+
+key="",
+color=dark-grey, line_width = 1,
+vector([_Rxu-0.5,0,0],[_Rxo-_Rxu+1,0,0]),
+vector([0,_Rxu-0.5,0],[0,_Rxo-_Rxu+1,0]),
+vector([0,0,_Rxu-0.5],[0,0,_Rxo-_Rxu+1]),
+color=black,
+point_type = filled_circle ,
+point_size = 0.2,
+achsen(_Rxu,_Rxo),
+
+key = "Punkte",
+color=magenta,
+point_type = circle,
+point_size = 1,
+points(O),
+if length(O)>0 and length(S_Labels)>0 then(label([S_Labels[1],O[1][1],O[1][2],O[1][3]+_Rxo/10]))else(key=""),
+if length(O)>1 and length(S_Labels)>1 then(label([S_Labels[2],O[2][1],O[2][2],O[2][3]+_Rxo/10]))else(key=""),
+if length(O)>2 and length(S_Labels)>2 then(label([S_Labels[3],O[3][1],O[3][2],O[3][3]+_Rxo/10]))else(key=""),
+if length(O)>3 and length(S_Labels)>3 then(label([S_Labels[4],O[4][1],O[4][2],O[4][3]+_Rxo/10]))else(key=""),
+if length(O)>4 and length(S_Labels)>4 then(label([S_Labels[5],O[5][1],O[5][2],O[5][3]+_Rxo/10]))else(key=""),
+if length(O)>5 and length(S_Labels)>5 then(label([S_Labels[6],O[6][1],O[6][2],O[6][3]+_Rxo/10]))else(key=""),
+if length(O)>6 and length(S_Labels)>6 then(label([S_Labels[7],O[7][1],O[7][2],O[7][3]+_Rxo/10]))else(key=""),
+if length(O)>7 and length(S_Labels)>7 then(label([S_Labels[8],O[8][1],O[8][2],O[8][3]+_Rxo/10]))else(key=""),
+if length(O)>8 and length(S_Labels)>8 then(label([S_Labels[9],O[9][1],O[9][2],O[9][3]+_Rxo/10]))else(key=""),
+if length(O)>9 and length(S_Labels)>9 then(label([S_Labels[10],O[10][1],O[10][2],O[10][3]+_Rxo/10]))else(key=""),
+if length(O)>10 and length(S_Labels)>10 then(label([S_Labels[11],O[11][1],O[11][2],O[11][3]+_Rxo/10]))else(key=""),
+if length(O)>12 and length(S_Labels)>12 then(label([S_Labels[12],O[12][1],O[12][2],O[12][3]+_Rxo/10]))else(key=""),
+if length(O)>13 and length(S_Labels)>13 then(label([S_Labels[13],O[13][1],O[13][2],O[13][3]+_Rxo/10]))else(key=""),
+if length(O)>14 and length(S_Labels)>14 then(label([S_Labels[14],O[14][1],O[14][2],O[14][3]+_Rxo/10]))else(key=""),
+
+key="", color=dark-green,
+color=dark-green,
+vector(PlottVektor2[1],PlottVektor2[2]),
+key="Vektoren",
+vector(PlottVektor3[1],PlottVektor3[2]),
+key="", color=dark-green,
+vector(PlottVektor4[1],PlottVektor4[2]),
+vector(PlottVektor5[1],PlottVektor5[2]),
+vector(PlottVektor6[1],PlottVektor6[2]),
+vector(PlottVektor7[1],PlottVektor7[2]),
+vector(PlottVektor8[1],PlottVektor8[2]),
+vector(PlottVektor9[1],PlottVektor9[2]),
+vector(PlottVektor10[1],PlottVektor10[2]),
+vector(PlottVektor11[1],PlottVektor11[2]),
+vector(PlottVektor12[1],PlottVektor12[2]),
+vector(PlottVektor13[1],PlottVektor13[2]),
+vector(PlottVektor14[1],PlottVektor14[2]),
+vector(PlottVektor15[1],PlottVektor15[2]),
+vector(PlottVektor16[1],PlottVektor16[2]),
+
+grid = true,
+zlabel = "z",
+ylabel = "y",
+xlabel = "x",
+surface_hide=wx_AO
+)$
+
+gaussLinGLS(M,x):=block(
+[_B_,i,j,n:length(x),A:copymatrix(M),_break:false],
+print("Gaussalgorithmus:"),
+print(A),
+for i:1 thru n-1 do(
+    for j:i+1 thru n do(
+		if A[i,i]=0 then(
+			_B_:A[i], A[i]:A[n], A[n]:_B_,print("Zeilentausch:",i,n)
+		), 
+		if A[i,i]#0 and A[j,i]#0 then(
+			print(sconcat("A[",j,"]=",A[i,i],"*A[",j,"]",if length(listofvars(A[j,i]))>0 then "" elseif A[j][i]<=0 then "+" else "",string(-A[j,i]),"*A[",i,"]")),
+			A[j]:ratsimp(A[i,i]*A[j]-A[j,i]*A[i]),
+			if j=n and i=n-1 then(
+				print(sconcat("A[" ,j, "]=A[",j,"]/A[",j,",",j,"]")),
+				if A[j,j]=0 then(return(A),_break:true, go(_Exit)),
+				A[j]:A[j]/A[j,j]
+			)
+		)
+    ),
+print(A)
+),
+if A[n,n]=0 then(print("keine Lösung..."), _break:true, go(_Exit)),
+print("Rücksubstitution..."),
+for i:n thru 2 step -1 do(
+    for j:1 thru i-1 do(
+		if A[i,i]=0 then(return(A),_break:true, go(_Exit)),
+		if A[j,i]#0 and A[i,i]#0 then(
+			print(sconcat("A[",j,"]=",A[j,i],"*A[",i,"]",if length(listofvars(A[j,i]))>0 then "" elseif A[i][i]<=0 then "+" else "",string(-A[i,i]),"*A[",j,"]")),
+			A[j]:ratsimp(A[j,i]*A[i]-A[i,i]*A[j])
+		)
+     ),
+print(sconcat("A[" ,i-1, "]=A[",i-1,"]/A[",i-1,",",i-1,"]")),
+A[i-1]:A[i-1]/A[i-1,i-1],
+print(A)
+),
+_Exit,
+if not _break then(
+if matrix_size(A)=[n,n+1] then(
+	ratsimp(makelist(x[i]=A[i,n+1]/A[i,i],i,1,n))
+)else(
+	for i:1 thru n do A:submatrix(A,1),
+	A
+))
+
+)$
+
+
+det(M):=block(
+[i,j,A:copymatrix(M), n:length(A)],
+for i:1 thru n-1 do(
+    for j:i+1 thru n do(        
+        A[j]:A[j]-A[j,i]/A[i,i]*A[i]
+    )
+),
+j:1,
+for i:1 thru n do j:j*A[i,i],
+j
+);
+
+
+lageUntersuchungEbeneKugel(E,M,r):=block(
+[_u_,_v_,l,m,o],
+if not listp(E) then E:paramForm(E,m,o),
+Km:lotFusspunkt(E,M),
+Kr:streckeLaenge(M,Km),
+if r-Kr < 0 then(
+print("Ebene schneidet die Kugel nicht..."),
+none
+)else(
+if r - Kr = 0 then(
+print("Ebene ist Tangente im Punkt Km: "),
+return(Km)
+)else(
+Kr:sqrt(r^2- Kr^2),
+print("Ebene schneidet die Kugel im Kreis"),
+print("Mittelpunkt Km: ",Km," Radius Kr: ",Kr),
+_u_:ERV1(E), _v_:ERV2(E),
+if _u_._v_ # 0 then(
+_rv_:solve(_u_.(_u_+l*_v_),l),
+_v_:ev(_u_+l*_v_, _rv_)
+),
+Km+Kr*_u_/betragLaenge(_u_)*cos(t)+Kr*_v_/betragLaenge(_v_)*sin(t)
+))
+)$
+
+
+schnittKugelGerade(KG,gt):=block(
+    _K_:ev(KG,x=gt[1],y=gt[2],z=gt[3]),
+    _L_:solve(_K_,varlist(gt)),
+    makelist(ev(gt,_L_[i]),i,1,length(_L_))
+);
+
+
+xyzKugelMittelpunktForm(K):=block(
+[_K_:expand(K),_x_:0,_y_:0,_z_:0],
+_x_:if coeff(_K_,x,2)/2 # 0 then coeff(_K_,x)/coeff(_K_,x,2)/2 else 0,
+_y_:if coeff(_K_,y,2)/2 # 0 then coeff(_K_,y)/coeff(_K_,y,2)/2 else 0,
+_z_:if coeff(_K_,z,2)/2 # 0 then coeff(_K_,z)/coeff(_K_,z,2)/2 else 0,
+(if coeff(_K_,x,2) # 0 then (coeff(_K_,x,2)*(x+_x_)^2-coeff(_K_,x)^2/4/coeff(_K_,x,2))else(coeff(_K_,x)*x))+
+(if coeff(_K_,y,2) # 0 then (coeff(_K_,y,2)*(y+_y_)^2-coeff(_K_,y)^2/4/coeff(_K_,y,2))else(coeff(_K_,y)*y))+
+(if coeff(_K_,z,2) # 0 then (coeff(_K_,z,2)*(z+_z_)^2-coeff(_K_,z)^2/4/coeff(_K_,z,2))else(coeff(_K_,z)*z))+
+ev(_K_,x=0,y=0,z=0),
+[[-_x_,-_y_,-_z_], %% ]
+)$
+
+
+kugelMittelpunkt(K):=block(
+[_K_:ratsimp(expand(K))],
+[-coeff(_K_,x)/coeff(_K_,x,2)/2,-coeff(_K_,y)/coeff(_K_,y,2)/2,-coeff(_K_,z)/coeff(_K_,z,2)/2]
+)$
+
+
+xyzFaktorGleichung(_G_):=block(
+[_GB_:0,
+ xy:coeff(coeff(_G_,x,1),y,1), 
+ yz:coeff(coeff(_G_,z,1),y,1),
+ xz:coeff(coeff(_G_,z,1),x,1)
+],
+if xy # 0 then(
+    _G_:_G_-x^2-xy*x*y-(xy/2*y)^2,
+    _GB_:(x+xy/2*y)^2
+),
+if yz # 0 then(
+    _G_:_G_-y^2-yz*y*z-(yz/2*z)^2,
+    _GB_:_GB_+(y+yz/2*z)^2
+),
+if xz # 0 then(
+    _G_:_G_-x^2-xz*x*z-(xz/2*z)^2,
+    _GB_:_GB_+(x+xz/2*z)^2
+),
+_G_+_GB_
+)$
+
+
+positivDefinit(M):=block(
+[_pd:true, _M_:copymatrix(M),_hm:makelist(0,_i,1,length(M))],
+for _i:length(M) thru 1 step -1 do(
+    _hm[_i]:determinant(_M_),
+    _pd:_pd and (_hm[_i]>0),
+    _M_:submatrix(_i,_M_,_i)
+),
+print(_hm),
+_pd
+);
+
+
+PLOTT_2d(L,a,b):=block(
+wxplot2d(L, [x,a,b],[y,a,b],
+[gnuplot_preamble, "set noborder;
+set xzeroaxis lt -1 linewidth 2;
+set yzeroaxis lt -1 linewidth 2;
+set size ratio 1;
+set grid;
+set xtics axis;
+set ytics axis"]))$
+

@@ -1,0 +1,262 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.04.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(f, t, x, y, z, k, h, m)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(M, T, t, x, n, h)$
+T:2$ t[1]:0$ x[1]:0$ h1:makelist((1/h), h, 2, 2^10)$
+1/M[h1]:=makelist([t[n+1]:n*(1/h1), x[n+1]:x[n]+(1/h1)*(t[n]-x[n]^2)], n, 1, (T*h1)), float;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+M[32], numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gnuplot_reset()$
+multiplot_mode(none)$
+gnuplot_replot("set term wxt")$
+gnuplot_replot("unset multiplot")$
+gnuplot_replot("set grid")$
+wxplot2d([[discrete, M[2]],[discrete, M[4]],[discrete, M[8]],[discrete, M[16]], [discrete, M[32]],[discrete, M[2^-10]]], [style, lines], [legend, "M[1/2]", "M[1/4]", "M[1/8]", "M[1/16]", "M[1/32]", "M[2^-10]"], [grid, 30, 30]), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(all)$
+kill(M, T, t, x, n, h, h1)$
+load(integer_sequence)$
+T:2$ t[1]:0$ x[1]:0$ h1:makelist((1/h), h, 2, 2^10)$
+M[h]:=makelist([t[n+1]:n*(1/h), x[n+1]:x[n]+(1/h)*(t[n]-x[n]^2)], n, (1 .. T*h)), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+M[32], numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gnuplot_reset()$
+multiplot_mode(none)$
+gnuplot_replot("set term wxt")$
+gnuplot_replot("unset multiplot")$
+gnuplot_replot("set grid")$
+wxplot2d([
+            [discrete, M[2]],
+            [discrete, M[4]],
+            [discrete, M[8]],
+            [discrete, M[16]], 
+            [discrete, M[32]],
+            [discrete, M[2^-10]]], 
+            [style, lines], 
+            [legend, "M[1/2]", "M[1/4]", "M[1/8]", "M[1/16]", "M[1/32]", "M[2^-10]"], [grid, 30, 30]), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f(t):= (1+h)^(t/h);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+limit(f(t), h, 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+h:2^-5$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot2d(f(t), [t, -2, 2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(m)$ m(t):=(1+(t/h))^h;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(h)$ limit(subst(h=k, m(t)), k, inf);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+h:2^-5$ h(t):=(1+(t/h))^h;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot2d(h(t), [t, -2, 2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gnuplot_reset()$
+multiplot_mode(none)$
+gnuplot_replot("unset multiplot")$
+gnuplot_replot("set term wxt")$
+gnuplot_replot("set grid")$
+wxplot2d([[discrete, M[1/32]], %e^(t)], [t, -2, 2], [x, -2, 2], [y, -2, 10]), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f, t, x, y, m, k)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(h)$ kill(M)$
+T:4$ t[1]:0$ x[1]:0$ h1:makelist(float(1/h), h, 2, 2^10)$
+M[h]:=makelist([t[n+1]:n*float(h), x[n+1]:x[n]+float(h)*(t[n]^2-x[n]^4)], n, 1, float(T/h)), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+M[1/32], numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gnuplot_reset()$
+multiplot_mode(none)$
+gnuplot_replot("unset multiplot")$
+gnuplot_replot("set term wxt")$
+gnuplot_replot("set grid")$
+wxplot2d([[discrete, M[1/32]], %e^(t)], [t, -4, 4], [x, -4, 4], [y, -2, 10]), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+de:diff(x,t)-t+x^2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+at(de, [t=1, x=1]), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+de:%e^t;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+at(de, [t=1, x=1]), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+rk(-de, x, 1, [t, 0.9, 1.1, 2^-10]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+de:diff(x,t)-x;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+at(de, [t=1, x=1]), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+diff(de, x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+de:%e^t;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot2d([[discrete, rk(de, x, 1, [t, 0.1, 1.5, 2^-10])], %e^t], [t, -4, 4], [y, 0, 4]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gnuplot_reset()$
+multiplot_mode(none)$
+gnuplot_replot("unset multiplot")$
+gnuplot_replot("set term wxt")$
+gnuplot_replot("set grid")$
+wxplot2d([[discrete, rk(de, x, 1, [t, 0.1, 1.5, 2^-10])], [discrete, rk(de, x, 1, [t, 0.5, 1.5, 2^-10])], [discrete, rk(de, x, 1, [t, 0.9, 1.5, 2^-10])], %e^t], [t, -4, 4], [y, 0, 4], [grid, 50, 50], [legend, "1st approx","2nd approx", "3rd approx", "e^t"]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A:matrix([-41, 15, 0, 168], [109, -40, 0, -447], [-3, 1, 0, 12], [2, 0, 1, -1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+echelon(A);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(z)$
+z:z*submatrix(4, echelon(A))[3][3]=submatrix(4, echelon(A))[3][4];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(y)$
+y:y*submatrix(3, echelon(A))[2][2]=submatrix(3, echelon(A))[2][4];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(x)$
+x:x*submatrix(2, echelon(A))[1][1]=rat(submatrix(2, echelon(A))[1][4] - y*(submatrix(2, echelon(A))[1][2]), simp);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(x, y, z)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+v[1]:0$ de:'diff(v, t)-9.8+(v/5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ode2(de, v, t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ode:'diff(v,t)-9.8+(v/5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+solve(at(%, [v=48.02, t=0])), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(%c, x, de, v, t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+v[1]:0$ de:diff(v, t)-9.8+(v/5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+rk(de, v, 0, [t, 0, 1, 0.01]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot2d([discrete, rk(de, v, 0, [t, 0, 1, 0.01])], [x, 0, 1], [y, -10, 0]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(x, y, z, t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq1: 'diff(x, t) +2*x+y-12*-12;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq2: 'diff(y, t) -2*x+5*y+5;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+atvalue('diff(x(t), t), t=0, v0)$
+atvalue('diff(y(t), t), t=0, u0)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+desolve([eq1, eq1], [x(t), y(t)]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eqq1: ode2(eq1, x, t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eqq2:ode2(eq2, y, t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+solve([eqq1, eqq2], [x, y]);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

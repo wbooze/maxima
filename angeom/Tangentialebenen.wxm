@@ -1,0 +1,58 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load(angeom);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+In einem kartesischen Koordinatensystem ist die Kugel K1 gegeben 
+$ K_{1}: x^2-6x+y^2-4y+z^2-2z-7=0 $ gegeben!
+
+Die Tangentialebenen lauten:
+
+$ t_{1}: $ 2x-y+4z=-13
+
+$ t_{2}: $ x+4y-2z=-12 
+
+Die Ebene t1 und t2 sind Tangentialebenen weiterer Kugeln $ K_{r}. $ 
+Bestimmen Sie die Koordinaten des Mittelpunktes einer solchen Kugel mit dem 
+Radius $ \bruch{10}{\wurzel{21}}! $ 10/sqrt(21)
+
+Geben Sie die Mittelpunkte $ M_{r} $ aller Kugeln in Abhängigkeit vom Radius r an! 
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Gs:[2,0,1]+s*[3,0,1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Gr:[1,1,0]+r*[2,1,0];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_S("","",normalForm(E1),"",Gr,Gs,-2,2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+E1:S+p*GRV(Gr)+q*GRV(Gs);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+K1:x^2-6*x+y^2-4*y+z^2-2*z-7;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ET1:2*x-y+4*z+13;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ET2:x+4*y-2*z+12;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_S(ET1,ET2,K1,"","","",-10,12);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

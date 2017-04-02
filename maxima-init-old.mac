@@ -1,0 +1,56 @@
+/* this is ~/wbooze/.maxima/maxima-init.mac */
+/* last edit 26.09.2011 */
+
+maxima_userdir: "/home/wbooze/.maxima"$
+
+maxima_tempdir: "/home/wbooze/temp"$
+
+file_search_maxima: append(["maxima_userdir/###.{mac,mc,txt}"], file_search_maxima )$
+
+file_search_lisp: append(["maxima_userdir/###.{lisp}"], file_search_lisp )$
+
+file_search_maxima: append(["maxima_userdir/angeom/###.{mac,mc,txt}"], file_search_maxima )$
+
+file_search_lisp: append(["maxima_userdir/angeom/###.{lisp}"], file_search_lisp )$
+
+file_search_maxima: append(["maxima_userdir/discrete/###.{mac,mc,txt}"], file_search_maxima )$
+
+file_search_lisp: append(["maxima_userdir/discrete/###.{lisp}"], file_search_lisp )$
+
+file_search_maxima: append(["/usr/local/share/maxima/branch_5_33_base_88_g30f2cf8_dirty/share/###.{mac,mc,txt}"], file_search_maxima )$
+
+file_search_lisp: append(["/usr/local/share/maxima/branch_5_33_base_88_g30f2cf8_dirty/share/###.{lisp}"], file_search_lisp )$
+
+ln(n):=log(n)$
+logb(n, b) := log(n)/log(b)$
+lg(n):=logb(2,n)$
+
+
+mshow([lis])::=block([ans:[],n:length(lis)],
+		      for i:1 thru n do
+		      (ans:append(ans,
+				   buildq([u:lis[i]],
+					   ['u,"=",u])),
+			if i < n
+			then ans
+			:append(ans,
+				 if i < n-1 then [","]
+				 else [", and"])),
+		      buildq([u:ans],print(splice(u))))$
+
+
+error_size:2000$
+linel:85$
+stringdisp:false$
+powerdisp:false$
+display2d:false$
+
+load(functs)$
+load(mbe1util)$
+ldisp(" Maxima is the Future! ")$ 
+ldisp(" mbe1util.mac functions ", functions)$
+disp(" whish you merry maths!")$
+
+load(graphs)$
+load(qdraw)$
+load(integer_sequence)$

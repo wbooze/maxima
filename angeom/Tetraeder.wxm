@@ -1,0 +1,138 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load(angeom);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A:[1,3,-1]; B:[4,2,1]; C:[6,3,-2]; D:[22,1,0];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+E1:A+r*(B-A)+s*(C-A);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+solve(E1-D,[r,s]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F(E1,[2,3]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+schwerPunktABC(_A,_B,_C):=(
+[(_A[1]+_B[1]+_C[1])/3,(_A[2]+_B[2]+_C[2])/3,(_A[3]+_B[3]+_C[3])/3]
+)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A:[0,0,0]; B:[6,9,0]; C:[-3,12,0]; S:[3,6,18];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+U:schwerPunktABC(B,C,S);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+V:schwerPunktABC(A,B,C);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+UV:V-U;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[A,B,C,S,U,V]$ 
+PlottVektor:[U,UV]$
+PLOTT_S(z,"","","","","",-20,25);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(A+B+C)/3;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+die punkte a(12/0/0) und b(-12/0/0) und c(0/c2/0) bilden die Grundfläche eines regelmäßigen tetraedas mit der Spitze d=(d1/d2/d3)
+
+
+a)ermittle die fehlende koordinate c2 mit c2 größer 0
+
+
+b)ermittle die Koordinaten der Spitze D mit d3 größer null
+
+
+c)welche winkel bilden die Seitenflächen dieses Tetraedas? 
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+A:[12,0,0]; B:[-12,0,0]; C:[0,t,0]; D:[dx,dy,dz];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Seitenlänge Sa
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Sa:betragLaenge(A-B);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+betrag CA = Sa
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Cgl:betragLaenge(A-C)-Sa;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Cgl:solve(Cgl,t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+C:ev(C,Cgl[2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Die Spitze eines Tetraeders liegt über dem Schwerpunkt der Grundfläche: gleichseitiges Dreieck
+Fusspunkt (Lot) der Spitze in der Grundfläche Sb
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Sb:(A+B+C)/3;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Damit liegen Dx, Dy entsprechend Sbx, Sby fest
+D muss über Sb liegen - S unterscheidet sich nur in der z Koordinate von Sb
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+D:Sb+[0,0,dz];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+und die Seitenlänge AD muss gleich Sa sein
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+gdz:solve(betragLaenge(A-D)-24,dz);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+D:Sb+[0,0, rhs(gdz[2])];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[A,B,C,Sb,D]$ 
+PlottVektor:[[0,0,0],[0,0,0]]$
+PLOTT_S("","","","","","",-25,25);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+betragLaenge(A-S);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

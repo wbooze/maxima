@@ -1,0 +1,128 @@
+/* file pauli2.mac
+   defrule methods used
+   after commutator has been expanded and
+   scalars, numbers, and %i's have been
+   factored out by commutators.mac.
+   
+   
+   see examples of use at end of file.
+   
+   loads commutators.mac, code written by Robert Dodier.
+   
+    */
+    
+ /* copyright 2010 by Edwin Woollett
+ * I release this work under terms of the GNU General Public License.
+ */
+   
+   
+ load (commutators);
+
+ remove (comm, antisymmetric);  
+
+ declare ([s1, s2, s3, s4], scalar); 
+
+ /* note: nonscalarp (sig[1]) ---> true  */ 
+ 
+  declare (eps3,antisymmetric)$
+  
+  tellsimpafter (eps3[1,2,3], 1)$
+  
+  matchdeclare ([ii,jj,kk],integerp, bb, scalarp )$    
+  
+  defrule (rc01,comm(sig[ii], bb), 0)$
+  
+  defrule (rc02,comm(bb, sig[ii]), 0)$
+ 
+ defrule (rc1, comm (sig[ii], sig[jj]), sum (2*%i*eps3 [ii,jj,kk]*sig[kk],kk,1,3))$
+ 
+ defrule (rp1, sig[ii] . sig[jj], sum ( %i*eps3 [ii,jj,kk]*sig[kk],kk,1,3) )$ 
+ 
+ odd1p(x) := (oddp (x) and x > 1)$
+ 
+ nctimes2p(x) := (nctimesp(x) and length (x) > 2)$
+ 
+ matchdeclare (aa,nctimes2p)$
+ 
+ defrule (rn3, aa, rest (aa,-2) . apply1 (rest (aa,length(aa)-2),rp1 ))$   
+ 
+ 
+ 
+ matchdeclare (aa, nonscalarp,nn,evenp)$
+ 
+ defrule (rn1, aa^^nn, 1)$
+ 
+ matchdeclare (aa, nonscalarp, nn, odd1p)$
+ 
+ defrule (rn2, aa^^nn, aa)$  
+ 
+ matchdeclare (aa,nonscalarp)$
+ 
+ defrule (rn4,aa, apply1 (aa, rn1, rn2, rn3, rp1))$    
+ 
+ 
+ pauli_simp (x) := (comm_simp (x), apply1(%%, rc01, rc02, rc1), apply1 (%%, rn4))$
+ 
+ 
+
+ 
+ 
+/*
+
+
+comm_exp (B,n,C,m) :=  
+
+  sum (sum (B^^(j-1) . C^^(k-1) . comm (B,C) . C^^(m-k) . B^^(n-j),k,1,m),j,1,n)$
+  
+ 
+ rcomm(e,x,y):= 
+        expand (ratsubst (x . y - y . x, comm(x,y),e))$
+ */
+ 
+        
+ /*
+ 
+ 
+ (%i1) load(pauli2);
+(%o1) "c:/work5/pauli2.mac"
+(%i2) comm (sig[2],1);
+(%o2) comm(sig[2],1)
+(%i3) pauli_simp (comm (1, sig[2]));
+(%o3) 0
+(%i4) pauli_simp (comm (sig[2],1));
+(%o4) 0
+(%i5) pauli_simp(comm(sig[1]^^3,sig[3]^^3 + sig[2]^^3));
+(%o5) 2*%i*sig[3]-2*%i*sig[2]
+(%i6) pauli_simp(comm(sig[1]^^2,sig[3]^^3 + sig[2]^^3));
+(%o6) 0
+(%i7) pauli_simp(comm(sig[1],sig[3]^^3 + sig[2]^^3));
+(%o7) 2*%i*sig[3]-2*%i*sig[2]
+(%i8) pauli_simp(comm(sig[1],sig[3]^^2 + sig[2]^^3));
+(%o8) 2*%i*sig[3]
+(%i9) pauli_simp(comm(sig[1],sig[3] + sig[2]^^3));
+(%o9) 2*%i*sig[3]-2*%i*sig[2]
+(%i10) pauli_simp(comm(sig[1],sig[3] + sig[2]^^2));
+(%o10) -2*%i*sig[2]
+(%i11) comm (sig[2],%i);
+(%o11) comm(sig[2],%i)
+(%i12) pauli_simp (comm (sig[2],%i));
+(%o12) 0
+(%i13) pauli_simp (comm (%i,sig[2]));
+(%o13) 0
+(%i14) pauli_simp (comm (sig[2],s1));
+(%o14) 0
+(%i15) pauli_simp (comm (s2,sig[2]));
+(%o15) 0
+(%i16) pauli_simp (comm (a2,sig[2]));
+(%o16) comm(a2,sig[2])
+(%i17) pauli_simp(comm(sig[1],sig[3]+sig[2]));
+(%o17) 2*%i*sig[3]-2*%i*sig[2]
+(%i18) pauli_simp(comm(sig[2]+sig[1],sig[3]));
+(%o18) 2*%i*sig[1]-2*%i*sig[2]
+(%i19) pauli_simp(comm(sig[1],sig[3]^^2+sig[2]));
+(%o19) 2*%i*sig[3]
+(%i20) pauli_simp(comm(sig[1],sig[3]^^3+sig[2]));
+(%o20) 2*%i*sig[3]-2*%i*sig[2]
+
+*/
+

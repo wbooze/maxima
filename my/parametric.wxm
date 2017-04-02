@@ -1,0 +1,24 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 13.04.2 ] */
+
+/* [wxMaxima: title   start ]
+Parameters:
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: input   start ] */
+f(t):=(1-t^2)/(1+t^2);
+wxplot2d([parametric, f(t), t, [t, -10, 10]]);
+wxplot2d([parametric, (2*t)/(1+t^2), t, [t, -10, 10]]);
+wxplot2d((1-x^2)/(1+x^2), [x, -10, 10]);
+wxplot2d([parametric, f(t), sin(t), [t, -10, 10]]);
+wxplot2d([parametric, f(t), cos(t), [t, -10, 10]]);
+wxplot2d([parametric, f(t), sin(t)^2, [t, -10, 10]]);
+wxplot2d([parametric, f(t), sin(t^2), [t, -10, 10]]);
+wxplot2d([parametric, f(t^2), t, [t, -10, 10]]);
+wxplot2d([parametric, f(t)^2, t, [t, -10, 10]]);
+wxplot2d([parametric, f(t^2), sin(t), [t, -10, 10]]);
+wxplot2d([parametric, f(t)^2, sin(t), [t, -10, 10]]);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

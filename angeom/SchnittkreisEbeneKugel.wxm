@@ -1,0 +1,149 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load(angeom);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+http://www.cz.j.th.schule.de/html_inc/projekte/informatik/maple/Schnittkreis1.html
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+radius:3;
+M:[2,1,0];
+A:[3,2,1.5]; B:[4,1,1.5]; C:[2,4,-3/2];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+KU:(([x,y,z]-M)^^2-radius^2)[1][1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+E1:A+r*(B-A)+s*(C-A)$ show(E1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+NFE1:normalForm(E1)*2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[A,B,C,M]$
+S_Labels[4]:"M"$ 
+PLOTT_L([KU,NFE1],[],-1.5,7);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Kreismittelpunkt
+Lot von Kugelmittelpunkt M auf die Schnittebene NFE1
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+KM:lotFusspunkt(NFE1,M);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+dM:streckeLaenge(M,KM);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Kr Radius Kreis über Pythagoras
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Kr:sqrt(radius^2-dM^2), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Kreis über die RV der Ebene
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+KG:(s*ERV1(E1)+t*ERV2(E1)).(s*ERV1(E1)+t*ERV2(E1))-Kr^2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+KG:expand(%);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+http://hestia.hs-niederrhein.de/~gkorsch/mserv/mservheiss/m1304/rkurven/kurven.htm
+
+Kreis: X° = M + r·u·cos(t) + r·v·sin(t)·
+M(Mittelpunkt) r(Radius) u,v zueinander orthogonale Vektoren aus der Ebene in der der Kreis liegt
+
+Koordinatendarstellung einer Kugel mit dem Radius r und dem Mittelpunkt M:
+Parameterdarstellung einer Kugel mit dem Radius r um den Ursprung (an Polarkoordinaten denken)
+x =  m + r·[sin(t)·cos(s), sin(t)·sin(s), cos(t)]
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+uv:ERV1(E1); vv:+ERV1(E1)+r*ERV2(E1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ rv:solve(uv.vv,r);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vv:ev(vv, rv); (uv.vv);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Kt:KM+Kr*uv/betragLaenge(uv)*cos(t)+Kr*vv/betragLaenge(vv)*sin(t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S_Qvox:16$ PLOTT_L([KU,NFE1],[Kt],-1.5,6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+KU:(x+2)^2+(y+2)^2+(z+1)^2-9; M:[-2,-2,-1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+NFE1:2*x+y-5*z+16;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Kreismittelpunkt
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+KM:lotFusspunkt(NFE1,M), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Radius Schnittkreis
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Kr:sqrt(3^2-streckeLaenge(M,KM)^2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Orthogonale Ebenen-Vektoren
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+E1:paramForm(NFE1,r,s)$
+uv:ERV1(E1);
+vv:+ERV1(E1)+r*ERV2(E1)$
+rv:solve(uv.vv,r)$
+vv:ev(vv, rv);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Kreis: M + r*u*cos(t) + r*v*sin(t)
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Kt:KM+Kr*uv/betragLaenge(uv)*cos(t)+Kr*vv/betragLaenge(vv)*sin(t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_L([KU,NFE1],[Kt],-5,2);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

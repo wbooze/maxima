@@ -1,0 +1,28 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 0.8.2 ] */
+
+/* [wxMaxima: input   start ] */
+load(angeom);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+P:[4,2,-3];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Dx(a):=matrix([1,0,0],[0,cos(a),-sin(a)],[0,sin(a),cos(a)]);
+Dy(a):=matrix([cos(a),0,sin(a)],[0,1,0],[-sin(a),0,cos(a)]);
+Dz(a):=matrix([cos(a),-sin(a),0],[sin(a),cos(a),0],[0,0,1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Py30:m2l(float(Dy(30).P));
+Pz60:m2l(float(Dz(60).Py30));
+(Dy(30/180*%pi));
+(Dz(60/180*%pi));
+Dy(30/180*%pi).Dz(60/180*%pi);
+O:[P,Py30,Pz60]$ PLOTT_L([],[],-10,10)$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

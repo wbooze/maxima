@@ -1,0 +1,160 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load("angeom");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: title   start ]
+Abstandsbestimmung Punkt - Gerade
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: comment start ]
+Ermitteln des Lotpunktes von einem Punkt auf eine Gerade 
+und Bestimmung des Abstandes Punkt - Gerade
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+P:[2,3,3];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gt:[-1,2,-2]+t*[1,2,0]$ show(gt);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wx_Vrot:94$ wx_Hrot:193$ O:[P]$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_wx("","",z,gt,"","",-5,5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Lösung über Normalform einer Ebene:
+Eine Ebene durch P mit dem Richtungsvektor der Gerden als NomalenVektor steht
+senkrecht zur Geraden:
+NF: n.([x,y,z]-P)=0
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+NFErs:GRV(gt).([x,y,z]-P);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Den Schnittpunkt der Geraden mit der Ebene NFErs, den Lotfusspunkt, 
+erhalten Sie durch Einsetzen der Geraden in die Normalform-Gleichung:
+n.([x,y,z]-P)
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+gls:GRV(gt).(gt-P);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsg:solve(gls,t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Fp:ev(gt,lsg);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Und damit den Abstand wieder als Betrag des Vektors FpP
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+d:((Fp-P).(Fp-P))/sqrt((Fp-P).(Fp-P));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[P,Fp]; PlottVektor3:[P,Fp-P];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wx_Vrot:86$ wx_Hrot:292$PLOTT_wx(NFErs,"","",gt,"","",-4,5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Kontrolle der Berechnung mit der angeom-Funktion:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+abstandPunktGerade(P,gt);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Ein Weg, umständlich führt aber auch zum Ziel
+he: Hilfsebene aufgespannt zwischen P und gt
+Einen RV nehmen Sie aus der Geraden und einen RV bilden Sie 
+aus dem Vektor vom Ortsvektor der Geraden zum Punkt P:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+he:gt+s*(GOV(gt)-P)$ °he;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_wx("",normalForm(he),"",gt,"","",-5,5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+nh: Normalenvektor Senkrecht zu he
+aus Richtungsvektor und Vektor vom Ortsvektor zu P
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+nh:GRV(gt)><(GOV(gt)-P);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+she: senkrechte Hilfsebene zu gt in P  
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+she:P+k*GRV(gt)+h*nh$ °she;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_wx(normalForm(she),normalForm(he),"",gt,"","",-5,5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+gh: Eine Gerade durch P senkrecht zu she muss die Gerade gt auch senkrecht treffen,
+Richtungsvektor ist der Normalenvektor zu she:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+gh:P+h*(GRV(gt)><nh)$ show(gh);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_wx(normalForm(she),normalForm(he),"",gt,gh,"",-5,5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Berechne den Schnittpunkt Fg von gh mit gt, Lot von P auf gt = LotFusspunkt Fg:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+gls:solve(gt-gh,[t,h]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Fg:F(gh,[h aus gls]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Der Abstand ist der Betrag, die Länge, des Vektors Fg-P:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+d:((Fg-P).(Fg-P))/sqrt((Fg-P).(Fg-P));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+float(%), numer;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

@@ -1,0 +1,104 @@
+
+
+/* qcd1.mac 
+    basic qcd stuff.
+    
+    april 16, 2011  
+    Edwin L. Woollett
+    woollett@charter.net
+    http://www.csulb.edu/~woollett
+    
+      */
+    
+
+  
+  I3 : ident(3)$
+  
+  Z3 : zeromatrix (3,3)$
+  
+  CZ3 : matrix ( [0],[0],[0] )$
+  
+  /* Gell-Mann lambda matrices  */
+
+ lam[1] : matrix ([0,1,0],[1,0,0],[0,0,0]);
+ 
+ lam[2] : matrix ([0,-%i,0],[%i,0,0],[0,0,0]);
+ 
+ lam[3] : matrix ([1,0,0],[0,-1,0],[0,0,0]);
+ 
+ lam[4] : matrix ([0,0,1],[0,0,0],[1,0,0]);
+ 
+ lam[5] : matrix ([0,0,-%i],[0,0,0],[%i,0,0]);
+ 
+ lam[6] : matrix ([0,0,0],[0,0,1],[0,1,0]);
+ 
+ lam[7] : matrix ([0,0,0],[0,0,-%i],[0,%i,0]);
+ 
+ lam[8] : matrix ([1/sqrt(3),0,0],[0,1/sqrt(3),0],[0,0,-2/sqrt(3)])$
+ 
+ /* the eight 3 x 3 matrices T[a] are the generators of
+           the SU(3)-color group */
+ 
+ 
+ for a thru 8 do T[a] : lam[a]/2 $
+ 
+ /*
+ (%i1) load(qcd1);
+(%o1) "c:/work5/qcd1.mac"
+(%i2) time(%);
+(%o2) [2.11]
+(%i3) mat_trace(T[1] . T[1]);
+(%o3) 1/2
+(%i4) mat_trace(T[1] . T[2]);
+(%o4) 0
+(%i5) sum (sum ( mat_trace (T[a] . T[b])^2,b,1,8),a,1,8);
+(%o5) 2
+*/
+
+ 
+ 
+ /* define the real completely antisymmetric SU(3) structure constants as an array
+    f[a,b,c] and the real completely symmetric structure constants d[a,b,c].
+    See Field p.350, Gastmans/Wu p.11, and Barger/Phillips, p. 557  */
+    
+ 
+ block ([fd1,fd2],
+ for a thru 8 do
+   for b thru 8 do
+     for c thru 8 do (
+       fd1 : mat_trace (T[a] . T[b] . T[c]),
+       fd2 : mat_trace (T[b] . T[a] . T[c]),
+       f[a,b,c] : expand (-2*%i*(fd1 - fd2)) 
+       /* , d[a,b,c] : expand (2*(fd1 + fd2)) */ ))$
+       
+       
+ 
+ 
+ /*********************************************************/
+ 
+  /* complex conjugation for expressions containg %i's and real numbers */
+
+ conj(_e%) := subst (-%i,%i,_e%)$
+ 
+     /********** absolute value squared ********************/
+    
+    Avsq(_e%) := expand (_e%*conj (_e%))$
+
+
+   /******** hermitian conjugate of a matrix ***********/
+
+  /* hc (_MM%) := transpose ( conj (_MM%)), */
+  
+    hc (_MM%) := (conj (_MM%), transpose (%%))$
+      
+   /***********  commutator of two matrices  *************/
+
+  comm (_M1%,_M2%) := _M1% . _M2% - _M2% . _M1% $
+  
+  
+  /*********** anticommutator of two matrices   ************/
+  
+   acomm (_M1%,_M2%) := _M1% . _M2% + _M2% . _M1% $
+   
+   
+   

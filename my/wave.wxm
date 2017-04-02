@@ -1,0 +1,29 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.04.0 ] */
+
+/* [wxMaxima: input   start ] */
+load(mbe1util)$
+load(draw)$
+load(integer_sequence)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+multiplot_mode(none)$
+gnuplot_replot("unset font")$
+gnuplot_replot("unset multiplot")$
+kill(t); v:1$ A:1$ k:10$ psi(x,t):= A*sin(k*(x-v*t));
+moving_wave_profile(n):= with_slider_draw(t, t:-n .. 0.5 ..n, explicit(psi(x,t),x,-n,n))$
+moving_wave_profile(5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+multiplot_mode(none)$
+gnuplot_replot("unset font")$
+gnuplot_replot("unset multiplot")$
+kill(t); v:1$ A:1$ k:1$ psi(x,t):= A*sin(k*(x-v*t));
+moving_wave_profile(n):= with_slider_draw(t, t:-n .. 0.5 ..n, explicit(psi(x,t),x,-n,n))$
+moving_wave_profile(5);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

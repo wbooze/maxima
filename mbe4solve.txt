@@ -1,0 +1,616 @@
+file mbe4solve.txt
+e. woollett, april, 08
+cut and paste code for
+Maxima by Example: Ch. 4,
+  Solving Equations
+available for download at
+http://www.csulb.edu/~woollett
+
+4.1 One Equation or Expression: Symbolic Solution or Roots
+==================================
+
+4.1.1 The Maxima Function solve
+-------------------------------
+(%i1) f(x);
+(%i2) solve( f(x)^2-1 , x );
+
+(%i1) apropos(solve);
+(%i2) describe(solveradcan)$
+(%i3) describe(solvetrigwarn)$
+
+4.1.2 solve with Expressions or Functions & the multiplicities List
+----------------------------------
+(%i1) multiplicities;
+(%i2) ex1 : x^2 - 2*x + 1;
+(%i3) factor(ex1);
+(%i4) g(x) := x^2 - 2*x + 1$
+(%i5) g(y);
+(%i6) solve(ex1);
+(%i7) multiplicities;
+(%i8) solve(g(y));
+(%i9) multiplicities;
+(%i10) realroots(ex1);
+(%i11) multiplicities;
+(%i12) allroots(ex1);
+(%i13) multiplicities;
+
+(%i1) multiplicities;
+(%i2) allroots(x^2 - 2*x + 1);
+(%i3) multiplicities;
+
+4.1.3 General Quadratic Equation or Function
+--------------------------------------
+(%i1) f(x) := a*x^2 + b*x + c$
+(%i2) f(y);
+(%i3) sol : solve( f(x) );
+(%i4) sol : solve( f(x),x );
+
+4.1.4 Checking Solutions with subst or ev and a "Do Loop"
+------------------------------------
+(%i5) s1 : sol[1];
+(%i6) r1 : subst(s1, f(x) );
+(%i7) expand(r1);
+(%i8) for i:1 thru 2 do disp( expand( subst( sol[i], f(x) ) ) )$
+(%i9) for i:1 thru 2 do disp( expand( ev(f(x), sol[i]) ))$
+
+4.1.5 The One Argument Form of solve
+--------------------------------------
+(%i10) solve(3*x -2);
+(%i11) (a:1, b:2, c:3)$
+(%i12) [a,b,c];
+(%i13) solve(a*x^2 + b*x + c);
+(%i14) [a,b,c] : [4,5,6];
+(%i15) solve(a*x^2 + b*x + c);
+
+4.1.6 Using disp, display, and print
+------------------------------------
+(%i16) [a,b,c] : [4,5,6];
+(%i17) [a,b,c];
+(%i18) f(x);
+(%i19) kill(a,b,c);
+(%i20) [a,b,c];
+(%i21) f(x);
+(%i22) sol;
+(%i23) for i:1 thru 2 do print("expr = ", expand( subst(sol[i],f(x) ) ) )$
+(%i24) ( disp("check roots"), for i thru 2 do
+               print("expr = ", expand( subst( sol[i],f(x) ) ) )  )$
+
+4.1.4 Checking Solutions using map
+----------------------------------
+(%i25) solnlist : map( rhs, sol );
+(%i26) map( f, solnlist );
+(%i27) expand(%);
+(%i28) expand( map(f, map(rhs, sol) ) );
+
+4.1.8 Psuedo-PostFix Code: %%
+----------------------------------
+(%i29) ( map(rhs,sol), map(f,%%), expand(%%) );
+
+4.1.9 Using an Expression Rather than a Function with Solve
+----------------------------------
+(%i1) ex : a*x^2 + b*x + c$
+(%i2) sol : solve( ex, x );
+(%i3) s1 : sol[1];
+(%i4) r1 : subst(s1, ex );
+(%i5) expand(r1);
+(%i6) for i:1 thru 2 do disp( expand( subst( sol[i], ex ) ) )$
+(%i7) [a,b,c] : [1,2,3]$
+(%i8) [a,b,c];
+(%i9) ex;
+(%i10) ''ex;
+(%i11) ex;
+(%i12) f(x);
+(%i13) f(x) := ex;
+(%i14) f(y);
+(%i15) f(x) := ''ex;
+(%i16) f(y);
+(%i17) kill(a,b,c);
+(%i18) f(y);
+(%i19) solnlist : map(rhs,sol);
+(%i20) map(f,solnlist);
+(%i21) expand(%);
+
+(%i1) ex : a*x^2 + b*x + c$
+(%i2) sol : solve( ex, x );
+(%i3) f(x) := ''ex$
+(%i4) expand ( map(f, map(rhs, sol) ) ); 
+(%i5) define( f(x),ex );
+(%i6) f(y);
+(%i7) expand ( map(f, map(rhs, sol) ) );
+(%i8) expand( map(lambda([x],''ex), map(rhs,sol) ) );
+
+4.1.10 Escape Speed from the Earth
+------------------------------------
+(%i1) energy : m*v^2/2 - G*M*m/r;
+(%i2) e0 : energy,v=v0,r=R;
+(%i3) efinal : limit(energy,r,inf),v=vf;
+(%i4) v0soln : solve(efinal = e0,v0);
+(%i5) v0soln : v0soln[2];
+(%i6) v0;
+(%i7) v0 : rhs( v0soln );
+(%i8) vescape : ev( v0, vf = 0 );
+(%i09) ev( vescape, [G=6.673e-11,M=5.974e24,R=6.378e6] );
+(%i10) float(%);
+(%i11) clist : [G=6.673e-11,M=5.974e24,R=6.378e6];
+(%i12) ev( vescape, clist, float );
+(%i13) fpprintprec:8$
+(%i14) ev( vescape, clist, float );
+(%i15) clist;
+4.1.11 Cubic Equation or Expression
+------------------------------------
+(%i1) ex : x^3 + x^2 + x$
+(%i2) sol : solve(ex);
+(%i3) define( f(x), ex )$
+(%i4) expand ( map(f, map(rhs, sol) ) );
+(%i5) [x1,x2,x3] : map(rhs,sol);
+(%i6) x1;
+
+4.1.12 Trigonometric Equation or Expression
+---------------------------------------
+(%i1) [fpprintprec:8,display2d:false]$
+(%i2) ex : sin(x)^2 -2*sin(x) -3$
+(%i3) sol : solve(ex);
+(%i4) define( f(x), ex )$ 
+(%i5) expand ( map(f, map(rhs, sol) ) );
+(%i6) numroots : float( map(rhs, sol) );
+(%i7) rr : realroots(ex);
+(%i8) map(solve, rr);
+(%i18) plot2d([0.0,ex3],[x,-6,6],[y,-5,5] )$
+
+4.1.13 Equation or Expression Containing Logarithmic Functions
+---------------------------------------------
+(%i1) [fpprintprec:8,display2d:false,ratprint:false]$
+(%i2) ex : log(0.25*(2*x+5)) - 0.5*log(5*x - 5)$
+(%i3) sol : solve(ex,x),solveradcan;
+(%i4) ex : fullratsimp(ex);
+(%i5) ex : logcontract(ex);
+(%i6) sol : solve(ex );
+(%i7) define( f(x), ex )$ 
+(%i8) expand( map(f, map(rhs,sol) ) );
+
+
+4.2 One Equation Numerical Solutions: allroots, realroots, find_root
+===================================================
+
+(%i1) fpprintprec:8$
+(%i2) [multiplicities,rootsepsilon,programmode];
+(%i3) polyfactor;
+
+4.2.1 Comparison of realroots with allroots
+------------------------------------------
+(%i4) ex : x^5 + x^4 -4*x^3 +2*x^2 -3*x -7$
+(%i5) define( fex(x), ex )$ 
+(%i6) rr : float( map(rhs, realroots(ex,1e-20) ) );
+(%i7) frr : map( fex, rr );
+(%i8) ar1 : map(rhs, allroots( ex ) );
+(%i9) far1 : expand( map( fex, ar1 ) );
+(%i10) ar2 : map(rhs, allroots( %i*ex ) );
+(%i11) far2 : expand( map( fex, ar2 ) );
+(%i12) far2 - far1;
+
+4.2.2 Intersection Points of Two Polynomials
+--------------------------------------------
+(%i1) fpprintprec : 8$
+(%i2) hx : x^3 - 8*x^2 + 19*x - 12$
+(%i3) kx : x^2/2 -x -1/8$
+(%i4) rx : hx - kx;
+(%i5) factor(rx);
+(%i6) define( fr(x), rx )$ 
+(%i7) allroots(rx);
+(%i8) rr : float( realroots(rx) );
+(%i9) rr : map( rhs, rr);
+(%i10) map(fr, rr);
+(%i11) display2d : false$
+(%i12) sx : solve(rx);
+(%i13) sx1 : map(rhs, sx);
+(%i14) sx2 : rectform(sx1);
+(%i15) sx3 : trigsimp(sx2);
+(%i16) sx4 : float(sx3);
+(%i17) float( map(fr, sx3) );
+(%i18) float( expand( map(fr, sx3) ) );
+(%i19) float( trigsimp( expand( map(fr, sx3) ) ) );
+(%i20) plot2d([hx,kx,rx],[x,0,5],
+        [style, [lines,2,1], [lines,2,2], [lines,2,0] ],
+           [legend, "hx", "kx", "rx=hx - rx"],
+        [gnuplot_preamble, " set xzeroaxis lw 2 "])$
+
+4.2.3 Transcendental Equations and Roots: find_root		
+-------------------------------------
+(%i1) fpprintprec:8$
+(%i2) plot2d( x - cos(x), [ x, 0, 1 ],
+              [style,  [lines, 4, 1] ],
+               [xlabel," plot of x - cos(x) "],
+            [gnuplot_preamble, "set nokey; set xzeroaxis lw 2 "] )$
+(%i3) find_root( x - cos(x),x, 0, 1);
+(%i4) ex : x - cos(x)$
+(%i5) [find_root( ex, x, 0, 1),find_root( ex, 0, 1)];
+(%i6) define( f(x), ex )$ 
+(%i7) [find_root(f(x), x, 0, 1), find_root(f(x), 0, 1),
+          find_root(f, 0, 1), find_root(f, x, 0, 1)];
+(%i8) ev(ex, x = first(%) );
+
+% eps file plot
+% plot2d( [0.0, x - cos(x)],[x,-5,5],
+%              [style, [lines,4,4], [lines,4,1] ],
+%               [xlabel," plot of x - cos(x) "],
+%            [gnuplot_preamble, "set nokey; set yzeroaxis lw 4  "],
+%             [gnuplot_term,ps], [gnuplot_out_file,"c:/work2/trans1.eps"])$
+%
+
+  % eps file plot for second example f(x)			
+%      plot2d( [0.0, f(x)],[x,0,5],
+%              [style, [lines,4,4], [lines,4,1] ],
+%               [xlabel," plot of f(x) "],
+%            [gnuplot_preamble, "set nokey "],
+%             [gnuplot_term,ps], [gnuplot_out_file,"c:/work2/trans2.eps"])$
+
+
+(%i1) fpprintprec:8$
+(%i2) f(x):= cos(x/%pi)*exp(-(x/4)^2) - sin(x^(3/2)) - 5/4$
+(%i3) plot2d(  f(x),[x,0,5],
+              [style,  [lines,4,1] ],
+               [xlabel," plot of f(x) "],[ylabel," "],
+            [gnuplot_preamble, "set nokey; set xzeroaxis lw 2 "] )$
+(%i4) [find_root(f,2.5,2.6), find_root(f, x, 2.5, 2.6),
+          find_root(f(x),x,2.5,2.6), find_root(f(y),y,2.5,2.6)];
+(%i5) [x1 : find_root(f,2.5,2.6),x2 : find_root(f, 2.9, 3.0 )];
+(%i6) float( map(f, [x1,x2] ) );
+
+4.2.4 find_root: Quote that Function!
+--------------------------------------------
+(%i1) fpprintprec:8$
+(%i2) find_root(diff(cos(2*x)*sin(3*x)/(1+x^2),x), x, 0, 0.5);
+(%i3) ex : trigsimp( diff(cos(2*x)*sin(3*x)/(1+x^2),x) );
+(%i4) plot2d([0.0,ex],[x,-3,3])$
+(%i5) find_root(ex,x,0,0.5);
+(%i6) ex1 :  'diff(cos(2*x)*sin(3*x)/(1+x^2),x);
+(%i7) find_root(ev(ex1,diff),x,0,0.5);
+(%i8) g(x) := 'diff(cos(2*x)*sin(3*x)/(1+x^2),x);
+(%i9) k(x) := ev(g(x),diff);
+(%i10) find_root(k(x),x,0,0.5);
+(%i11) find_root( ev(g(x),diff),x,0,0.5 );
+(%i12) find_root( k, 0, 0.5 );
+(%i13) f(x) := x - cos(x)$
+(%i14) [find_root( f, 0, 1), find_root( 'f, 0, 1),
+          find_root( '(f), 0, 1), find_root( f(x), x, 0, 1),
+             find_root( '( f(x)), 'x, 0, 1),find_root( '( f(x)), x, 0, 1),
+               find_root( 'f(x), x, 0, 1)];
+----------------------------
+(%i1) fpprintprec : 8$
+(%i2) ex : integrate(2*'y,'y,sqrt(5),x);
+(%i3) ex : expand(ex);
+(%i4) define( f(x), ex );
+(%i5) solve( ex );
+(%i6) rr : float( map(rhs,%) );
+(%i7) map(f,rr);
+(%i8) find_root(f,0,4);
+(%i9) g(x) := block([numer,keepfloat,y],
+          numer:true,keepfloat:true,
+          integrate(2*y,y,sqrt(5),x) )$
+(%i10) map(g, [1,2,3]);
+(%i11) map(f, [1,2,3]);
+(%i12) [find_root( g, 1, 4), find_root( g(x),x,1,4),
+         find_root( '(g(x)),'x,1,4 ), find_root( 'g(x),x,1,4 )];
+(%i13) quad_qags(2*'y,'y,sqrt(5),2);
+(%i14) g(2.0);
+(%i15) h(x) := block([numer,keepfloat,y,qlist],
+          numer:true,keepfloat:true,
+          qlist : quad_qags(2*y,y,sqrt(5),x),
+           qlist[1] )$
+(%i16) map(h,[1,2,3]);
+(%i17) map(g,[1,2,3]);
+(%i18) find_root( h(x),x,1,4);
+(%i19) [find_root( h, 1, 4),find_root( '(h(x)),'x,1,4 ),
+        find_root( '(h(x)),x,1,4 ),find_root( 'h(x),x,1,4 )];
+
+4.2.5 newton
+-----------------------------
+(%i1) fpprintprec:8$
+(%i2) load (newton1);
+(%o2) C:/PROGRA~1/MAXIMA~3.0/share/maxima/5.14.0/share/numeric/newton1.mac
+(%i3) newton (cos (u), u, 1, 1/100);
+(%i4) ev (cos (u), u = %);
+(%i5) assume (a > 0);
+(%i6) newton (x^2 - a^2, x, a/2, a^2/100);
+(%i7) ev (x^2 - a^2, x = %);
+(%i8) solve( cos(x) );
+(%i9) float(%);
+(%i10) solve( x^2 - a^2,x );
+
+-------------
+newton(exp,var,x0,eps):=
+    block([xn,s,numer],
+      numer:true,
+      s:diff(exp,var),
+      xn:x0,
+      loop,
+        if abs(subst(xn,var,exp))<eps then return(xn),
+        xn:xn-subst(xn,var,exp)/subst(xn,var,s),
+      go(loop)
+    )$
+-----------------------
+
+4.3 Two or More Equations: Symbolic and Numerical Solutions
+=======================================================
+
+4.3.1 Numerical or Symbolic Linear Equations with solve or linsolve  
+-------------------------------------------------
+(%i1) eqns : [a*x + b*y = c, d*x + e*y = f];
+(%i2) solve(eqns,[x,y]);
+(%i3) soln : linsolve(eqns,[x,y]);
+(%i4) (ev(eqns, soln), ratexpand(%%) );
+-------------------
+(%i1) eqns : [3*x-y=4,x+y=2];
+(%i2) solns : solve(eqns,[x,y]);
+(%i3) soln : solns[1];
+(%i4) for i thru 2 do disp( ev( eqns[i],soln ) )$
+(%i5) linsolve(eqns,[x,y]);
+
+4.3.2 Matrix Methods for Linear Equation Sets: linsolve_by_lu
+------------------------------------	
+(%i6) m : matrix( [3,-1],[1,1] );
+(%i7) display2d:false$
+(%i8) m;
+(%i9) xcol : matrix([x],[y]);
+(%i10) m . xcol;
+(%i11) b : [4,2];
+(%i12) linsolve_by_lu(m,b);
+(%i13) xycol : first(%);
+(%i14) m . xycol - b;
+(%i15) xylist : makelist( xycol[i,1],i,1,length(xycol) );
+(%i16) xyrules : map("=",[x,y],xylist);
+(%i17) (substpart("[",xycol,0), flatten(%%) );
+(%i18) bcol : matrix([4],[2])$
+(%i19) linsolve_by_lu(m,bcol);
+(%i20) m . first(%) - bcol;
+
+4.3.3 Symbolic Linear Equation Solutions: Matrix Methods
+---------------------------------------
+(%i1) display2d:false$
+(%i2) m : matrix( [a,b], [d,e] )$
+(%i3) bcol : matrix( [c], [f] )$
+(%i4) ls : linsolve_by_lu(m,bcol);
+(%i5) xycol : ratsimp( first(ls) );
+(%i6) ( m . xycol - bcol, ratsimp(%%) );
+(%i7) (display2d:true,xycol);
+(%i8) determinant(m);
+
+4.3.4 Multiple Solutions from Multiple Right Hand Sides
+--------------------------------------
+(%i21) display2d:true$
+(%i22) b1col : matrix( [4], [2] );
+(%i23) x1col : first( linsolve_by_lu(m,b1col) );
+(%i24) b2col : matrix( [3], [1] );
+(%i25) x2col : first( linsolve_by_lu(m, b2col) );
+(%i26) bmat : matrix( [4,3], [2,1] );
+(%i27) linsolve_by_lu( m, bmat );
+(%i28) xsolns : first(%);
+(%i29) m . xsolns - bmat;
+(%i30) x1col : col(xsolns,1);
+(%i31) x2col : col(xsolns,2);
+
+4.3.5 Three Linear Equation Example 
+-------------------------------------
+(%i1) eqns : [2*x - 3*y + 4*z = 2, 3*x - 2*y + z = 0,
+                     x + y - z = 1]$
+(%i2) display2d:false$
+(%i3) solns : solve( eqns,[x,y,z] );
+(%i4) soln : solns[1];
+(%i5) for i thru 3 do disp( ev(eqns[i],soln) )$
+(%i6) linsolve(eqns,[x,y,z]);
+(%i7) m : matrix( [2,-3,4],[3,-2,1],[1,1,-1] )$
+(%i8) xcol : matrix( [x],[y],[z] )$
+(%i9) m . xcol;
+(%i10) bcol : matrix( [2],[0],[1] )$
+(%i11) linsolve_by_lu(m,bcol);
+(%i12) xyzcol : first(%);
+(%i13) m . xyzcol - bcol;
+(%i14) xyzlist : makelist( xyzcol[i,1],i,1,length(xyzcol) );
+(%i15) xyzrules : map("=",[x,y,z],xyzlist);
+(%i16) exs : [2*x - 3*y + 4*z - 2, 3*x - 2*y + z ,
+                     x + y - z - 1];
+(%i17) linsolve(exs,[x,y,z]);
+(%i18) solve(exs);
+---------------------------------
+
+(%i1) eqns : [x + z = y,2*a*x - y = 2*a^2,y - 2*z = 2]$
+(%i2) solns : linsolve(eqns,[x,y,z] );
+(%i3) solve(eqns,[x,y,z]);
+(%i4) for i thru 3 do (
+             e: expand( ev(eqns[i],solns) ),disp(lhs(e) - rhs(e)) )$
+(%i5) e;
+(%i6) [kill(e),e];
+(%i7) for i thru 3 do (
+             expand( ev(eqns[i],solns) ),disp(lhs(%%) - rhs(%%)) )$
+(%i8) display2d:false$
+(%i9) m : matrix([1,-1,1],[2*a,-1,0],[0,1,-2] )$
+(%i10) xcol : matrix( [x],[y],[z] )$
+(%i11) m . xcol;
+(%i12) bcol : matrix( [0],[2*a^2], [2] )$
+(%i13) soln : linsolve_by_lu(m,bcol)$
+(%i14) xyzcol : ( first(soln), ratsimp(%%) );
+(%i15) ratsimp( m . xyzcol - bcol);
+
+4.3.6 Surpressing rat Messages: ratprint
+----------------------------------
+(%i1) [keepfloat,ratprint];
+(%i2) display2d:false$
+(%i3) fpprintprec:8$
+(%i4) eqns : [0.2*x + 0.3*y = 3.3,0.1*x - 0.8*y = 6.6]$
+(%i5) solns : solve(eqns, [x,y]);
+(%i6) linsolve(eqns,[x,y]);
+(%i7) m : matrix([0.2,0.3],[0.1,-0.8] )$
+(%i8) bcol : matrix( [3.3], [6.6] )$
+(%i9) linsolve_by_lu(m,bcol);
+(%i10) ratprint:false$
+(%i11) solns : solve(eqns, [x,y]);
+(%i12) linsolve(eqns,[x,y]);
+(%i13) linsolve_by_lu(m,bcol);
+(%i14) float(solns);
+(%i15) linsolve_by_lu(m,bcol, 'floatfield);
+
+4.3.7 Non-Linear Polynomial Equations
+---------------------------------
+(%i1) fpprintprec:8$
+(%i2) eqns : [x^2 + y^2 = 1, x + 3*y = 0]$
+(%i3) solns : solve(eqns,[x,y]);
+(%i4) solns : rootscontract(solns);
+(%i5) for i thru 2 do for j thru 2 do (
+                ev(eqns[i],solns[j]), disp(lhs(%%)-rhs(%%)) )$
+(%i6) float(solns);
+-----------------------
+
+(%i1)  fpprintprec:8$
+(%i2)  eqns : [4*x^2 - y^2 = 12, x*y - x = 2]$
+(%i3)  solns : solve( eqns, [x,y] );
+(%i4) for i thru 2 do for j thru length(solns) do (
+      expand( ev(eqns[i],solns[j]) ),
+      abs( lhs(%%) - rhs(%%) ), disp(%%) )$
+
+4.3.8 General Sets of Nonlinear Equations: eliminate, mnewton
+--------------------------------
+4.3.9 Intersections of Two Circles:  implicit_plot	  
+-----------------------------------
+(%i1) [eq1 : x^2 + y^2 = 1,eq2 : (x-2)^2 + (y-2)^2 = 4]$
+(%i2) eqns : [eq1,eq2]$
+(%i3) load(implicit_plot);
+(%i4) implicit_plot(eqns,[x,-6,6],[y,-6,6],[nticks,200],
+          [gnuplot_preamble, "set zeroaxis" ])$
+(%i5) solve(eq1,y);
+(%i6) ysoln : second(%);
+(%i7) eliminate(eqns,[y]);
+(%i8) xex : solve(first(%));
+(%i9) (fpprintprec:8, xex : float(xex) );
+(%i10) [x1soln : first(xex), x2soln : second(xex) ]$
+(%i11) [ev(%o7,x1soln), ev(%o7,x2soln)];
+(%i12) y1soln : ev(ysoln,x1soln);
+(%i13) y2soln : ev(ysoln,x2soln);
+(%i14) [soln1:[x1soln,y1soln],soln2:[x2soln,y2soln] ]$
+(%i15) [ev(eqns,soln1), ev(eqns,soln2) ];
+(%i16) [soln1,soln2];
+
+4.3.10 Using Draw for Implicit Plots
+------------------------------------
+/* file implicitplot1.mac  */
+/*  need load(implicit_plot);  to use this code  */
+disp(" doplot() ")$
+
+doplot() := block([ x,y, eq1, eq2, y1:-2, y2:4,r, x1 ,x2 ],
+                  r : 1.56,
+                  x1 : r*y1,
+                  x2 : r*y2,
+                  eq1 : x^2 + y^2 = 1,
+              eq2 : (x-2)^2 + (y-2)^2 = 4,
+          draw2d( 
+             grid      = true,
+             line_type = solid,
+             line_width  = 3,
+             color = blue,
+             implicit(eq1, x, x1,x2, y, y1,y2),
+             color = red,
+             implicit(eq2, x, x1,x2, y, y1,y2),
+             color = black,
+             point_type = filled_circle,
+             point_size = 2,
+             points( [ [0.294281,0.955719], [ 0.955719, 0.294281] ] ),
+             title     = "Intersections of Two Circles" ,
+             terminal = 'eps ,
+			  file_name = "c:/work2/mycircle2" )
+         )$
+---------------------------
+(%i1) load(draw);
+(%i2) load(implicitplot1);
+(%i3) doplot();
+
+4.3.11 Another Example
+--------------------------------------
+(%i1) eq1 : x^2 + y^2 = 2;
+(%i2) eq2 : exp(x - 1) + y^3 = 2;
+(%i3) eliminate([eq1,eq2],[y]);
+(%i4) ex : first(%);
+(%i5) plot2d([0.0,ex],[x,-5,5] )$
+(%i6) plot2d([0.0,ex],[x,0,2] )$
+(%i7) x1 : find_root(ex,x,0.5,1.5);
+(%i8) yeqn : ev(eq1,x = x1);
+(%i9) solve(yeqn);
+(%i10) ysol : second(%);
+(%i11) soln1 : [x = x1, ysol];
+(%i12) ev(eq1,soln1);
+(%i13) ev(eq2,soln1);
+------------------
+
+(%i1) load(mnewton);
+(%o1) C:/PROGRA~1/MAXIMA~3.0/share/maxima/5.14.0/share/contrib/mnewton.mac
+(%i2) mnewton([2*a^a-5],[a],[1]);
+(%i3) mnewton([2*3^u-v/u-5, u+2^v-4], [u, v], [2, 2]);
+(%i4) mnewton([x1+3*log(x1)-x2^2, 2*x1^2-x1*x2-5*x1+1],
+              [x1, x2], [5, 5]);
+
+--------------------
+(%i1) fpprintprec:8$
+(%i2) load(mnewton);
+(%i3) exs : [x^2 + y^2 -2, exp(x-1)+y^3-2]$
+(%i4) mn(x0,y0) := mnewton(exs,[x,y],[x0,y0] )$
+(%i5) mn(1.1,0.9);
+(%i6) mn(1.2,0.8);
+(%i7) mn(1.3,0.7);
+(%i8) mn(1.4,0.6);
+(%i9) mn(1.5,0.5);
+(%i10) mn(1.5,0.6);
+(%i11) mn(1.7,0.6);
+(%i12) mn(1.9,0.6);
+(%i13) mn(1.9,0.7);
+(%i14) mn(2,0.7);
+(%i15) mn(0.8,1.1);
+(%i16) mn(0.5,1.2);
+(%i17) mn(0.1,1.2);
+
+4.3.12 Error Messages and Do It Yourself Mnewton
+------------------------------------------
+(%i18) eqns : [x+y=3,x^2+y^2=9]$
+(%i19) mn(x0,y0) := mnewton(eqns,[x,y],[x0,y0] )$
+(%i20) solve(eqns,[x,y]);
+(%i21) mn(1,2);
+(%i22) mn(-1,4);
+(%i23) mn(-2,5);
+(%i24) mn(0,0);
+(%i25) mn(0,1);
+(%i26) mn(2,0);
+
+-----------------------
+(%i1) (fpprintprec:8,ratprint:false)$
+(%i2) g : matrix( [x + y -3],[x^2 + y^2 -9] );
+(%i3) gv : ev(g, x=v[1,1], y=v[2,1] );
+(%i4) define(f(v), gv);
+(%i5) b : matrix([1],[2]);
+(%i6) f(b);
+(%i7) (r1 : g[1,1], r2 : g[2,1] )$
+(%i8) h : matrix( [diff(r1,x), diff(r1,y)],
+               [diff(r2,x), diff(r2,y) ] );
+(%i9) hv : ev(h, x=v[1,1], y=v[2,1] );
+(%i10) define( j(v), hv );
+(%i11) j(b);
+(%i12) ls : linsolve_by_lu(j(b),-f(b) );
+(%i13) s :  first(ls) ;
+(%i14) b : b + s;
+(%i15) b : b + first( linsolve_by_lu(j(b),-f(b) )  );
+(%i16) b : b + first( linsolve_by_lu(j(b),-f(b) )  );
+(%i17) b : b + first( linsolve_by_lu(j(b),-f(b) )  );
+(%i18) b : b + float( first( linsolve_by_lu(j(b),-f(b) )  ) );
+(%i19) f(b);
+(%i20) b : matrix( [0],  [0] );
+(%i21) f(b);
+(%i22) j(b);
+(%i23) ls : linsolve_by_lu(j(b),-f(b) );
+(%i24) determinant(j(b));
+
+
+4.3.13 Automated Code for mymnewton	
+--------------------------------------
+code for mymnewton in text file
+  mymnewton.mac
+
+(%i1) load("mymnewton.mac");
+(%i2) mymnewton([x+y-3, x^2+y^2-9],[1,2], 5)$
+(%i3) mymnewton([x+y-3, x^2+y^2-9],[0,0], 5)$
+

@@ -1,0 +1,1443 @@
+% file fft.tex
+%
+% Maxima by Example, Ch. 11, Fast Fourier Transform Tools
+%   Copyright 2009 by Edwin L. Woollett
+%   I release this file under the terms of the GNU General Public License.
+%
+%   Edwin L Woollett, July,Aug, 2009
+%   woollett@charter.net
+%   http://www.csulb.edu/~woollett
+%   last edit  08-11-09 with Maxima 5.19.0
+%   history: feb 08, april may 08, August 09
+%
+% edit with Notepad++,  http://notepad-plus.sourceforge.net/uk/site.htm ,
+% then load into LED, http://www.latexeditor.org/ ,  for latexing
+% latex by miktex 2.7 , http://miktex.org/ , -->  intro.dvi  
+\documentclass[11pt]{article}
+\usepackage[dvips,top=1.5cm,left=1.5cm,right=1.5cm,foot=1cm,bottom=1.5cm]{geometry}
+\usepackage{times,amsmath,amsbsy,graphicx,fancyvrb,url}
+\usepackage[usenames]{color}
+%\definecolor{MyDarkBlue}{rgb}{0,0.08,0.45}
+\definecolor{mdb}{rgb}{0.1,0,0.55}
+\newcommand{\tcdb}{\textcolor{mdb}}
+\newcommand{\tcbr}{\textcolor{BrickRed}}
+\newcommand{\tcb}{\textcolor{blue}}
+\newcommand{\tcr}{\textcolor{red}}
+\urldef\tedhome\url{ http://www.csulb.edu/~woollett/  }
+\urldef\tedmail\url{ woollett@charter.net}
+%1.  this is for maxima code: red framed bold, footnotesize 
+\DefineVerbatimEnvironment%
+   {myVerbatim}%
+   {Verbatim}%
+   {fontfamily=courier,fontseries=b,fontsize=\footnotesize ,frame=single,rulecolor=\color{BrickRed}}
+\DefineVerbatimEnvironment%
+   {myVerbatim1}%
+   {Verbatim}%
+   {fontfamily=courier,fontseries=b,fontsize=\scriptsize ,frame=single,rulecolor=\color{BrickRed}}
+%2.  this is for blue framed bold 
+\DefineVerbatimEnvironment%
+   {myVerbatim2}%
+   {Verbatim}%
+   {fontfamily=courier,fontseries=b,frame=single,rulecolor=\color{blue}}
+\DefineVerbatimEnvironment%
+   {myVerbatim2s}%
+   {Verbatim}%
+   {fontfamily=courier,fontseries=b,fontsize=\small,frame=single,rulecolor=\color{blue}}
+\DefineVerbatimEnvironment%
+   {myVerbatim2f}%
+   {Verbatim}%
+   {fontfamily=courier,fontseries=b,fontsize=\footnotesize,frame=single,rulecolor=\color{blue}}
+% 3.  this is for black framed  bold
+\DefineVerbatimEnvironment%
+   {myVerbatim3}%
+   {Verbatim}%
+   {fontfamily= courier, fontseries=b, frame=single}
+% 4.  this is for no frame bold
+\DefineVerbatimEnvironment%
+   {myVerbatim4}%
+   {Verbatim}%
+   {fontfamily=courier, fontseries=b}
+% 6.  for defaults use usual verbatim
+\newcommand{\mv}{\Verb[fontfamily=courier,fontseries=b]}
+\newcommand{\mvs}{\Verb[fontfamily=courier,fontseries=b,fontsize=\small]}
+\newcommand{\mvf}{\Verb[fontfamily=courier,fontseries=b,fontsize=\footnotesize]}
+
+\renewcommand{\thefootnote}{\ensuremath{\fnsymbol{footnote}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   title page
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{ Maxima by Example:\\ Ch.11: Fast Fourier Transform Tools
+            \thanks{This is a live document. This version uses \textbf{Maxima 5.19.0}.
+			 Check \; \textbf{ \tedhome } \; for the latest version of these notes. Send comments and
+			 suggestions for improvements to \textbf{\tedmail} } }
+
+
+\author{Edwin L. Woollett}
+\date{\today}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%          document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%
+%\small
+\maketitle
+\tableofcontents
+\numberwithin{equation}{section}
+\newpage
+\subsubsection*{Preface}
+\begin{myVerbatim2s} 
+COPYING AND DISTRIBUTION POLICY    
+This document is part of a series of notes titled
+"Maxima by Example" and is made available
+via the author's webpage http://www.csulb.edu/~woollett/
+to aid new users of the Maxima computer algebra system.	
+	
+NON-PROFIT PRINTING AND DISTRIBUTION IS PERMITTED.
+	
+You may make copies of this document and distribute them
+to others as long as you charge no more than the costs of printing.	
+
+These notes (with some modifications) will be published in book form
+eventually via Lulu.com in an arrangement which will continue
+to allow unlimited free download of the pdf files as well as the option
+of ordering a low cost paperbound version of these notes.
+\end{myVerbatim2s}	
+\smallskip
+\noindent \tcbr{Feedback from readers is the best way for this series of notes
+  to become more helpful to new users of Maxima}.
+\tcdb{\emph{All} comments and suggestions for improvements will be appreciated and
+  carefully considered}.
+\smallskip
+\begin{myVerbatim2s}
+LOADING FILES
+The defaults allow you to use the brief version load(fft) to load in the
+Maxima file fft.lisp.
+To load in your own file, such as qfft.mac (used in this chapter),
+using the brief version load(qfft), you either need to place 
+qfft.mac in one of the folders Maxima searches by default, or
+else put a line like:
+  
+file_search_maxima : append(["c:/work3/###.{mac,mc}"],file_search_maxima )$
+  
+in your personal startup file maxima-init.mac (see Ch. 1, Introduction
+to Maxima for more information about this).
+
+Otherwise you need to provide a complete path in double quotes,
+as in load("c:/work3/qfft.mac"),
+ 
+We always use the brief load version in our examples, which are generated 
+using the Xmaxima graphics interface on a Windows XP computer, and copied
+into a fancy verbatim environment in a latex file which uses the fancyvrb
+and color packages.
+\end{myVerbatim2s} 
+\smallskip
+\begin{myVerbatim2s}
+  Maxima, a Computer Algebra System.
+  Version 5.19.0 (2009) using Lisp GNU Common Lisp (GCL) GCL 2.6.8 
+  (aka GCL).  http://maxima.sourceforge.net/
+\end{myVerbatim2s}   
+\small
+The homemade function \mv|fll(x)| (first, last, length) is used to return the first and last
+  elements of lists (as well as the length), and is defined in the Ch.1 utility
+  file  \mv|mbe1util.mac|. We will include a reference to this definition when working with lists.\\
+  
+\noindent This function is defined by:
+\begin{myVerbatim2s}
+fll(x) := [first(x),last(x),length(x)]$
+declare(fll,evfun)$
+\end{myVerbatim2s}
+The author would like to thank the Maxima developers for their friendly help via 
+  the Maxima mailing list.
+\normalsize
+\newpage
+\setcounter{section}{11}
+\pagestyle{headings}
+\subsection{Examples of the Use of the Fast Fourier Transform Functions \textbf{fft} and \textbf{inverse\_fft}}
+We discuss the use of Maxima's fast Fourier transform package
+  \mv|fft.lisp|, which has been rewritten (effective with version 5.19)
+  to allow list input and output (rather than being restricted to array input 
+  and output).\\
+  
+\noindent We first present five simple examples of using Maxima's fast Fourier
+  transform functions \textbf{fft} and \textbf{inverse\_fft}.
+We then discuss our notation and the utility functions available in the Ch.11
+  file \textbf{qfft.mac}.
+We then present a derivation of the discrete Fourier transformation pairs, using
+  Maxima's conventions.
+\subsubsection{Example 1: FFT Spectrum of a Monochromatic Signal}    
+We load in the Maxima package \mv|fft.lisp| and also
+  our own package \mv|qfft.mac|.
+\begin{myVerbatim}
+(%i1) load(fft);
+(%o1)  C:/PROGRA~1/MA89DF~1.0/share/maxima/5.19.0/share/numeric/fft.lisp
+(%i2) load(qfft);
+(%o2)                          c:/work3/qfft.mac
+\end{myVerbatim}
+Our first example uses the simplest possible signal which still contains some
+  information, a signal having one intrinsic frequency.  
+We assume the signal is  $\mathbf{F(t) = \boldsymbol{\cos(6\,\pi \,t)}}$.
+This signal has an \textcolor{blue}{angular frequency} $\mathbf{\boldsymbol{\omega = 6\,\pi = 2\,\pi \,f}}$
+  where $\mathbf{f}$ is the \tcbr{frequency} in Hertz (ie., in $\mathbf{sec^{-1}}$).
+Thus the frequency $\mathbf{f = 3 \,sec^{-1}}$.
+We bind the symbol \textbf{e} to this signal expression for later use:
+\begin{myVerbatim}
+(%i3) e : cos ( 6*%pi*t )$
+\end{myVerbatim}  
+Let \mv|ns| be the (\tcb{even}) number of function samples, and \mv|fs| be the
+  \tcbr{sampling frequency}.\\
+  
+\noindent The \textbf{qfft} package function \textbf{nyquist(ns, fs)} computes
+  the \tcb{time interval} between signal samples \mv|dt = 1/fs|, 
+  the \tcbr{Nyquist integer} \, \mv|knyq = ns/2|,
+  the \tcb{frequency resolution} \mv|df = fs/ns|, 
+  and the \tcbr{Nyquist frequency}\\
+  \mv|fnyq = knyq * df = fs/2|.\\
+  
+\noindent The product of the \tcbr{time interval} \mv|dt| between samples of the signal 
+  and the \tcb{frequency resolution} \mv|df| is always the inverse of the total number of
+  signal samples \mv|ns|:
+\begin{myVerbatim2}
+            dt * df = 1 / ns
+\end{myVerbatim2} 
+We select \mv|fs| and \mv|ns| to satisfy \tcbr{two conditions}.
+The only intrinsic frequency of the signal is $\mathbf{f0 = 3 \,s^{-1}}$.
+\textbf{First} we need $\mathbf{fs > 2\,f0}$ which means that $\mathbf{fs > 6\,s^{-1}}$.
+\textbf{Secondly} we need the frequency resolution \mv|df| to satisfy
+$\mathbf{df < f0}$, which will be satisfied if we choose \mv|df| such that 
+  $\mathbf{f0 = 3 \, df}$, or \mv|df = 1 hertz|.
+But then \mv|df = fs / ns = 1|, or \mv|fs = ns|, so the
+  first condition becomes $\mathbf{ns > 6}$, but we also need
+  \mv|ns| to be an even number of the form $\mathbf{2^{m}}$ for some
+  integer $\mathbf{m}$,  so we choose \mv|ns = 8|.\\
+
+\noindent We then bind both \mv|ns| and \mv|fs| to the value \mv|8|
+  and assign \mv|dt| (the sampling interval) to the first element of
+  the list produced by the package function \mv|nyquist( ns, fs )|, which
+   also prints out \mv|dt|, \mv|knyq|, \mv|fnyq|, and \mv|df|.
+\begin{myVerbatim}
+(%i4) ( ns : 8, fs : 8 )$
+(%i5) dt : first (nyquist (ns,fs));
+sampling interval dt =  0.125 
+Nyquist integer knyq =  4 
+Nyquist freq fnyq =  4.0 
+freq resolution df =  1.0 
+(%o5)                                0.125
+\end{myVerbatim} 
+\newpage
+\noindent We then use the package function \mv|sample(expr, var, ns, dvar)| to generate a list of floating
+  point numbers as the expression \mv|expr| is evaluated \mv|ns| times, generating
+  the list (with \mv|dvar| being the time step \mv|dt| here)\\
+  \mvs|[F(0),F(dt),F(2*dt),...,F((ns-1)*dt )]| holding the values
+  \mvs|F(m*dt)|, for \mvs|m = 0,1,2,...,ns-1|.
+More details of the syntax of the \mv|qfft.mac| package functions can
+  be found in  Section \ref{syntax}. 
+Recall that we have just bound \mv|ns| and \mv|dt| to numerical values
+  and that the expression \mv|e| depends on the variable \mv|t|. 
+\begin{myVerbatim}
+(%i6) flist : sample (e,t,ns,dt);
+(%o6) [1.0, - 0.707, - 1.83691E-16, 0.707, - 1.0, 0.707, 5.51073E-16, - 0.707]
+\end{myVerbatim}
+We see that elements three, \mv| F(2*dt)|, and seven, \mv| F(6*dt)|, are tiny 
+  numbers of the order of the default floating point errors, and are 
+  numerically equivalent to zero.\\
+ 
+\noindent We first make a plot of \textbf{both} the given function (the signal) 
+  and a list of points \mv|[m*dt, F(m*dt)]| constructed using the package function \mv|vf (flist, dt)|.
+Recall that the signal is first sampled at \mv|t = 0|.
+\begin{myVerbatim}
+(%i7) tflist : vf (flist,dt);
+(%o7) [[0, 1.0], [0.125, - 0.707], [0.25, - 1.83691E-16], [0.375, 0.707], 
+           [0.5, - 1.0], [0.625, 0.707], [0.75, 5.51073E-16], [0.875, - 0.707]]
+\end{myVerbatim}
+We let \mv|tmax| be the ``sampling time'', the number of signal samples
+  times the time interval between samples.
+\begin{myVerbatim}
+(%i8) tmax : ns*dt;
+(%o8)                                 1.0
+(%i9) plot2d([e ,[discrete,tflist]], [t,0,tmax],
+             [style,[lines,3],[points,3,2,1]],
+              [legend,false])$
+\end{myVerbatim}
+%\newpage
+%\noindent The resulting plot looks like:
+\smallskip
+\begin{figure} [h]  
+   \centerline{\includegraphics[scale=.8]{ch11p1.eps} }
+	\caption{ $\mathbf{F(t) = \boldsymbol{\cos(6\,\pi \,t)}}$ with Sample Points }
+\end{figure} 
+
+%plot2d([e ,[discrete,tflist]], [t,0,tmax],
+%             [style,[lines,5],[points,4,2,1]],
+%              [gnuplot_preamble,"set nokey;"],
+%              [psfile,"ch11p1.eps"])$
+
+\newpage
+\noindent Now that we have looked at both the signal and sample signal values (on the same
+  plot), we next look at the \textbf{fast Fourier frequency spectrum} implied by this single frequency 
+  signal sample.
+We first define \mv|glist| to be the fast fourier transform of \mv|flist|
+\begin{myVerbatim}
+(%i10) glist : fft (flist);
+(%o10) [- 2.34662E-17, 1.11022E-16 - 3.30546E-17 %i, 
+1.52656E-16 %i - 4.59227E-17, 0.5 - 1.18171E-16 %i, 1.15312E-16, 
+2.16746E-16 %i + 0.5, - 1.52656E-16 %i - 4.59227E-17, 
+5.55112E-17 - 6.55197E-17 %i]
+(%i11) fchop (%);
+(%o11)             [0.0, 0.0, 0.0, 0.5, 0.0, 0.5, 0.0, 0.0]
+\end{myVerbatim}
+  in which we have used Maxima's fast fourier transform function \textbf{fft}.
+We then used our package function \textbf{fchop} to set tiny floating point numbers to zero.  
+The \textbf{qfft} package function \mv|current_small()| prints out the
+  current setting of the \mv|qfft.mac| parameter \mv|_small%| used by \textbf{fchop}.
+\begin{myVerbatim}
+(%i12) current_small()$
+     current default small chop value =  1.0E-13  
+\end{myVerbatim}
+\small
+The first element of \mvs|glist| corresponds to \mvs|k = 0|, and the list \mvs|glist|
+  contains the values of the fast Fourier transform  amplitudes \mvs|G(k*df)| for
+  \mvs|k = 0, 1, 2, ..., ns -1|, where \mvs|df| is the
+  frequency resolution (for this example, \mvs|df = 1 hertz|).  
+We call the value \mvs|G(k*df)| the ``fast Fourier transform amplitude''
+  corresponding to the frequency \mvs|f = k*df|.\\
+
+\noindent If we look at the chopped version, we see that the first non-zero
+  fast fourier transform amplitude occurs at element four, which corresponds
+  to \mvs|k = 3|, which corresponds to the frequency \mvs|f = k*df = 3 * 1 = 3 hertz|.  
+In a later section exploring the basic ideas of the fast Fourier transform, we explain
+  why all the usable spectrum information is contained in the interval \mvs|k = 0|
+  to \mvs|k = knyq = 4|.\\
+  
+\noindent To make a simple point plot of the fourier amplitudes, we first use the
+  package function \mvs|kg| to make a list of the points \mvs|[k, G(k*df)]| out
+  to the Nyquist integer \mvs|knyq|.
+Since we want real numbers for a plot, this function takes the 
+  absolute value of each Fourier amplitude and also chops tiny numbers.
+\begin{myVerbatim1}
+(%i13) kglist : kg (glist);
+(%o13)        [[0, 0.0], [1, 0.0], [2, 0.0], [3, 0.5], [4, 0.0]]
+(%i14) plot2d ( [discrete, kglist],[x,0,5],[y,0,0.8],
+                  [style,[points,5,1,1]],[xlabel,"k"],
+                  [ylabel," "],[gnuplot_preamble,"set grid;"])$
+\end{myVerbatim1}
+%\newpage
+which produces the simple plot
+\smallskip
+\begin{figure} [h]  
+   \centerline{\includegraphics[scale=.5]{ch11p2.eps} }
+	\caption{Spectrum of $\mathbf{\boldsymbol{\cos(6\,\pi \,t)}}$  }
+\end{figure} 
+
+%plot2d ( [discrete, kglist],[x,0,5],[y,0,0.8],
+%                  [style,[points,5,1,1]],[xlabel,"k"],
+%                  [ylabel," "],[gnuplot_preamble,"set grid;"],
+%                [psfile,"ch11p2.eps"])$
+
+\newpage
+\normalsize
+\noindent We can also use \textbf{plot2d} to make a simple histogram, using \textbf{kglist}.
+\begin{myVerbatim}
+(%i15) vbars : makelist ( [discrete,
+                  [[kglist[i][1],0],[kglist[i][1],kglist[i][2]]]] ,
+                      i,1,length(kglist) );
+(%o15) [[discrete, [[0, 0], [0, 0.0]]], [discrete, [[1, 0], [1, 0.0]]], 
+[discrete, [[2, 0], [2, 0.0]]], [discrete, [[3, 0], [3, 0.5]]], 
+[discrete, [[4, 0], [4, 0.0]]]]
+(%i16) plot2d ( vbars,[y,0,0.8],[style,[lines,5,1]],
+               [ylabel," "],[xlabel," k "],[legend,false],
+                [gnuplot_preamble,"set grid;"] )$
+\end{myVerbatim}
+%\newpage
+which produces the plot
+\smallskip
+\begin{figure} [h]  
+   \centerline{\includegraphics[scale=.8]{ch11p3.eps} }
+	\caption{Line Spectrum of $\mathbf{\boldsymbol{\cos(6\,\pi \,t)}}$  }
+\end{figure} 
+
+%plot2d ( [ [discrete,[[0,0]]],[discrete,[[1,0]]],
+%              [discrete,[[2,0]]],
+%               [discrete,[[3,0],[3,0.5]]],
+%			   [discrete,[[4,0]]]],
+%                [y,0,0.8],
+%				[style,[points,3,1,1],[points,3,1,1],
+%				  [points,3,1,1], [lines,8,1],
+%				  [points,3,1,1]],
+%               [ylabel," "],[xlabel," k "],[legend,false],
+%                [gnuplot_preamble,"set grid;"],
+%                  [psfile,"ch8p16b.eps"])$
+\noindent The production of such a frequency space spectrum plot can be
+  automated by accepting the fast Fourier transform list \textbf{glist} and defining
+  a Maxima function \textbf{spectrum (glist, nlw, ymax) } which would be used 
+  with the specific syntax \textbf{spectrum (glist, 5, 0.8)} to obtain a
+  histogram similar to the above but cleaner.
+(\textbf{nlw} is the line width and \textbf{ymax} is the vertical extent
+  of the canvas starting at \mv|y = 0|.)\\
+  
+\noindent We have designed \textbf{spectrum} to also allow the expanded syntax
+  \textbf{spectrum (glist, nlw, ymax, k1, k2) } which zooms in on
+  the interval \mv|k1 <= k <= k2|, where  \mv|k2 <= knyq|.
+In addition, we have avoided, in \textbf{spectrum}, creating vertical bars when a fast Fourier
+  transform amplitude is less than a very small number.
+\newpage
+\noindent The entry
+\begin{myVerbatim}
+(%i17) spectrum (glist, 5, 0.8 )$
+\end{myVerbatim}
+produces the plot
+\smallskip
+\begin{figure} [h]  
+   \centerline{\includegraphics[scale=.8]{ch11p4.eps} }
+	\caption{spectrum ( glist, 5, 0.8 ) }
+\end{figure} 
+
+%spectrum_eps (glist,8, 0.8, "ch11p4.eps" )$
+
+\noindent We will use \textbf{spectrum}, included in \textbf{qfft.mac},
+  in our following examples as a quick way to look at the frequency spectrum.\\
+  
+\noindent Finally, let's use the Maxima function \textbf{inverse\_fft} to apply
+  the inverse fast Fourier transform to the list of fast Fourier transform amplitudes
+  \textbf{glist}, and see how closely the result matches the
+  original signal sample list \textbf{flist}.
+\begin{myVerbatim}
+(%i18) flist1 : inverse_fft(glist);
+(%o18) [1.0, 1.11022E-16 %i - 0.707, 2.24949E-32 %i - 1.83691E-16, 
+6.77259E-17 %i + 0.707, - 1.0, 0.707 - 1.11022E-16 %i, 
+5.51073E-16 - 2.24949E-32 %i, - 6.77259E-17 %i - 0.707]
+(%i19) fchop(%);
+(%o19)      [1.0, - 0.707, 0.0, 0.707, - 1.0, 0.707, 0.0, - 0.707]
+(%i20) fchop( flist);
+(%o20)      [1.0, - 0.707, 0.0, 0.707, - 1.0, 0.707, 0.0, - 0.707]
+(%i21) lmax ( abs (flist1 - flist));
+(%o21)                            1.30049E-16
+\end{myVerbatim}
+We see that \textbf{inverse\_fft (glist)} recovers our original signal
+  sample list \textbf{flist} to within floating point errors.
+\newpage
+\subsubsection{Example 2: FFT Spectrum of a Sum of Two Monochromatic Signals }  \label{twof}
+Almost all signals will contain more than one intrinsic frequency, and to recover 
+   a portion of the frequency spectrum with fidelity, we need to satisfy the two conditions
+\begin{equation}
+\mathbf{ fs > 2\,f_{high} \quad \text{and} \quad  df \leq f_{low} },
+ \end{equation}   
+   in which  $\mathbf{f_{low}}$ is the lowest intrinsic frequency to be identified,
+   and $\mathbf{f_{high}}$ is the highest intrinsic frequency to be identified.
+   (Again, \textbf{fs} is the sampling frequency, and \textbf{df} is the
+   frequency resolution).\\
+   
+\small
+\noindent We assume now that the signal is 
+  $\mathbf{F(t) = \boldsymbol{\cos(2\,\pi \,t)} + \boldsymbol{\sin(4\,\pi \,t)}}$.
+We thus have a signal with the frequencies $\mathbf{f_{1} = 1\, s^{-1} }$\\
+  and $\mathbf{f_{2} = 2\, s^{-1} }$.
+With $\mathbf{fs}$ being the sampling frequency, and $\mathbf{ns}$ being the number of signal
+  samples, we require $\mathbf{fs > 2\,f_{high} = 4}$, as well as $\mathbf{df \leq f_{low} = 1}$.
+If we choose $\mathbf{f_{low} = 3\,df}$,
+  then \mvs|df = 1/3 = fs/ns|, or \mvs|fs = ns/3|.
+So the first condtion then
+  implies we need $\mathbf{ns/3 > 4}$, or $\mathbf{ns > 12}$.
+Since \mvs|ns| also should be equal to $\mathbf{2^{m}}$ for some 
+  integer $\mathbf{m}$, we choose \mvs|ns = 16|.
+Then \mvs|fs = 16/3| and \mvs|df = fs/ns = 1/3 hertz|. 
+\begin{myVerbatim1}
+(%i1) ( load(fft), load(qfft) )$
+(%i2) e : cos(2*%pi*t) + sin(4*%pi*t)$
+(%i3) (ns : 16, fs : 16/3)$
+(%i4) dt : first (nyquist (ns,fs));
+sampling interval dt =  0.188 
+Nyquist integer knyq =  8 
+Nyquist freq fnyq =  2.6667 
+freq resolution df =  0.333 
+(%o4)                                0.188
+(%i5) flist : sample (e,t,ns,dt)$
+(%i6) %,fll;
+(%o6)                         [1.0, - 0.324, 16]
+(%i7) tmax: ns*dt;
+(%o7)                                 3.0
+(%i8) tflist : vf (flist,dt)$
+(%i9) %,fll;
+(%o9)                  [[0, 1.0], [2.8125, - 0.324], 16]
+(%i10) plot2d([e ,[discrete,tflist]], [t,0,tmax],
+             [style,[lines,3],[points,3,2,1]],
+              [legend,false])$
+\end{myVerbatim1} 
+We have used our utility function \mv|fll| described in the preface, which 
+  returns the first and last element of a list, as well as the length of the
+  list.
+%\newpage
+The plot thus produced is
+\smallskip
+\begin{figure} [h]  
+   \centerline{\includegraphics[scale=.6]{ch11p5.eps} }
+	\caption{ $\mathbf{\boldsymbol{\cos(2\,\pi \,t)} + \boldsymbol{\sin(4\,\pi \,t)}}$ with Sample Points  }
+\end{figure} 
+%plot2d([e ,[discrete,tflist]], [t,0,tmax],
+%             [style,[lines,3],[points,3,2,1]],
+%              [legend,false],[psfile,"ch11p5.eps"])$
+
+\newpage
+\normalsize
+\noindent We next generate the list \textbf{glist} of fast Fourier transform amplitudes \mv|G(k*df)|
+  and use \textbf{spectrum} to look at the implied frequency spectrum.
+\begin{myVerbatim}
+(%i11) glist : fft (flist)$
+(%i12) %,fll;
+(%o12)         [- 7.94822E-17, 1.52656E-16 - 5.7151E-17 %i, 16]
+(%i13) spectrum (glist,5,0.6)$
+\end{myVerbatim}
+%\newpage
+which produces the spectrum histogram:
+\begin{figure} [h]  
+   \centerline{\includegraphics[scale=1]{ch11p6.eps} }
+	\caption{Spectrum of $\mathbf{\boldsymbol{\cos(2\,\pi \,t)} + \boldsymbol{\sin(4\,\pi \,t)}}$  }
+\end{figure} 
+% spectrum_eps (glist,8,0.6,"ch11p6.eps")$
+
+\noindent Since \mvs|df = 1/3|, the line at \mvs|k = 3| corresponds to the
+  frequency \mvs|f = k*df = 3*(1/3) = 1 Hertz| and the line at \mvs|k = 6|
+  corresponds to the frequency \mvs|f = k*df = 6*(1/3) = 2 Hertz|.
+\newpage
+\subsubsection{Example 3: FFT Spectrum of a Rectangular Wave }
+A rectangular wave as a function of time \mvs|t| with period equal to \mvs|64 sec|
+  which cycles between plus and minus \mvs|1| can be constructed from 
+   \mvs|floor| and \mvs|mod| in the form:
+   \mv|rwave(t) := 2*mod(floor(t/32),2) - 1|.\\
+   
+\noindent For \mvs|t = 0, t/32 = 0, floor(t/32) = floor(0) = 0, mod(0,2) = 0|, 
+  so \mvs|rwave(0) = -1|. 
+\begin{myVerbatim}
+(%i1) rwave(t):= 2*mod(floor(t/32),2) -1 $
+(%i2) [floor(0),mod(0,2),rwave(0)];
+(%o2)                             [0, 0, - 1]
+\end{myVerbatim} 
+For \mvs|t = 32, floor(32/32) = floor(1) = 1, mod(1,2) = 1, rwave(32) = 1|. 
+\begin{myVerbatim}
+(%i3) [floor(1),mod(1,2),rwave(32)];
+(%o3)                              [1, 1, 1]
+\end{myVerbatim} 
+For \mvs|t = 64, floor(64/32) = floor(2) = 2, mod(2,2) = 0, rwave(64) = -1|. 
+\begin{myVerbatim}
+(%i4) [floor(2),mod(2,2),rwave(64)];
+(%o4)                             [2, 0, - 1]
+\end{myVerbatim} 
+Hence \mvs|rwave(0 + 64) = rwave(0)| and \mvs|rwave(t)| has a period equal to \mvs|64 sec|.\\
+
+\noindent We first look at the rectangular wave signal with a plot. 
+\begin{myVerbatim}
+(%i5) plot2d(rwave(t),[t,0,128],[y,-1.5,1.5],
+         [ylabel," "],[style,[lines,5]],
+         [gnuplot_preamble,"set grid;set zeroaxis lw 2;"])$
+\end{myVerbatim}
+\smallskip
+\begin{figure} [h]  
+   \centerline{\includegraphics[scale=.6]{ch11p7.eps} }
+	\caption{ Rectangular Wave with Period 64 sec.  }
+\end{figure} 
+
+%plot2d([[discrete,[[0,0],[128,0]]], rwave(t)],
+%                [t,0,128],[y,-1.5,1.5],
+%         [ylabel," "],[style,[lines,2,4],[lines,8,1]],
+%         [legend,false],[gnuplot_preamble,"set grid;"],
+%          [psfile,"ch11p7.eps"])$
+
+\noindent If we consider sampling this signal at intervals \mvs|dt = 1 sec|, 
+   the sampling frequency will be \mvs|fs = 1/dt =|\\
+   \mvs|1 hertz = 1 per sec = 64 per cycle|.
+The lowest intrinsic frequency of this signal is  \mvs|f_low =|\\
+ 1/64 hertz|,  corresponding to the period of the rectangular wave. 
+If we choose \mvs|4*df = f_low|, then \\
+ \mvs|df = 1/256 = fs/ns = 1/ns|,  so \mvs|ns = 256|.
+Due to the sharp corners of a rectangular wave we expect many high frequency components
+  to be present in the spectrum.  
+\newpage
+\noindent We thus try the combination, \mvs|ns = 256|, and \mvs|fs = 1 hertz|. 
+\begin{myVerbatim}
+(%i6) (ns:256, fs:1)$
+(%i7) (load(fft),load(qfft) )$
+(%i8) dt:first(nyquist(ns,fs));
+sampling interval dt =  1.0 
+Nyquist integer knyq =  128 
+Nyquist freq fnyq =  0.5 
+freq resolution df =  0.00391 
+(%o8)                                1.0
+(%i9) flist : sample(rwave(t),t,ns,dt)$
+(%i10) fll (flist);
+(%o10)                          [- 1.0, 1.0, 256]
+(%i11) makelist (flist[i],i,1,10);
+(%o11) [- 1.0, - 1.0, - 1.0, - 1.0, - 1.0, - 1.0, - 1.0, - 1.0, - 1.0, - 1.0]
+(%i12) tmax: ns*dt;
+(%o12)                               256.0
+(%i13) tflist : vf (flist,dt)$
+(%i14) fll (tflist);
+(%o14)                  [[0, - 1.0], [255.0, 1.0], 256]
+(%i15) plot2d([rwave(t) ,[discrete,tflist]], [t,0,tmax],
+              [y,-1.5,1.5],[ylabel," "],
+             [style,[lines,3],[points,1,0,1]],
+              [legend,false])$
+\end{myVerbatim}
+%\newpage
+The \mv|sample_plot| invocation produces the black points of the sample on
+  top and bottom of the rectangular wave shown here:
+\smallskip
+\begin{figure} [h]  
+   \centerline{\includegraphics[scale=.8]{ch11p8.eps} }
+	\caption{Black Sample Points with Rectangular Wave  }
+\end{figure} 
+
+%plot2d([rwave(t) ,[discrete,tflist]], [t,0,tmax],
+%              [y,-1.5,1.5],[ylabel," "],
+%             [style,[lines,8],[points,2,4,1]],
+%              [legend,false],[psfile,"ch8p21.eps"])$
+
+\newpage
+\noindent Next we look at the signal frequency spectrum from \mvs|k = 0| to \mvs|k = knyq = 128|.
+   Since \mvs|f = k*df|,  and \textbf{df = 1/256 \, hertz}, the low fundamental intrinsic frequency
+   \mvs|f_0 = 1/64 hertz| will be located at \mvs|k = 4|, and the maximum
+   possible frequency component will be \mvs|fnyq = knyq*df = 0.5 hertz = 32*f_0|. 
+The spectrum plot is generated by passing the list \mv|flist| containing
+  \mv|ns = 256| signal samples, along with \mv|nlw = 3|, and \mv|ymax = 0.7| to \mv|spectrum|:
+\begin{myVerbatim}
+(%i16) glist : fft (flist)$
+(%i17) %,fll;
+(%o17)                          [0.0, 0.0, 256]
+(%i18) spectrum (glist,3,0.7)$
+\end{myVerbatim} 
+%\newpage
+which produces the spectrum plot:
+\smallskip
+\begin{figure} [h]  
+   \centerline{\includegraphics[scale=1]{ch11p9.eps} }
+	\caption{Spectrum from k = 0 to knyq = 128   }
+\end{figure} 
+
+% spectrum_eps (glist,5,0.7,"ch11p9.eps")$
+
+\noindent The plot shows lines at \mvs|k = 4, 12, 20, 28, 36, ....|.
+Since \mvs|f = k*df| and \mvs|f_0 = 4*df| is the fundamental frequency, 
+  the frequencies present are
+  \mvs|f_0, 3*f_0, 5*f_0, 7*f_0,...| which is the ``fundamental'' plus odd harmonics of the
+   fundamental.
+We know there must be high frequency components to account
+   for the sharp corners of the signal.
+\newpage
+\subsubsection{Example 4: FFT Spectrum Sidebands of a Tone Burst Before and After Filtering}
+A tone burst signal consisting of a sine wave begins at \mvs|t = 0| and ends abruptly
+  after forty five seconds.
+The fast Fourier frequency spectrum of such a signal, when sampled over the duration
+  of the sine wave plus some time following the sine wave end, will contain ``sideband''
+  frequencies above and below the intrinsic frequency of the sine wave.
+Many signal filters can be used to allow the easy identification of the intrinsic
+  sine wave frequency by surpressing the sideband frequencies.
+We use for the tone burst the sine wave: $\mathbf{\boldsymbol{\sin(2\,\pi\,t/5)}}$
+ during the time interval  $\mathbf{0 \leq t \leq 45 \,sec}$,
+  and then abruptly dropping to \mvs|0| for $\mathbf{t > 45 \, sec}$.
+The intrinsic frequency of the sine wave is \mvs|f0 = 1/5 hertz|,
+ and the corresponding period is \mvs|5 sec|, thus the
+  sine wave lasts for nine periods.
+We will use the following idealized model of such a signal by ignoring the actual time needed to
+  end the sine wave. 
+\begin{myVerbatim}
+(%i1) sig(t) := if t < 45 then sin(2*%pi*t/5.0)  else 0$
+\end{myVerbatim} 
+\small
+We will use this definition only for $\mathbf{t \geq 0}$ in our work.
+With \mvs|fs| the sampling frequency, if we want about \textbf{10 \, samples/cycle} 
+ (ie., \mvs|10 per 5 sec|),
+  then we want \mvs|period*fs = 10|, or \mvs|fs| roughly equal to \mvs|2 hertz|.
+We want the intrinsic, frequency \mvs|f0|  ( \mvs| 0.2  hertz|) to 
+  \tcbr{not} be too close to the left end of the frequency spectrum plot so we can 
+  see the low frequency sidebands as well as the higher frequency sidebands.\\
+  
+\noindent Suppose we try requiring that \mvs|f0 = 0.2 hertz = 50*df = 50*fs/ns|.
+Solving for the number of signal samples \mvs|ns|, we get \mvs|ns = 50 * 2 * 5 = 500|.
+To get a power of \mvs|2| we choose the closest such quantity, \mvs|ns = 512|.
+We then return to our \mvs|f0| location requirement to solve for the resulting value
+  of \mvs|fs| to get \textbf{fs = 512/250 = 2.048 \, hertz}. 
+\begin{myVerbatim1}
+(%i2) load (qfft)$
+(%i3) (ns:512,fs:2.048)$
+(%i4) dt : first(nyquist(ns,fs));
+sampling interval dt =  0.488 
+Nyquist integer knyq =  256 
+Nyquist freq fnyq =  1.024 
+freq resolution df =  0.004 
+(%o4)                                0.488
+(%i5) tmax : ns*dt;
+(%o5)                                250.0
+\end{myVerbatim1} 
+We can plot a Maxima function defined with the \textbf{if  then  else} construct
+  without problem since \textbf{plot2d} evaluates its arguments.
+\begin{myVerbatim1}
+(%i6) plot2d ( sig(t),[t,0,tmax],[y,-1.5,1.5],
+         [style,[lines,1,0]],[ylabel," "],[nticks,100],
+          [legend,false],[gnuplot_preamble,"set grid;"])$
+\end{myVerbatim1}
+%\newpage
+which produces the plot:
+\begin{figure} [h]  
+   \centerline{\includegraphics[scale=.5]{ch11p10.eps} }
+	\caption{Sine Wave Tone Burst, Period = 5 sec, Duration = Nine Periods  }
+\end{figure} 
+
+%plot2d ( sig(t),[t,0,tmax],[y,-1.5,1.5],
+%         [style,[lines,1,4]],[ylabel," "],[nticks,100],
+%          [legend,false],[gnuplot_preamble,"set grid;"],
+%          [psfile,"ch8p23.eps"])$
+\newpage
+\normalsize
+\noindent Using the \mvs|qfft| package function \mvs|sample| with a Maxima function
+  defined with the \mvs|if...then| construct produces a list each element of which
+  includes \mv|if  then  else|, which can be used with \textbf{plot2d}.
+However, we will include an extra evaluation in defining our \textbf{flist} so we
+  can see the numerical values as a list.
+Note that the syntax \mv|expr, fll;| causes an extra evaluation, so to be careful
+  we need to use the syntax \mv|fll (expr)|.
+\begin{myVerbatim}
+(%i7) flist : sample (sig(t),t,ns,dt)$
+(%i8) fll (flist);
+(%o8) [if 0.0 < 45.0 then 0.0 else 0.0, 
+                                   if 249.51 < 45.0 then - 0.576 else 0.0, 512]
+(%i9) flist : ev (flist)$
+(%i10) fll (flist);
+(%o10)                          [0.0, 0.0, 512]
+(%i11) makelist(flist[i],i,1,10);
+(%o11) [0.0, 0.576, 0.942, 0.964, 0.634, 0.0736, - 0.514, - 0.914, - 0.981, 
+                                                                        - 0.69]
+(%i12) tflist : vf (flist,dt)$
+(%i13) fll (tflist);
+(%o13)                  [[0, 0.0], [249.51, 0.0], 512]
+\end{myVerbatim} 
+We now use \textbf{plot2d} to show our sample points on top of our tone burst
+  signal (both in black).
+\begin{myVerbatim}
+(%i14) plot2d([sig(t) ,[discrete,tflist]], [t,0,tmax],
+              [y,-1.5,1.5],[ylabel," "],
+             [style,[lines,1,0],[points,1,0,1]],
+              [legend,false])$
+\end{myVerbatim} 
+%\newpage
+which produces the plot:
+\smallskip
+\begin{figure} [h]  
+   \centerline{\includegraphics[scale=.8]{ch11p11.eps} }
+	\caption{Signal and Sample Points Which Include 0's for $\mathbf{t > 45 \,sec}$ }
+\end{figure} 
+
+% plot2d([sig(t) ,[discrete,tflist]], [t,0,tmax],
+%              [y,-1.5,1.5],[ylabel," "],
+%             [style,[lines,1,4],[points,2,4,1]],
+%              [legend,false],[psfile,"ch11p11.eps"])$
+% 
+\newpage
+\noindent We now plot the unfiltered tone burst spectrum after generating \textbf{glist}
+  with \textbf{fft}.
+\begin{myVerbatim}
+(%i15) load (fft)$
+(%i16) glist : fft (flist)$
+(%i17) fll (glist);
+(%o17)             [- 8.08763E-5, 0.00174 - 0.00286 %i, 512]
+(%i18) spectrum (glist, 2, 0.1 )$
+\end{myVerbatim} 
+%\newpage
+which produces the spectrum plot:
+\begin{figure} [h]  
+   \centerline{\includegraphics[scale=1]{ch11p12.eps} }
+	\caption{Frequency Spectrum of Unfiltered Tone Burst}
+\end{figure} 
+% spectrum_eps (glist, 3, 0.1,"ch11p12.eps" )$
+We see strong sideband frequencies on both the low and high side of the intrinsic
+  frequency \mvs|f0 = 50*df|, which is the highest peak at \mvs|k = 50|
+  (\textbf{f = \, k*df \, =  \,50*(1/250) \, = \, 1/5 \, = \, 0.02}).  
+The sidebands are a mathematical artifact of the finite duration of the
+  sine wave tone burst with its abrupt beginning and end.\\
+  
+\noindent A windowing filter which smooths out the beginning and end of the ``burst envelope''
+  is used by defining a smoothed envelope signal as the product of the
+  unsmoothed signal and a suitable windowing function.
+The von Hann window employs a $\mathbf{\boldsymbol{\sin^{2}}}$ pinch envelope. 
+\begin{myVerbatim}
+(%i19) hannw(x,m) := sin(%pi*(x-1)/(m-1))^2$
+(%i20) sig_w(t) := hannw(t,45)*sig(t)$
+(%i21) plot2d ( sig_w(t),[t,0,tmax],[y,-1.5,1.5],
+         [style,[lines,1,0]],[ylabel," "],[nticks,100],
+          [legend,false],[gnuplot_preamble,"set grid;"])$
+\end{myVerbatim} 
+\newpage
+\noindent which shows the filtered tone burst
+\smallskip
+\begin{figure} [h]  
+   \centerline{\includegraphics[scale=.5]{ch11p13.eps} }
+	\caption{Filtered Tone Burst }
+\end{figure} 
+%plot2d ( sig_w(t),[t,0,tmax],[y,-1.5,1.5],
+%         [style,[lines,2,4]],[ylabel," "],[nticks,100],
+%          [legend,false],[gnuplot_preamble,"set grid;"],
+%           [psfile,"ch11p13.eps"])$
+
+%\newpage
+\small
+\noindent Using now the filtered tone burst signal \mv|sig_w(t)|,
+   we construct a filtered signal sample list \mv|flist_w| and
+   look at the altered fast Fourier spectrum (remember \mv|dt| has been
+   bound to \mv|0.488| and \mv|ns| to \mv|512|): 
+\begin{myVerbatim1}
+(%i22) flist_w : sample (sig_w(t),t,ns,dt)$
+(%i23) fll (flist_w);
+(%o23) [0.00509 (if 0.0 < 45.0 then 0.0 else 0.0), 
+                           0.799 (if 249.51 < 45.0 then - 0.576 else 0.0), 512]
+(%i24) flist_w : ev (flist_w)$
+(%i25) fll (flist_w);
+(%o25)                          [0.0, 0.0, 512]
+(%i26) makelist (flist_w[i],i,1,5);
+(%o26)          [0.0, 7.68319E-4, 2.63668E-6, 0.00106, 0.00293]
+(%i27) glist_w : fft (flist_w)$
+(%i28) makelist (glist_w[i],i,1,5);
+(%o28) [1.59068E-5, 3.93191E-6 - 1.99372E-5 %i, - 1.83151E-5 %i - 1.84837E-5, 
+                        2.09989E-6 %i - 2.59175E-5, 1.69797E-5 %i - 9.67992E-6]
+(%i29) spectrum (glist_w, 2, 0.1)$
+\end{myVerbatim1} 
+%\newpage
+and we see deletion of most of the sideband frequency peaks:
+\smallskip
+\begin{figure} [h]  
+   \centerline{\includegraphics[scale=.5]{ch11p14.eps} }
+	\caption{Frequency Spectrum of the Filtered Tone Burst }
+\end{figure} 
+% spectrum_eps (glist_w, 3, 0.1,"ch8p27.eps")$
+\newpage
+\normalsize
+\subsubsection{Example 5: Cleaning a Noisy Signal using FFT Methods}
+We use the same signal as used in Example 2, Sec. (\ref{twof}), but
+  add some random noise to it.
+Without the noise, the signal is 
+  $\mathbf{F(t) = \boldsymbol{\cos(2\,\pi \,t)} + \boldsymbol{\sin(4\,\pi \,t)}}$.
+Thus the clean signal contains the frequencies 
+ $\mathbf{f_{1} = 1\, s^{-1} }$ and $\mathbf{f_{2} = 2\, s^{-1} }$,
+  and two corresponding periods 
+  $\mathbf{\boldsymbol{\tau}_{1} = 1/f_{1} = 1 \, sec}$ and
+  $\mathbf{\boldsymbol{\tau}_{2} = 1/f_{2} = 0.5 \, sec}$.
+To get a noisy looking signal we have to sample and add noise
+  a lot of times within one or two periods of the
+  clean signal, where we use the maximum of the intrinsic periods.
+Let's try $\mathbf{N = 512}$ samples over a time \textbf{tmax = 2 \, sec}.
+Then $\mathbf{N\,\boldsymbol{\delta}t = 2 \, sec}$, so \textbf{fs = 1/dt = N/2 = 256}.
+The first condition on the sampling frequency is that $\mathbf{f_{s} > 2\, f_{high}}$,
+  or $\mathbf{fs > 4 \, s^{-1}}$, which is certainly satisfied.
+The second condition on \textbf{fs} is $\mathbf{\boldsymbol{\delta}f < f_{low}}$,
+  or $\mathbf{df < 1 \, s^{-1}}$, or $\mathbf{fs/ns < 1 \, s^{-1}}$, or $\mathbf{fs < ns}$, which is also
+  true.
+Hence we try \textbf{ns = 512, \, fs = 256}. 
+\begin{myVerbatim}
+(%i1) e : cos(2*%pi*t) + sin(4*%pi*t)$
+(%i2) (load(fft), load(qfft))$
+(%i3) [ns:512,fs:256]$
+(%i4) dt : first(nyquist(ns,fs));
+sampling interval dt =  0.00391 
+Nyquist integer knyq =  256 
+Nyquist freq fnyq =  128.0 
+freq resolution df =  0.5 
+(%o4)                               0.00391
+(%i5) flist : sample(e,t,ns,dt)$
+(%i6) %,fll;
+(%o6)                          [1.0, 0.951, 512]
+(%i7) flist_noise : makelist(flist[j]+0.3*(-1.0+random(2.0)),j,1,ns)$
+(%i8) %,fll;
+(%o8)                        [1.2483, 1.0073, 512]
+(%i9) tflist_noise : vf (flist_noise,dt)$
+(%i10) %,fll;
+(%o10)               [[0, 1.2483], [1.9961, 1.0073], 512]
+(%i11) plot2d ([discrete,tflist_noise],[y,-2,2],
+                 [style,[lines,1]],[ylabel," "])$
+\end{myVerbatim} 
+%\newpage
+which produces the noisy signal plot
+\smallskip
+\begin{figure} [h]  
+   \centerline{\includegraphics[scale=.7]{ch11p15.eps} }
+	\caption{Noisy Signal}
+\end{figure} 
+
+% plot2d ([discrete,tflist_noise],[y,-2,2],
+%                 [style,[lines,1]],[ylabel," "],
+%                [psfile,"ch8p19.eps"])$
+%
+\newpage
+
+\noindent One way to ``clean'' this signal is to set small numbers in the fast Fourier
+  transform to zero and inverse transform back to the time domain using
+  \textbf{inverse\_fft}.\\
+  
+\noindent In order to ``chop'' small numbers in the fast Fourier transform
+  amplitude list, we need to produce that list, which we call
+  \textbf{glist\_noise} from the noisy signal sample \textbf{flist\_noise} by
+   using \textbf{fft}.
+\begin{myVerbatim}
+(%i12) glist_noise : fft (flist_noise)$
+(%i13) %,fll;
+(%o13)             [- 0.0022, 5.09918E-4 %i - 0.00338, 512]
+\end{myVerbatim}
+
+\noindent Before ``chopping'' small numbers in \textbf{glist\_noise}, we take a look at the
+  fast Fourier frequency spectrum implied by \textbf{glist\_noise}.
+\begin{myVerbatim}
+(%i14) spectrum (glist_noise,2,0.6)$
+\end{myVerbatim} 
+%\newpage
+which produces the plot
+\smallskip
+\begin{figure} [h]  
+   \centerline{\includegraphics[scale=.7]{ch11p16.eps} }
+	\caption{Noisy Signal Frequency Spectrum}
+\end{figure} 
+%spectrum_eps (glist_noise,3,0.6,"ch11p16.eps")$
+
+\noindent The dominant lines are still those corresponding to the two intrinsic
+  frequencies of the clean signal we started with, but there are many more frequencies
+  present due to the noise.
+\newpage
+\noindent To see more clearly the dominant line region, we show another plot with 
+  the integer \textbf{k} in the range \textbf{(0, 10)}: 
+\begin{myVerbatim1}
+(%i15) spectrum (glist_noise,4,0.6,0,10)$
+\end{myVerbatim1} 
+%\newpage
+which produces the plot:
+\smallskip
+\begin{figure} [h]  
+   \centerline{\includegraphics[scale=.55]{ch11p17.eps} }
+	\caption{Noisy Signal Frequency Spectrum with k in (0,10)}
+\end{figure} 
+%spectrum_eps (glist_noise,6,0.6,"ch11p17.eps",0,10)$
+%\newpage
+
+\noindent We now use \textbf{fchop1} with the value \textbf{0.2} to set small floating point numbers
+  less than \textbf{0.2} to \tcbr{zero} in the frequency space list \textbf{glist\_noise}, 
+  and again use \textbf{spectrum} to look at the frequency spectrum associated with the
+  chopped frequency space list. 
+\begin{myVerbatim1}
+(%i16) glist_noise_chop : fchop1(glist_noise,0.2)$
+(%i17) %,fll;
+(%o17)                          [0.0, 0.0, 512]
+(%i18) spectrum (glist_noise_chop,2,0.6)$
+\end{myVerbatim1} 
+%\newpage
+which produces the plot
+\begin{figure} [h]  
+   \centerline{\includegraphics[scale=.55]{ch11p18.eps} }
+	\caption{Chopped Frequency Spectrum }
+\end{figure} 
+%spectrum_eps (glist_noise_chop,3,0.6,"ch11p18.eps")$
+
+\newpage
+\noindent Here is the cleaned spectrum in the range \textbf{k = (0,10)}:
+\smallskip
+\begin{figure} [h]  
+   \centerline{\includegraphics[scale=1]{ch11p19.eps} }
+	\caption{Chopped Frequency Spectrum for k in (0,10)}
+\end{figure} 
+
+%spectrum_eps (glist_noise_chop,6,0.6,"ch11p19.eps",0,10)$
+
+\noindent We now create a \tcb{cleaned up signal list} using \textbf{inverse\_fft} on the
+  chopped glist, transforming back to the time domain. 
+\begin{myVerbatim}
+(%i19) flist_clean : inverse_fft ( glist_noise_chop )$
+(%i20) %,fll;
+(%o20)      [2.22045E-16 %i + 1.0016, 0.952 - 3.16992E-15 %i, 512]
+(%i21) flist_clean : realpart(flist_clean)$
+(%i22) %,fll;
+(%o22)                       [1.0016, 0.952, 512]
+\end{myVerbatim} 
+Since the \tcbr{inverse} Fourier transform will often include small imaginary parts due
+  to floating point error, we took care to take the \tcb{real part} of the
+  returned list before looking at the cleaned up signal.
+We now construct the list of points \textbf{[t, F\_clean]}: 
+\begin{myVerbatim}
+(%i23) tflist_clean : vf ( flist_clean, dt )$
+(%i24) %,fll;
+(%o24)                [[0, 1.0016], [1.9961, 0.952], 512]
+\end{myVerbatim} 
+\newpage
+\small
+\noindent and plot first just the cleaned up signal points 
+\begin{myVerbatim1}
+(%i25) plot2d ([discrete,tflist_clean],[y,-2,2],
+                 [style,[lines,1]],[ylabel," "])$
+\end{myVerbatim1} 
+%\newpage
+which produces
+\begin{figure} [h]  
+   \centerline{\includegraphics[scale=.5]{ch11p20.eps} }
+	\caption{Cleaned Signal Points}
+\end{figure} 
+
+%plot2d ([discrete,tflist_clean],[y,-2,2],
+%                 [style,[lines,3]],[ylabel," "],
+%                 [psfile,"ch11p20.eps"])$
+
+\noindent We now show both the cleaned list points together with the original clean two frequency
+  signal we started with, to show that the cleaned up points lie right on top of the
+  original two frequency signal. 
+\begin{myVerbatim1}
+(%i26) plot2d([e ,[discrete,tflist_clean]], [t,0,2],
+             [style,[lines,1],[points,1,0,1]],
+              [legend,false])$
+\end{myVerbatim1}
+%\newpage
+which produces the plot
+\begin{figure} [h]  
+   \centerline{\includegraphics[scale=.65]{ch11p21.eps} }
+	\caption{Cleaned Signal Points on Top of Original Clean Signal}
+\end{figure} 
+
+% plot2d([e ,[discrete,tflist_clean]], [t,0,2],
+%             [style,[lines,1,1],[points,2,4,1]],
+%              [legend,false],[psfile,"ch11p21.eps"])$ 
+
+\noindent \normalsize We see that the inverse fast Fourier transform of the chopped glist frequency spectrum
+  yields a cleaned up signal, as desired.
+\newpage
+\subsection{Our Notation for the Discrete Fourier Transform and its Inverse} \label{notate}
+Given a real valued signal $\mathbf{F(t)}$ which is to be sampled $\mathbf{N}$ times 
+  at the moments (separated by equal time intervals $\mathbf{\boldsymbol{\delta}t}$)
+ $\mathbf{t = 0,\, \boldsymbol{\delta}t,\, 2\,\boldsymbol{\delta}t,\,...,(N-1)\,\boldsymbol{\delta}t}$,
+one needs to select the two parameters $\mathbf{N = 2^{m}}$ and $\mathbf{f_{s}}$, where the latter
+  is called the sampling frequency.
+The sampling time interval is then given by
+\begin{equation}  \label{Eq:dt}
+\mathbf{\boldsymbol{\delta}t} = \mathbf{\frac{1}{f_{s}}}
+\end{equation}
+(or else use the data determined value of $\mathbf{\boldsymbol{\delta}t}$ to
+  calculate $\mathbf{f_{s}}$).
+Note that the fast fourier transform algorithm used by Maxima assumes that
+  the number of signal samples $\mathbf{N}$ is some integral power of $2$, 
+  $\mathbf{N = 4, 8, 16, 32, 64, ...}$ so an experimental sample might have 
+  to be padded with zeroes to achieve this condition on $\mathbf{N}$.
+The sampling frequency $\mathbf{f_{s}}$  should be greater than twice the 
+  highest frequency component to be identified in
+  the signal and the frequency resolution $\mathbf{\boldsymbol{\delta}f}$
+  should be smaller than the lowest frequency to be identified in the signal.
+Given the sampling frequency $\mathbf{f_{s}}$ and the number of signal samples
+  $\mathbf{N}$, the frequency resolution $\mathbf{\boldsymbol{\delta}f}$ is
+  given by
+\begin{equation}  \label{Eq:df}
+\mathbf{\boldsymbol{\delta}f} = \mathbf{\frac{f_{s}}{N}}
+\end{equation}
+We will motivate this definition below.
+Assuming this definition, we then require that
+\begin{equation}
+\mathbf{ \frac{f_{s}}{N} < f_{low} }
+\end{equation}
+The sampling frequency $\mathbf{f_{s}}$ thus needs to satisfy the two conditions:
+\begin{equation}  \label{Eq:highlow}
+\mathbf{ 2\, f_{high} < f_{s} < N\,f_{low} }
+\end{equation}
+A convenient choice which automatically satisfies the low frequency part of these
+  conditions is to arrange that
+\begin{equation}  \label{Eq:flow}
+  \mathbf{f_{low} = n\,\boldsymbol{\delta}f},
+\end{equation}
+  where $\mathbf{n = 3 \;\text{or} \; 4}$, say.
+Then that choice determines the frequency resolution to be used 
+ $\mathbf{\boldsymbol{\delta}f = f_{low}/n}$, and from the definition
+ of $\mathbf{\boldsymbol{\delta}f}$, Eq.(\ref{Eq:df}),  this requires that
+\begin{equation} \label{Eq:fs}
+\mathbf{f_{s} = N\,f_{low}/n }
+\end{equation}
+and then Eq.(\ref{Eq:highlow}) implies the condition on $\mathbf{N}$:
+\begin{equation} \label{Eq:nmin}
+\mathbf{N > \frac{2\,n\,f_{high}}{f_{low}}}
+\end{equation}
+In the simple case that $\mathbf{f_{low} = f_{high} = f_{0}}$
+  Eq.(\ref{Eq:fs}) becomes
+\begin{equation} \label{Eq:fs1}
+\mathbf{f_{s} =  N \, \frac{f_{0}}{n} },
+\end{equation}
+Eq.(\ref{Eq:highlow}) becomes
+\begin{equation}  \label{Eq:ns1}
+\mathbf{N > 2\,n},
+\end{equation}
+and 
+\begin{equation}  \label{Eq:df1}
+\mathbf{ \boldsymbol{\delta}f = \frac{f_{0}}{n} }
+\end{equation}
+%\newpage
+In Example 1, the signal frequency is $\mathbf{f_{0} = 3}$, and we chose \textbf{n = 3}.
+Then, Eq.(\ref{Eq:fs1}) implies that $\mathbf{f_{s} = N}$, 
+  Eq.(\ref{Eq:ns1}) implies that $\mathbf{N > 6}$, and
+  Eq.(\ref{Eq:df1}) implies that $\mathbf{\boldsymbol{\delta}f = 1}$.
+Since we need $\mathbf{N = 2^{m}}$ as well, we chose $\mathbf{f_{s} = N = 8}$.\\
+
+\noindent In Example 2, $\mathbf{f_{low} = 1}$ and $\mathbf{f_{high} = 2}$, and we again
+  chose \textbf{n = 3}. 
+Then, Eq.(\ref{Eq:flow}) implies that $\mathbf{\boldsymbol{\delta}f = 1/3}$,
+   Eq.(\ref{Eq:fs}) implies that $\mathbf{f_{s} = N/3}$,
+   and Eq.(\ref{Eq:nmin}) implies that $\mathbf{N > 12}$.
+Since we need $\mathbf{N = 2^{m}}$ as well, we chose $\mathbf{N = 16}$ and 
+  this forces $\mathbf{f_{s} = 16/3}$.
+\newpage
+\noindent The $\mathbf{N}$ real numbers $\mathbf{F(0),\,F(\boldsymbol{\delta}t),\,
+  F(2\,\boldsymbol{\delta}t),\,..., F(m\,\boldsymbol{\delta}t),\,..., F((N-1)\,\boldsymbol{\delta}t) }$
+  can be used to define $\mathbf{N}$ complex numbers $\mathbf{G(k\,\boldsymbol{\delta}f)}$, where
+  $\mathbf{k = 0,\,1,\, ... ,(N - 1)}$, according to (this incorporates Maxima's conventions):
+\begin{equation}  \label{Eq:Gval}
+\mathbf{G(k\,\boldsymbol{\delta}f)} = 
+  \mathbf{\frac{1}{N}\,\sum_{m = 0}^{N - 1}\, F(m\,\boldsymbol{\delta}t)\,
+               e^{-2\,\boldsymbol{\pi}\,i\,m\,k/N}}
+\end{equation}
+The Maxima conventions include where to put the factor of $\mathbf{1/N}$ and
+  what sign to use in the exponent argument.
+Our notation uses $\mathbf{i}$ to stand for the pure imaginary number $\mathbf{\sqrt{-1}}$.
+Common engineering notation uses $\mathbf{j}$ for $\mathbf{\sqrt{-1}}$.\\
+
+\noindent Equation (\ref{Eq:Gval}) can be exactly inverted to arrive at an
+  expression for the values of the original signal at $\mathbf{N}$ discrete
+  times in terms of the $\mathbf{N}$ values of the discrete Fourier transform.
+\begin{equation}  \label{Eq:Fval}
+\mathbf{F(m\,\boldsymbol{\delta}t)} = 
+  \mathbf{\sum_{k = 0}^{N - 1}\, G(k\,\boldsymbol{\delta}f)\,
+               e^{2\,\boldsymbol{\pi}\,i\,k\,m/N}}
+\end{equation}
+where $\mathbf{m = 0,\,1,\, ... ,(N - 1)}$.\\
+
+\noindent Using Eqs. (\ref{Eq:df}) and (\ref{Eq:dt}), we make the replacement
+\begin{equation}  \label{Eq:dfdt}
+\mathbf{\frac{1}{N} =  \boldsymbol{\delta}f \, \boldsymbol{\delta}t }
+\end{equation}
+in Equations (\ref{Eq:Gval}) and (\ref{Eq:Fval}) to get
+\begin{equation} \label{Eq:Gfk}
+\mathbf{G(f_{k})} = 
+  \mathbf{\frac{1}{N}\,\sum_{m = 0}^{N - 1}\, F(t_{m})\,
+               e^{-2\,\boldsymbol{\pi}\,i\,f_{k}\,t_{m}}}
+\end{equation}
+and
+\begin{equation}
+\mathbf{F(t_{m})} = 
+  \mathbf{\sum_{k = 0}^{N - 1}\, G(f_{k})\,
+               e^{2\,\boldsymbol{\pi}\,i\,t_{m} \, f_{k}}}
+\end{equation}
+where $\mathbf{f_{k}} = \mathbf{k\,\boldsymbol{\delta}f}$ 
+  and $\mathbf{t_{m}} = \mathbf{m\,\boldsymbol{\delta}t}$.\\
+  
+\noindent A simpler looking set of transform pairs can be achieved by
+  letting $\mathbf{F_{m} = F(t_{m})}$ and $\mathbf{G_{k} = G(f_{k})}$, in terms
+  of which Equations (\ref{Eq:Gval}) and (\ref{Eq:Fval}) become
+\begin{equation}  \label{Eq:Gval2}
+\mathbf{G_{k}} = 
+  \mathbf{\frac{1}{N}\,\sum_{m = 0}^{N - 1}\, F_{m}\,
+               e^{-2\,\boldsymbol{\pi}\,i\,m\,k/N}}
+\end{equation}
+and
+\begin{equation}  \label{Eq:Fval2}
+\mathbf{F_{m}} = 
+  \mathbf{\sum_{k = 0}^{N - 1}\, G_{k}\,
+               e^{2\,\boldsymbol{\pi}\,i\,k\,m/N}}
+\end{equation}
+We can use
+\begin{equation}
+\mathbf{e^{-2\,\boldsymbol{\pi}\,i\,m\,k}}=\mathbf{(e^{-2\,\boldsymbol{\pi}\,i\,k})^{m}} =
+  \mathbf{(-1)^{m}} = 1
+\end{equation}
+to show that the fast Fourier amplitudes have the periodicity $\mathbf{N}$
+\begin{equation}
+\mathbf{G_{k + N}} = \mathbf{G_{k}}.
+\end{equation}
+We can now formally admit  negative frequencies by letting $\mathbf{k}$ take
+  on negative integral values, and setting $\mathbf{k = -N/2}$ we then get
+\begin{equation}
+\mathbf{G_{N/2}} = \mathbf{G_{-N/2}}.
+\end{equation}
+\newpage
+\noindent This means that the amplitude corresponding to the ``Nyquist frequency''
+\begin{equation} \label{Eq:fnyq}
+  \mathbf{ f_{Nyquist} = \frac{N}{2}\,\boldsymbol{\delta}f }
+\end{equation}
+  is the same complex  number as the amplitude corresponding to the 
+  frequency $\mathbf{-f_{Nyquist}}$.\\
+In the \textbf{qfft} package, the function \textbf{nyquist} calculates
+  what we call the ``Nyquist integer'' $\mathbf{k_{Nyquist}}$, which is just
+\begin{equation} \label{Eq:knyq}
+\mathbf{k_{Nyquist} = \frac{N}{2}},
+\end{equation} 
+in terms of which 
+\begin{equation}
+\mathbf{ f_{Nyquist} = k_{Nyquist}\, \boldsymbol{\delta}f }
+\end{equation}
+Likewise we can show that
+\begin{equation}
+\mathbf{G_{N/2 + 1}} = \mathbf{G_{-N/2 + 1}}.
+\end{equation}
+which means that the amplitude corresponding to the frequency
+  $\mathbf{(N/2 + 1)\,\boldsymbol{\delta}f = f_{Nyquist} + \boldsymbol{\delta}f}$ 
+  is the same complex number as the amplitude corresponding to the 
+  frequency $\mathbf{-f_{Nyquist} + \boldsymbol{\delta}f}$.
+The only useful part of the spectrum in that contained in the frequency interval
+  between zero and $\mathbf{f_{Nyquist} - \boldsymbol{\delta}f}$, ie., in the range \\
+  $\mathbf{k = 0, 1, 2, ..., (N/2) -1}$.\\
+  
+\noindent In a similar manner we can show that $\mathbf{F_{m + N} = F_{m}}$,
+or that $\mathbf{F(t_{m} + T) = F(t_{m})}$, where
+\begin{equation}
+  \mathbf{T = N\,\boldsymbol{\delta}t = \frac{N}{f_{s}} = \frac{1}{\boldsymbol{\delta}f}},
+\end{equation}
+  so that the fast Fourier amplitudes
+  describe a signal which has the basic inevitable long period $\mathbf{T}$ no matter
+  what other shorter periods (and correspondingly higher frequencies) are also
+  present in the signal.
+This low frequency, long period property is an artifact of the approximate nature
+  of Equations (\ref{Eq:Gval}) and (\ref{Eq:Fval}).\\
+  
+\noindent The fast fourier transform and its inverse should be considered as a distinct
+  type of transform pair rather than as an approximation to either a Fourier
+  series expansion or a Fourier integral expression of a continuous spectrum.
+The basic idea of the fast Fourier transform is that one has waited long enough
+  for a physical system to ``settle down'' and the system is then sampled for
+  a certain finite length of time $\mathbf{T_{s}}$ (we use frequency-time language 
+  only for simplicity here, the same ideas apply to wavelength-spatial domain
+  problems).
+\newpage
+\subsection{Syntax of \textbf{qfft.mac} Functions}  \label{syntax}
+\begin{myVerbatim2s}
+   FAST FOURIER TRANSFORM UTILITIES   
+    nyquist (ns,fs) 
+    sample (expr,var,ns,dvar)
+    vf (flist,dvar)
+    kg (glist)        
+    fchop (expr)
+    fchop1 (expr,small)
+    current_small ()
+    setsmall (val)
+    spectrum ( glist, nlw, ymax, k1,k2 )    
+
+	
+1.  nyquist (ns, fs), given ns, the number of signal 
+    samples, and fs, the sampling frequency,  
+    returns the list [dt,knyq,fnyq,df] where dt is the time 
+    interval between function samples (dt = 1/fs), knyq in the Nyquist
+    integer (knyq = ns/2),  fnyq is the Nyquist frequency 
+    (fnyq = fs/2 = knyq*df), and df is the frequency
+    resolution (df = fs/ns) for the output of fft.
+    For given ns, the values of df and dt are linked
+    by the equation df*dt = 1/ns.
+	Thus  nyquist(8,8); returns the list
+             [0.125, 4, 4.0, 1.0], and also prints out:
+       
+        sampling interval dt =  0.125 
+        Nyquist integer knyq =  4 
+        Nyquist freq fnyq =  4.0 
+        freq resolution df =  1.0
+		
+2. sample (expr, var, ns, dvar) constructs a list of ns
+   floating point samples F(m*dvar),
+   [F(0), F(dvar), F(2*dvar),...,F((ns-1)*dvar) ],
+   given the expression expr depending on var.
+   
+      sample(cos(t),t,16,1) returns a list of 16 values 
+      of cos(t) at intervals dt = 1, with list element 
+      number 1 holding cos(0), element number 2 holding 
+      cos(dt) = cos(1), etc.
+	  
+	  A signal sample list to be used with fft(flist) should
+	  have a length ns which is 2 raised to some integer power,
+	  2^3 = 8, 2^4 = 16,... If your experimental signal sample
+	  size does not have such a power of 2 length, you should pad
+	  the sample list with extra zeros.
+	  
+3. vf ( flist, dvar ), given a list of function samples flist,
+    consisting of ns values, and the step size dvar, returns a
+	list of the form (if dvar = dt, say),
+   [ [0, F(0)],[dt, F(dt)],...,[(ns-1)*dt, F( (ns-1)*dt)]]
+   useful for a plot.
+    For example, if the length of flist is 8, vf (flist, 1) returns the list
+       [ [0, F(0)], [1, F(1)], ... , [7, F(7)] ]
+\end{myVerbatim2s}
+\newpage
+\begin{myVerbatim2s}
+4.  kg ( glist ) constructs a list of [ k, abs( g(k*df) ) ] 
+     for k = 0, 1, ..., knyq, which can be used with plot2d.
+	 knyq is the Nyquist integer, knyq = ns/2, 
+     where ns is the number of function samples and also the 
+     length of flist and glist. fchop(abs(glist[j])) is 
+     used to be able to plot real numbers and set tiny
+	 numbers to zero.
+	 
+     glist is the fast Fourier transform list of complex amplitudes
+	 produced by glist : fft( flist ). 
+	 
+	 Using inverse_fft( glist ) should produce flist again to within
+	 floating point errors. Since floating point errors will also
+	 introduce tiny imaginary numbers in inverse_fft ( fft (flist) )
+	 (if flist is real), you can use realpart(...) to recover
+	 a list of real numbers.
+
+5.  fchop(expr) or fchop(list) sets tiny floating point
+          numbers (with package default, less than 10^(-13) ) to zero.
+		  
+6.  fchop1(expr,small) is used to override the default value of
+       the small chop value with your desired value.	  
+	
+      Example: fchop1(s1, 1.0e-3) to set numbers smaller than
+       10^(-3) to zero in the expression or list s1.
+	
+7.  current_small() returns the current default small chop value.	 
+
+8.  setsmall(val) allows you to set a new value for the
+     current default small chop value; use floating point
+     numbers like 2.0e-3 or 2.0E-3.
+	 
+9.  spectrum (glist, nlw, ymax ) creates a histogram of the frequency
+    spectrum implied by glist = fft ( flist ), with line width nlw
+	and vertical canvas height ymax. The range of integers
+	k is 0 <= k <= knyq. The frequency associated with a given
+	line is given by f = k*df, where df is the frequency 
+	resolution df = fs/ns. ns is the total number of signal samples
+	and fs is the sampling frequency: fs = 1/dt (dt is the time 
+	interval between signal samples).
+	
+	spectrum (glist, nlw, ymax, k1, k2) restricts the plot to
+	the range k1 <= k <= k2.
+\end{myVerbatim2s}
+\newpage
+\subsection{The Discrete Fourier Transform Derived via a Numerical Integral Approximation}
+\subsubsection*{Review of Trapezoidal Rule}
+If we let $\mathbf{f_{0} = f(a),\; f_{1} = f(a + h),\; f_{2} = f(a + 2\,h),...}$
+  and $\mathbf{f_{N} = f(b) = f(a + N\,h)}$, then the trapezoidal rule approximation
+  is
+\begin{equation}
+\mathbf{\int_{a}^{b} f(x)\,dx \approx \frac{h}{2}\,(f_{0} + 2\,f_{1} + 2\,f_{2} + \cdots  + 2\,f_{N-1} + f_{N})}
+\end{equation}
+where $\mathbf{b = a + N\,h}$ defines $\mathbf{h = (b-a)/N}$.
+If we now specialize to functions such that $\mathbf{f(a) = f(b)}$ then the trapezoidal
+  rule reduces to
+\begin{equation}
+\mathbf{\int_{a}^{b} f(x)\,dx \approx h\,\left(f(a) + f(a+h) + f(a+2\,h) + \cdots + f(b- 2\,h) + f(b-h)\right)}
+\end{equation}
+with $\mathbf{h = (b-a)/N}$.\\
+
+\noindent If we now make the replacements $\mathbf{x \rightarrow t,\;a \rightarrow 0,\;
+         b \rightarrow T,\; h = (b-a)/N \rightarrow T/N = \boldsymbol{\Delta}t}$,\\
+		 $\mathbf{(b-h) \rightarrow T - (T/N) = (N-1)\,\boldsymbol{\Delta}t}$, then
+\begin{equation}
+\mathbf{\int_{0}^{T} f(t)\,dt \approx (T/N)\,\left(f(0) + f(\boldsymbol{\Delta}t) +
+         f(2\,\boldsymbol{\Delta}t) + \cdots + f(\,(N-1)\,\boldsymbol{\Delta}t) \,\right) }
+\end{equation}
+or
+\begin{equation} \label{Eq:trap}
+\mathbf{\int_{0}^{T} f(t)\,dt \approx \boldsymbol{\Delta}t \, \sum_{m=0}^{N-1}\,f(m\,\boldsymbol{\Delta}t) }
+\end{equation}
+where $\mathbf{\boldsymbol{\Delta}t = T/N}$ and assuming $\mathbf{f(0) = f(T)}$.
+\subsubsection*{A Path to the Discrete Fourier Transform}
+If we knew the value of a signal $\mathbf{F(t)}$ at all moments of the interval
+  $\mathbf{0 \leq t \leq T}$ then we could evaluate the Fourier coefficients
+\begin{equation}  \label{Eq:cont}
+\mathbf{C_{k} = \frac{1}{T}\,\int_{0}^{T} F(t)\,e^{- 2\,\boldsymbol{\pi}\,i\,k\,t/T}\,dt }
+\end{equation}
+  ($\mathbf{k}$ is an integer) in terms of which the signal could be represented as the sum
+\begin{equation}
+\mathbf{F(t) = \sum_{k = -\infty}^{\infty}\,C_{k} \,e^{2\,\boldsymbol{\pi}\,i\,k\,t/T} }
+\end{equation}
+  which would be a complex form of Fourier series expansion in terms of an infinite number
+  of Fourier coefficients $\mathbf{C_{k}}$.
+We have adopted here sign and prefactor conventions which will lead us to Maxima's fast
+  Fourier conventions.\\
+  
+\noindent Now assume we only know the signal at $\mathbf{N}$ discrete values
+  $\mathbf{F(m\,\boldsymbol{\Delta}t)}$, where $\mathbf{m = 0,1,2,...,N-1}$,
+  and that $\mathbf{F(t) = f(t+T) }$. 
+We can then approximate the integral in Eq.(\ref{Eq:cont}) using the trapezoidal
+  approximation expressed by Eq.(\ref{Eq:trap}).
+\begin{equation}
+\mathbf{C_{k} \approx \frac{1}{T}\,(T/N)\,\sum_{m=0}^{N-1}\,F(m\,\boldsymbol{\Delta}t)\,
+               e^{- 2\,\boldsymbol{\pi}\,i\,k\,m\,\boldsymbol{\Delta}t/T} }
+\end{equation}
+Defining a ``frequency resolution'' $\mathbf{\boldsymbol{\delta}f}$ given by 
+\begin{equation}   \label{Eq:dfdt2}
+\mathbf{\boldsymbol{\delta}f = \frac{1}{T} = \frac{1}{\boldsymbol{\Delta}t\,N} = 
+                     \frac{f_{s}}{N} }
+\end{equation}
+in which $\mathbf{f_{s} = 1/\boldsymbol{\Delta}t}$ is the ``sampling frequency'',
+  and making the replacements $\mathbf{T \rightarrow 1/\boldsymbol{\delta}f,\;
+    C_{k} \rightarrow G(k\,\boldsymbol{\delta}f)}$
+\begin{equation}  \label{Eq:Gkdf}
+\mathbf{G(k\,\boldsymbol{\delta}f) = \frac{1}{N}\,\sum_{m=0}^{N-1}\,F(m\,\boldsymbol{\Delta}t)\,
+                   e^{- 2\,\boldsymbol{\pi}\,i\,(k\,\boldsymbol{\delta}f)\,(m\,\boldsymbol{\Delta}t)}}
+\end{equation}
+With $\mathbf{f_{k}} = \mathbf{k\,\boldsymbol{\delta}f}$ 
+  and $\mathbf{t_{m}} = \mathbf{m\,\boldsymbol{\Delta}t}$, we can write this as
+\begin{equation} 
+\mathbf{G(f_{k})} = 
+  \mathbf{\frac{1}{N}\,\sum_{m = 0}^{N - 1}\, F(t_{m})\,
+               e^{-2\,\boldsymbol{\pi}\,i\,f_{k}\,t_{m}}}
+\end{equation}
+which we recognise as the same as Eq.(\ref{Eq:Gfk}).
+With only $\mathbf{N}$ values of $\mathbf{F(t_{m})}$ we can only determine $\mathbf{N}$
+  values of $\mathbf{G(f_{k})}$, which by convention we take to be for the values of
+  the integer $\mathbf{k = 0, 1, 2,..., N-1}$.\\
+  
+\noindent We see from Eq.(\ref{Eq:dfdt2}) that
+\begin{equation}
+\mathbf{\boldsymbol{\delta}f\,\boldsymbol{\Delta}t = \frac{1}{N} }
+\end{equation}
+  which allows Eq.(\ref{Eq:Gkdf}) to be written as
+\begin{equation}  \label{Eq:Gval3} 
+\mathbf{G(k\,\boldsymbol{\delta}f) = \frac{1}{N}\,\sum_{m=0}^{N-1}\,F(m\,\boldsymbol{\Delta}t)\,
+                   e^{- 2\,\boldsymbol{\pi}\,i\,k\,m/N }} 
+\end{equation}
+ which reproduces our starting point Eq.(\ref{Eq:Gval}) in Sec. \ref{notate}.
+\subsubsection*{The Inverse Discrete Fourier Transform}
+\small
+Although the discrete Fourier transform, Eq.(\ref{Eq:Gval3}), is an approximation which gets
+  better as $\mathbf{N}$ increases for fixed $\mathbf{T}$ (or since Eq.(\ref{Eq:dfdt2}) indicates
+  that the latter condition is equivalent to the ratio $\mathbf{f_{s}/N}$ being fixed, gets
+  better as $\mathbf{N}$ and $\mathbf{f_{s}}$ are each increased in the same ratio), the
+  inversion formula involves no further approximations.\\
+  
+\noindent Multiplying both sides of Eq.(\ref{Eq:Gval3}) by 
+  $\mathbf{exp(2\,\boldsymbol{\pi}\,i\,k\,n/N)}$ and then summing both sides over $\mathbf{k}$,
+  and then interchanging the order of the $\mathbf{k}$ and $\mathbf{m}$ summations on the right
+  hand side, results in
+\begin{equation}
+\mathbf{\sum_{k = 0}^{N-1} G(k\,\boldsymbol{\delta}f)\,e^{2\,\boldsymbol{\pi}\,i\,k\,n/N}} = 
+          \mathbf{\frac{1}{N}\,\sum_{m = 0}^{N-1} F(m\,\boldsymbol{\Delta}t)\,
+		  \sum_{k = 0}^{N-1} e^{2\,\boldsymbol{\pi}\,i\,k\,(n - m)/N} } =
+		  \mathbf{\frac{1}{N}\,\sum_{m = 0}^{N-1} F(m\,\boldsymbol{\Delta}t)\,(N\,\boldsymbol{\delta}_{m,n})} =
+		  \mathbf{F(n\,\boldsymbol{\Delta}t)}
+\end{equation}
+which reproduces our discrete inverse Fourier transform formula Eq.(\ref{Eq:Fval}), since $\mathbf{n}$
+  is an arbitrary integer.\\
+  
+\noindent That the sum over $\mathbf{k}$ is equal to zero if $\mathbf{m \neq n}$ can be seen
+  by letting $\mathbf{l = n - m}$ and using $\mathbf{e^{k\,a} = (e^{a})^{k}}$ and recognising that
+  we have a simple geometric sum.
+We can also let Maxima confirm this as follows: 
+\begin{myVerbatim1}
+(%i1) declare([k,l,N],integer)$
+(%i2) sum (exp(2*%pi*%i*k*l/N),k,0,N-1),simpsum;
+                                 2 %i %pi l
+                               %e           - 1
+(%o2)                          ----------------
+                                 2 %i %pi l
+                                 ----------
+                                     N
+                               %e           - 1
+(%i3) %,demoivre;
+(%o3)                                  0
+\end{myVerbatim1} 
+In the last step the exponentials of complex arguments are converted into their
+  trig function equivalents using
+\begin{equation}
+\mathbf{e^{i\,\boldsymbol{\theta}} = \boldsymbol{\cos\,\boldsymbol{\theta}} + i\,\boldsymbol{\sin \,\theta}}
+\end{equation}
+\subsection{Fast Fourier Transform References}
+We have consulted the treatment of the fast Fourier transform in the following
+  books:
+\begin{enumerate}
+\item \textbf{Mathematica for the Sciences, Richard E. Crandall, Addison-Wesley, 1991}
+\item \textbf{A First Course in Computational Physics, Paul L. Davies, John Wiley, 1994}
+\item \textbf{Applied Mathematica: Getting Started, Getting it Done, William T. Shaw and
+  Jason Tigg, Addison-Wesley, 1994}
+\end{enumerate}
+
+\end{document}

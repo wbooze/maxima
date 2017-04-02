@@ -1,0 +1,270 @@
+/************************************************************************
+    lag1.mac is a batch file which contains the definition
+    of a lagrangian differential equation constructor
+    le (q) which assumes q is a generalized coordinate
+    describing one of the degrees of freedom of the
+    dynamical system described by a lagrangian expression
+    with the name 'lag' which depends on the
+    generalized coordinates and velocities. 
+    
+    See the examples below for how le (q) can be used.
+    
+    This lagrangian method for Maxima is that of Richard
+    Rand (p. 38-39, Topics in Nonlinear Dynamics with
+    Computer Algebra, Gordon and Breach, 1994.)
+    
+    The batch file lag1.mac also loads file lag2.mac
+    which defines a Maxima function leN (qL,mylagr)
+    which expects a list qL of generalized coordinates
+    and produces a list of second order lagrange
+    differential equations, given a system lagrangian
+    expression in the second slot which has the
+    generalized velocities expressed as q1d,q2d,...
+    (if qL = [q1,q2,...]).
+    
+    An example of use of leN is shown below.
+    
+    Note that we only consider, here, systems
+    for which the specification of constraint
+    conditions on the variables is not needed.
+    
+    Copyright (C) 2010  Edwin L. Woollett  <woollett@charter.net>       
+    http://www.csulb.edu/~woollett
+    
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU GENERAL PUBLIC LICENSE, Version 2, June 1991,
+    as published by the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details. You should have received a
+    copy of the GNU General Public License along with this program.
+    If not, see http://www.fsf.org/licensing/.
+************************************************************************/
+    
+ kill(all)$
+ 
+/*  display2d:false$ */
+ 
+ /* generate each degree of freedom eqn. of motion
+    one at a time with:  */
+    
+ le(q) := expand (diff (diff (lag, diff (q,t)),t) - diff (lag,q)) = 0$
+ 
+ load ("lag2.mac")$
+ 
+ /* examples of le(q) use  */
+ 
+ " use le(q) for  deriving one equation at a time "$
+ 
+ "  case one degree of freedom x(t)  "$
+ 
+ "  dx/dt => xd(t)  "$
+   
+ depends(x,t)$
+ 
+ xd : diff(x,t)$
+ 
+ ke : m*xd^2/2$
+ 
+ pe : V(x)$
+ 
+ lag : ke - pe$
+ 
+ eqx : le (x);
+ 
+ " case simple harmonic motion about x = 0 "$
+ 
+ V(x) := k*x^2/2$
+ 
+ eqx1 : ev (eqx,diff);
+ 
+ " case vertical motion in grav. field, x axis up "$
+ 
+ V(x) := m*g*x$
+ 
+ eqx1 : (ev (eqx,diff), expand (%%/m));
+ 
+ "-------------------------------------------------"$
+ "  case: two degrees of freedom "$
+ 
+ " case projectile motion in (x,y) plane, y axis up "$
+ 
+ depends (y,t)$
+ 
+ yd : diff(y,t)$
+ 
+ ke : ke + m*yd^2/2$
+ 
+ pe : V2(x,y)$
+ 
+ lag : ke - pe$
+ 
+ eqx : le(x);
+ 
+ eqy : le(y);
+ 
+ " case no friction "$
+ 
+ V2(x,y) := m*g*y$
+ 
+ eqx1 : (ev(eqx,diff),expand (%%/m));
+ 
+ eqy1 : (ev(eqy,diff),expand (%%/m));
+ 
+ " ---------------------------------------------"$
+ " use leN(qL,Lag) for a list of equations of motion "$
+ " corresponding to list qL "$
+ " ----------------------------------"$
+ " our example is projectile motion in a plane"$
+ "  with m -->  1 for simplicity "$
+ 
+ kill(x,y)$
+ 
+ qL : [x,y]$
+ 
+ " set mass m = 1 here "$
+ 
+ mylag : xd^2/2 + yd^2/2 - g*y$
+ 
+ leN (qL, mylag);
+ 
+ " =================================== "$
+ 
+ /*  RECORD OF USE:
+ 
+ 
+ Maxima 5.22.1 http://maxima.sourceforge.net
+using Lisp GNU Common Lisp (GCL) GCL 2.6.8 (a.k.a. GCL)
+Distributed under the GNU Public License. See the file COPYING.
+Dedicated to the memory of William Schelter.
+The function bug_report() provides bug reporting information.
+                                  2010-10-26
+
+(%i1) batch ("lag1.mac")$
+read and interpret file: #pC:/work5/lag1.mac
+(%i2)                              kill(all)
+(%i1) le(q) := expand(diff(diff(lag, diff(q, t)), t) - diff(lag, q)) = 0
+(%i2)                           load(lag2.mac)
+                                 leN (qL,Lag) 
+
+(%i3)           use le(q) for  deriving one equation at a time 
+(%i4)                   case one degree of freedom x(t)  
+(%i5)                           dx/dt => xd(t)  
+(%i6)                            depends(x, t)
+(%i7)                           xd : diff(x, t)
+                                           2
+                                       m xd
+(%i8)                             ke : -----
+                                         2
+(%i9)                              pe : V(x)
+(%i10)                           lag : ke - pe
+(%i11)                            eqx : le(x)
+                                            2
+                             d             d x
+(%o11)                       -- (V(x)) + m --- = 0
+                             dx              2
+                                           dt
+(%i12)              case simple harmonic motion about x = 0 
+                                            2
+                                         k x
+(%i13)                           V(x) := ----
+                                          2
+(%i14)                       eqx1 : ev(eqx, diff)
+                                   2
+                                  d x
+(%o14)                          m --- + k x = 0
+                                    2
+                                  dt
+(%i15)          case vertical motion in grav. field, x axis up 
+(%i16)                           V(x) := m g x
+                                                    %%
+(%i17)                eqx1 : (ev(eqx, diff), expand(--))
+                                                    m
+                                   2
+                                  d x
+(%o17)                            --- + g = 0
+                                    2
+                                  dt
+(%i18)         -------------------------------------------------
+(%i19)                    case: two degrees of freedom 
+(%i20)         case projectile motion in (x,y) plane, y axis up 
+(%i21)                           depends(y, t)
+(%i22)                          yd : diff(y, t)
+                                         2
+                                     m yd
+(%i23)                          ke : ----- + ke
+                                       2
+(%i24)                           pe : V2(x, y)
+(%i25)                           lag : ke - pe
+(%i26)                            eqx : le(x)
+                                              2
+                           d                 d x
+(%o26)                     -- (V2(x, y)) + m --- = 0
+                           dx                  2
+                                             dt
+(%i27)                            eqy : le(y)
+                              2
+                             d y   d
+(%o27)                     m --- + -- (V2(x, y)) = 0
+                               2   dy
+                             dt
+(%i28)                         case no friction 
+(%i29)                         V2(x, y) := m g y
+                                                    %%
+(%i30)                eqx1 : (ev(eqx, diff), expand(--))
+                                                    m
+                                     2
+                                    d x
+(%o30)                              --- = 0
+                                      2
+                                    dt
+                                                    %%
+(%i31)                eqy1 : (ev(eqy, diff), expand(--))
+                                                    m
+                                   2
+                                  d y
+(%o31)                            --- + g = 0
+                                    2
+                                  dt
+(%i32)           ---------------------------------------------
+(%i33)         use leN(qL,Lag) for a list of equations of motion 
+(%i34)                     corresponding to list qL 
+(%i35)                 ----------------------------------
+(%i36)            our example is projectile motion in a plane
+(%i37)                    with m -->  1 for simplicity 
+(%i38)                            kill(x, y)
+(%i39)                            qL : [x, y]
+(%i40)                        set mass m = 1 here 
+                                             2     2
+                                           yd    xd
+(%i41)                     mylag : - g y + --- + ---
+                                            2     2
+(%i42)                          leN(qL, mylag)
+                                qdL = [xd, yd]
+
+                                         dx  dy
+                               qLdiff = [--, --]
+                                         dt  dt
+
+                                       dx       dy
+                           qLR = [xd = --, yd = --]
+                                       dt       dt
+
+                                   dy 2          dx 2
+                                  (--)          (--)
+                                   dt            dt
+                         _Lag2% = ----- - g y + -----
+                                    2             2
+
+                              2        2
+                             d x      d y
+(%o42)                      [--- = 0, --- + g = 0]
+                               2        2
+                             dt       dt
+(%i43)                =================================== 
+
+
+*/
+

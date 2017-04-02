@@ -1,0 +1,50 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 0.8.7 ] */
+
+/* [wxMaxima: input   start ] */
+load(angeom),
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A :[0,0,0]$ B :[8,0,0]$ C :[8,8,0]$ D :[0,8,0]$ E :[4,4,8]$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S_Figur1:mesh([A,B,C,D,A],[A,B,E],[B,C,E],[C,D,E])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+E1:a*x+3*z-8*a, F(hesseNF(E1),E)^2=4^2, solve(%,a), E1a:E1,%[1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+g1:E+l*normalVektorNF(E1a), F:schnittEbeneGerade(E1a,g1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[A,B,C,D,E,F]$ PLOTT_L([E1a],[],-1,9)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wx_ScVon:-2$ wx_ScBis:5$ 
+wx_Hrot:30$ wx_Vrot:60$
+PLOTT_D([ev(E1,a=wx_Scene)],[],-1,9)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ g1:[3,0,0]+r*[2,0,-3]; h1:[1,a,3]+s*[-0.5,(a^2-a),0.75];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S_Figur:[]$ S_Figur1:[]$ O:[A]$
+wx_ScVon:-2$ wx_ScBis:5$ 
+wx_Hrot:30$ wx_Vrot:60$
+PLOTT_D([],[g1,ev(h1,a=wx_Scene)],-10,10)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

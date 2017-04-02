@@ -1,0 +1,69 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 13.04.2 ] */
+
+/* [wxMaxima: input   start ] */
+kill(seq)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(start,stop,[stepping]) := block(
+[ control:stop, stop:ceiling(stop), n, y:[],
+stepping: (if (not(emptyp(stepping))) then 
+                    float(first(stepping)) else 1.0),
+shift: (if (length(stepping)>1) then
+                float(second(stepping)) else (0.0)) ],
+
+            (n:(float(control-start)/float(stepping))),
+            (if (start < stop)
+            then
+            (y:flatten(append([y], 
+                                        makelist(float(start+shift+(stepping*(i-start))), 
+                                        i, start, n+start))))
+            else
+            (y:flatten(append([y], 
+                                        makelist(-(float(stop-shift-(stepping*(i-stop)))), 
+                                        i, -(n+stop), stop)))))
+            (if (n>1.0)
+                then return(y)
+                else return([])))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(1, 10);
+seq(1, 10, 0.9);
+seq(0.1, 2*%pi, 0.1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(start,stop,[stepping]) := block(
+[ control:stop, stop:ceiling(stop),n, y:[],
+stepping: (if (not(emptyp(stepping))) then 
+                    float(first(stepping)) else 1.0),
+shift: (if (length(stepping)>1) then
+                float(second(stepping)) else (0.0)) ],
+
+            (n:(float(control-start)/float(stepping))),
+            (if (start < stop)
+            then
+            (k:float(start+shift+(stepping*(i-start))),
+             y:flatten(append([y], 
+                                        makelist(ev(k), 
+                                        i, start, n+start))))
+            else
+            (m: -(float(stop-shift-(stepping*(i-stop)))),
+              y:flatten(append([y], 
+                                        makelist(ev(m), 
+                                        i, -(n+stop), stop)))))
+            (if (n>1.0)
+                then return(y)
+                else return([])))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(1, 10);
+seq(1, 10, 0.9);
+seq(0.1, 2*%pi, 0.1);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

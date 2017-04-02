@@ -1,0 +1,47 @@
+Richard Fateman wrote:
+> I'm back.
+> 
+> My parents survived their 90th birthday party, and so did the rest of us.
+
+Wow!  Congratulations!  That's a pretty special day, especially for both 
+parents!
+
+> 
+> 
+> 1.  I've forgotten the official utterance to make asdf work in this
+> circumstance.
+> 
+> I found that I could do, in allegro,
+> (require :asdf)
+> (load "oct.asd")
+> (load "defsystem.lisp")  ;; some old copy of this..
+> 
+> ... BUT THEN WHAT DO I SAY ?
+
+Heh.  I never remember either.
+
+(asdf:oos 'asdf:load-op :oct)
+
+or
+
+(asdf:oos 'asdf:compile-op :oct)
+
+
+Not sure, but I think load-op just loads the files without compiling 
+(but if fasls exist, the fasls are loaded).
+
+If you want to use defsystem (which is what I use), you can say
+
+(mk:oos "oct" :compile) to compile or (mk:oos "oct" :load) to load 
+(without compiling?).
+
+
+
+> 
+> 
+> Anyway, I compiled and loaded the stuff by fiddling around previously, so I
+> loaded that up and compiled.
+> Then.. 
+> (Note, allegro has to use safety >0   to do the rounding right on i86 ..)
+
+I need to change the code to use safety > 0 for Allegro.  I'll do that soon.

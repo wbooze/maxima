@@ -1,0 +1,535 @@
+
+/* Some Maxima functions for playing with representation of functions of
+a single "real" variable  (double-precision floats, actually)
+by their Chebyshev series coefficients.  This particular version
+is set up for generation and  manipulation of functions defined on [-1,1].
+
+We refer elsewhere (insert good reference) for a discussion
+of the nature of functions that can be appropriately modeled by a
+Chebyshev expansion. The functions could be translated or scaled, or pasted together
+piecewise. as done by the later work of the Chebfun group (see their web page).
+
+It has been said that "the Chebyshev polynomials are everywhere dense in numerical analysis." 
+
+|# 
+
+ To Do:
+ 
+ 1. I haven't debugged how to use FFT for this, so indeed this is probably   
+ much slower than it could be. The discrete cosine transform of size n
+is equivalent to an FFT of size 4 n where half the entries are zero
+and half of the remaining entries are the negatives of the
+original. There are so many implementations of the FFT that I could
+not be sure of using the best one, but if I pick one, (including my
+own), for sure that would not be best.  The Chebfun people presumably
+finess this by using whatever Matlab uses, which is probably some
+version from FFTW. (which includes versions of the DCT as well). And
+then I would feel some obligation to deal with the "give special
+consideration to powers of two".  Possibilities for fastest include
+DJ Bernstein's code, djbfft, FFTPACK, FFTW. And I don't like to
+irritate friends here.  So all-in-all, I don't feel so bad
+about using one or two line programs, even if they are n^2 rather than
+nlogn.  But if I find one "fast" implementation that works without
+effort and can be called from Lisp, and it falls into my lap, I might use it.
+
+
+ 
+ 2. I am probably naive in the calculation heuristics for how many terms
+ are needed to represent a function.
+
+ 3. I have not dealt at all with NaN or Infinities.
+
+ 4. There are many extensions (cf chebfun group software in Matlab) that
+ are possible. For example, using splitting of functions to handle
+ discontinuities. Using arbitrary or even infinite domains.
+
+5. Many functions that are supplied could be done in a cleverer fashion.
+For example, conversion of rational functions can be done by partial fraction
+expansion, rootfinding, and many special cases. We can multiply directly
+in chebyshev series, and (in the works) do function composition.
+
+ 6. Many functions that are described in chebfun literature are not
+ implemented at all. Rootfinding, quadrature for a start.
+
+ 7. These functions are not using the full generic arithmetic facilities.
+Some assume (or insist on) double-float coefficients.  The package could be make
+ more generic to allow quad-double, or arbitrary precision (software) floats.
+ There is less argument for using (say) rationals or intervals, and it is
+ probably worthwhile to be fast.  On the other hand, some functions are written
+to produce exact chebyshev coefficients when given polynomial inputs. Even
+polynomials with symbolic entries.
+
+*/
+
+/*going back to Einwohner (& Fateman) paper in 1989.
+
+Take an expression and convert to Cheby form via Taylor Series. */
+
+kill(tc,FromCheby, ToCheby, ToCheby2)$
+tc[0](x):=1$
+tc[1](x):=rat(x)$
+tc[n](x):=2*x*tc[n-1](x)-tc[n-2](x)$
+
+/*here's another way, if you are in a hurry */
+tc2[0](x):=1$
+tc2[1](x):=x$
+tc2[n](x):= if evenp(n) then 2*tc2[n/2](x)^2-1
+  else 2*tc2[(n+1)/2](x)*tc2[(n-1)/2](x)-x$
+
+ToCheby(e,x,n):= 
+/* convert analytic expression, depending on x,  to Chebyshev series.
+  The expression e may be a polynomial or function in other variables, too.
+  The result will be a list of the Chebyshev coefficients.
+  Here we try to make them all floats.
+   */
+  block([ tay: taylor(e,x,0,n),q,r,ans:[], keepfloat:true],
+  tay:ratdisrep(tay),
+  for i: n step -1 thru 0 do
+   ([q,r]:divide(tay,tc[i](x),x),
+     ans:cons(float(q),ans),tay:r),
+   return(apply('chebseries,ans)))$
+
+/* another version, which has been written in lisp for  */
+
+
+/* convert analytic function lambda([x]...expression in x) to Chebyshev series
+  The expression f may be a polynomial or function in other variables, too.
+  The result will be a list of the Chebyshev coefficients.
+  Here we try to make them all floats.
+   */
+ToCheby2(%%f,n):=  /* this one takes a function, e,g, lambda([x],..) */
+apply ('chebseries, DCT(makelist(%%f(cos(?pi*(k+0.5d0)/n)),k,0,n-1)))$
+
+
+ToCheby2(%%f,n):=  /* this one takes a function, e,g, lambda([x],..) */
+apply ('chebseries, DCT(makelist(apply(%%f,[(cos(?pi*(k+0.5d0)/n))]),k,0,n-1)))$
+
+
+ToCheby2s(f,n):=  /*(symbolic) this one takes a function, e,g, lambda([x],..)*/
+apply ('chebseries, DCTs(makelist(f(cos(%pi*(i+1/2)/n)),i,0,n-1)))$
+
+
+
+/* gauss-lobatto points*/
+glp(n):= makelist(cos(?pi*(i+0.5d0)/n),i,0,n-1)$
+glpf(f,n):= makelist(apply(f, [cos(?pi*(i+0.5d0)/n)]),i,0,n-1)$
+
+
+FromCheby(a,x):=  
+/* if x is a symbol, this will convert Chebyshev series to an expression
+   in the power basis, i.e. polynomial in x.
+   if x is a number, this will evaluate the series at that point and
+   provide a number. (if a is just numbers).
+   This algorithm is based on recurrence in Clenshaw alg. */
+  block([N:length(a)-1,keepfloat:true,
+         bj2:0,bj1:0,bj0:0, z:reverse(a)],
+ for j: 1 thru N do
+  (bj0:2*x*bj1-bj2+first(z), 
+  bj2:bj1, bj1:bj0,z:rest(z)),
+  x*bj1+first(z)/2 
+            /*  omit the /2 if it is sum' ??*/
+-bj2)$
+/* a test */
+FromCheby(ToCheby(a*x^5+b*x^2+45,x,5),rat(x));
+
+	
+
+/* Given a Chebyshev series, return another one in which we may have removed
+ terms that don't matter much; that is, trailing coeffs were small relative to
+large coeffs. */
+
+TrimCS(a,relerr):=
+ block([max: apply(max,args(a)),
+        min: apply(min,args(a)),
+        r: reverse(a),
+        bigmaginv],
+ bigmaginv: 1/max(abs(max),abs(min)),
+ while (abs(first(r))*bigmaginv < relerr) do r:rest(r),
+
+ return(reverse(r)))$
+
+small_to_zero(expr,eps):=
+ /* Replaces all numbers smaller in absolute value than EPS by zero . */
+   fullmap(lambda([x], if numberp(x) and abs(x)<eps then 0 else x), 
+           expr))$
+stz(z):=small_to_zero(z,1.0d-9)$
+
+
+/* Multiplying chebyshev series. */
+ChebTimes(a,b) := /* assuming matching vars and range */
+block([la:length(a),lb:length(b),ans,bb,h],
+array(ans, la+lb-1),
+for i: 0 thru la+lb-1 do ans[i]:0,
+ for i:0 thru la-1 do
+ (bb:b,
+  for j:0 thru lb-1 do
+    ( term: first(a)*first(bb)/2,
+       ans[i+j]: ans[i+j]+term,
+       h:abs(i-j),
+       ans[h]:ans[h]+term,
+       bb:rest(bb)),
+     a:rest(a)),
+ apply('chebseries, makelist(ans[i],i,0,la+lb-1)))$
+
+
+chebtimes(a,b) := /* assuming matching vars and range  works */
+block([la:length(a),lb:length(b),ans],
+local(aa,bb,ans),
+a:args(a),b:args(b),
+aa[i]:=a[i+1], /* index from 0 */
+bb[i]:=b[i+1],
+ans[i]:=0,
+ for i:0 thru la-1 do
+  for j:0 thru lb-1 do
+    ( term: aa[i]*bb[j]/2,
+       ans[i+j]: ans[i+j]+term,
+       h:abs(i-j),
+       ans[h]:ans[h]+term),
+ ans[0]:2* ans[0],  
+ apply('chebseries, makelist(ans[i],i,0,la+lb-1)))$
+
+/* a simple formula (Thacher, 1964) sufficient to convert from x^r to Cheby.
+    hh[r] is the chebseries for x^r
+  
+(kill(hh), hh[r]:=apply('chebseries,makelist(
+   if evenp(r-q)then 2^(1-r)*binomial(r,(r-q)/2) else 0,
+                     q,0,r)))$
+
+if powers(a,b,c,d) is an encoding of a+b*x+c*x^2+d*x^3,   with "x" understood, then converting
+from power basis to chebshev basis is
+
+power2cheby(p):=
+block([pa,ans,n:length(p)],
+local(pa,ans),
+pa[i]:=inpart(p,i+1),
+ans[i]:=0,
+for r:0 thru n-1 do /* for each power r*/
+ for q: 0 thru r do (
+     if evenp(r-q)then 
+           ans[q]:ans[q]+pa[r]*2^(1-r)*binomial(r,(r-q)/2)),
+apply ('chebseries, makelist(ans[i],i,0,n-1)))$
+
+cheby2power(c):=  /*not so efficient perhaps */
+block([f:FromCheby(c,rat(zz))],
+apply('powers,makelist(ratcoeff(f,zz,i),i,0,length(c)-1)))
+
+
+
+/* simple transformation examples */
+
+
+(matchdeclare(atrue,true),
+defrule(r1,x^atrue,hh[atrue]),
+s:a+b*x+c*x^3,
+TTT:apply1(s,r1));  /* note that x is treated as x^1 */
+
+
+(chebseriesp(x):= is (not(atom(x))and inpart(x,0)=chebseries),
+matchdeclare(cs,chebseriesp),
+defrule(r2,cs,FromCheby(cs,xx)),
+AllFromCheby(s,xx):=apply1(s,r2),
+AllFromCheby(TTT,rat(z)))
+
+
+
+/* Still need composition.
+
+For composition, maybe we can use these facts. But probably not.
+
+T[n](T[m](x)) = T[n*m](x)
+
+T[3](T[4](a*x)) = T[4](a*x)*(let( s=a^2*x^2, k=s* (t[2](a*x)-t[0](a*x))/2,
+   256*k^2+64*k+1)
+
+T[5](T[10](a*x)) =  T[2](a*x) *
+                 ( T[0](a*x)-2*T[4](a*x) +2*T[8](a*x))
+                 ( T[0](a*x)-  T[20](a*x)+2*T[40](a*x))
+
+T[4](a*T[5](x)) = 1/2*(5*T[0](a^2)-8*T[1](a^2)+3*T[2](a^2))* T[0](x)+
+                  (2*T[0](a^2)-4*T[1](a^2)+2*T[2](a^2 ))*   T[10](x)+
+                  (T[1](a^4)* T[20](x)
+
+
+tc[4](a*tc[5](x)) = 1/2*(5*tc[0](a^2)-8*tc[1](a^2)+3*tc[2](a^2))* tc[0](x)+
+                  (2*tc[0](a^2)-4*tc[1](a^2)+2*tc[2](a^2 ))*      tc[10](x)+
+                  (tc[1](a^4)*                                   tc[20](x)
+
+
+;; checks out, but what is the pattern?
+ */
+
+AJS(f,n):=apply('chebseries,makelist(AJS1(f,j,n),j,0,n-1))$
+
+AJS1(%%f,j,n):= 
+ block([in:1.0d0/n,p:?pi/n],
+  2*in*(2-(if (j=n) then 0 else 1))*
+  sum(block([h:p*(k+.5d0)], cos(h*j)*%%f(cos(h))),k,0,n-1))$
+   
+
+/* if u is a list of n values of a function f at selected points ... 
+{ f(cos( pi*(k+1/2)/n)), k=0.. n-1 }
+
+s1: DCT(u) is a list of the Chebyshev series coefficients. */
+
+/* WORKS*/
+wDCT(u):=  /* (slow version) of discrete cosine transform on a list u. */
+ block([n:length(u), L:[],d], d:1/sqrt(float(n)),
+for i: 0 thru n-1 do
+L: cons(d*sum(u[r]*cos(?pi*(r-1/2)*(n-1-i)/n),r, 1, n),L),L)  
+,
+
+/* copy from wolfram documentation */
+DCT(u):=  /* (slow version) of discrete cosine transform on a list u. */
+ block([n:length(u), L:[],q],
+  q:?pi/n,
+for s from 1 thru n do
+L: cons(sum(u[r]*cos(q*(r-0.5d0)*(s-1)),r, 1, n),L),reverse(sqrt(float(1/n))*L)),
+
+
+
+DCTs(u):=  /* symbolic(slow version) of discrete cosine transform on a list u. */
+ block([n:length(u), L:[]],
+for i: 0 thru n-1 do
+L: cons(sum(u[r]*cos(%pi*(r-1/2)*(n-1-i)/n),r, 1, n)/sqrt(n),L),L)$
+
+iDCT(u):=  /* (slow version) of Inverse discrete cosine transform on a list u. */
+ block([n:length(u), L:[]],
+for i: 0 thru n-1 do
+L: cons((u[1]+2*sum(u[r]*cos(?pi*(r-1)*(n-1/2-i)/float(n)),r, 2, n))/sqrt(n),L),L)$
+
+iDCTs(u):=  /* symbolic (slow version) of Inverse discrete cosine transform on a list u. */
+ block([n:length(u), L:[]],
+for i: 0 thru n-1 do
+L: cons((u[1]+2*sum(u[r]*cos(%pi*(r-1)*(n-1/2-i)/n),r, 2, n))/sqrt(n),L),L)$
+
+
+/* Example.  f(x):=x^2 
+can be written as a Chebyshev series [1, 0, 1/2, 0, 0, ...] because
+
+(1/2)*1*T[0] + 0* T[1] + 1/2* T[2] = 
+
+1/2      +0*x     + 1/2(2*x^2-1) = x^2.
+
+(note: the summation convention here halves the 0th coefficient).
+
+In the chebfun project, the convention is to switch between this Chebyshev
+series representation and one where we store x^2 as a sequence of values at 
+special locations (Gauss-Lobatto points) distributed between -1 and 1.
+For our example of length 4, we compute the vector b
+
+b :={cos((i+1/2)*pi/4), i=0,1,2,3} which is approximately this
+b=        [0.92388, 0.382683, -0.382683, -0.92388]
+Now squaring each element of b gives us the vector u below.
+
+u=        [0.853553, 0.146447, 0.146447, 0.853553]
+v=DCT(u)= [1, 0, 1/2, 0]
+u=iDCT(v)=[0.853553, 0.146447, 0.146447, 0.853553]
+
+and converting v to the "power" basis gives us x^2.
+
+This means we can, as convenient, deal with u,v, or "x^2", and convert
+amongst them.  In reality, there will be minor glitches, like the
+numbers we have written as 1/2 may appear as 0.49999, and the zeros
+may be 5.5d-17 or some such quantity.  We also are assuming that our
+heuristic works. That is, we are correct when
+we truncate a Chebyshev series based on our heuristic assumption
+that a few really small coefficients in sequence means that all the
+remaining higher-order coefficients are negligible as well.
+
+Our heuristic specifies that the encoding for x^40 goes out 57 terms,
+but for x^5, only 8 are required.
+
+*/
+
+/*  Advantage of using chebfun on Matlab:  a bunch of clever people
+have worked for a few years on refining and extending it. Many
+applications and documentation. Some features of Matlab fit naturally
+into the Chebfun ethos -- the generic arithmetic model, interactive
+computation, support for online and automatically typeset documentation.
+Relatively efficient code, at least when activities can be expressed as
+matrix computations on double-float values.
+
+Disadvantages of using Matlab base:
+
+It uses a proprietary program base (does not run on Octave, a free "clone" of Matlab).
+
+The choice of data type 
+(fundamentally, arrays of double-precision floats)
+provides a basic level of effectiveness and efficiency, but
+(we suspect) that alternative kinds of number systems -- which could
+be used for Chebyshev series, will not be easy to support. For example,
+software high-precision floats, exact rational numbers, intervals,
+symbolic expressions. This is deliberate, however.  */
+
+
+(drv(m):=append(space2(m),spacem2(reverse(m))),
+space2(k):= if k=[] then [] else cons(0,cons( first(k),space2(rest(k)))),
+spacem2(k):=if k=[] then [] else cons(0,cons(-first(k),spacem2(rest(k)))))
+
+(drv(m):=append(space2(m),space2(reverse(m))),
+space2(k):= if k=[] then [] else cons(0,cons( first(k),space2(rest(k)))),
+
+fastDCT(x):=
+ block([n:length(x),a:4*fft(drv(x))],
+2*sqrt(float(n))* makelist(a[i],i,1,n)))
+
+
+
+
+in fftw, a REDFT10 type II DCT, sometimes called "the" DCT is the (unnormalized)
+
+Y[k]=2*sum(X[j]*cos(%pi*(j+1/2)*k/n), j,0,n-1)
+
+The inverse (DCT-III) unnormalized is
+
+Y[k]=X[0]+2*sum(X[j]*cos(%pi*j*(k+1/2)/n), j,1,n-1)
+
+
+;; a program based on FFTW document, above.
+
+(DCT(x):=block([X,Y,n:length(x)],
+ local(X,Y),
+ X[i]:=x[i+1],
+ Y[i]:=0,
+ for k:0 thru n-1 do Y[k]: 2*sum(X[j]*cos(?pi*(j+1/2)*k/n), j,0,n-1),
+ makelist(Y[i],i,0,n-1)),
+
+iDCT(x):=block([X,Y,n:length(x)],
+ local(X,Y),
+ X[i]:=x[i+1],
+ Y[i]:=0,
+ for k:0 thru n-1 do Y[k]: X[0]+2*sum(X[j]*cos(?pi*j*(k+1/2)/n), j,1,n-1),
+ makelist(Y[i],i,0,n-1)) )
+
+
+/* normalize */
+(DCT(x):=block([X,Y,n:length(x),d],
+ local(X,Y),
+ d:sqrt(1/float(n)),
+ X[i]:=x[i+1],
+ Y[i]:=0,
+ for k:0 thru n-1 do Y[k]: d*sum(X[j]*cos(?pi*(j+1/2)*k/n), j,0,n-1),
+ makelist(Y[i],i,0,n-1)),
+
+iDCT(x):=block([X,Y,n:length(x),d],
+ local(X,Y),
+ d:sqrt(1/float(n)),
+ X[i]:=x[i+1],
+ Y[i]:=0,
+ for k:0 thru n-1 do Y[k]: d*(X[0]+2*sum(X[j]*cos(?pi*j*(k+1/2)/n), j,1,n-1)),
+ makelist(Y[i],i,0,n-1)),
+RT(z):=(iDCT(DCT(z))) )
+
+/* fourier transform*/
+DFT (a):=block([A,n:length(a),B,h],
+local(A,B),
+ A[i]:=a[i+1],
+ B[i]:=0,
+ for j:0 thru n-1 do (h: exp(j*%i*pi/n),
+           B[j]:sum(A[k]*h^k,k,0,n-1)),
+ makelist(B[j],j,0,n-1))$	
+
+(DFTe (a):=block([A,n:length(a),B,h,d], /*exact fourier, leave pi in*/
+d:1/n,
+local(A,B),
+ A[i]:=a[i+1],
+ Y[i]:=0,
+ for k:0 thru n-1 do (h: cos(2*k*pi/n)+%i*sin(2*k*pi/n),
+           Y[k]:d*sum(A[j]*h^j,j,0,n-1)),
+makelist(Y[i],i,0,n-1)),	
+
+DCTe(x):=block([X,Y,n:length(x),d], /*exact cosine*/
+ local(X,Y),
+ d:sqrt(1/n),
+ X[i]:=x[i+1],
+ Y[i]:=0,
+ for k:0 thru n-1 do Y[k]: d*sum(X[j]*cos(pi*(j+1/2)*k/n), j,0,n-1),
+ makelist(Y[i],i,0,n-1)))
+
+
+
+myDCTe2(x):=
+ block([n:length(x),a:4*DFTe(drv(x))],
+makelist(a[i],i,1,n)))
+
+
+
+
+in fftw, a REDFT10 type II DCT, sometimes called "the" DCT is the (unnormalized)
+
+Y[k]=2*sum(X[j]*cos(%pi*(j+1/2)*k/n), j,0,n-1)
+
+The inverse (DCT-III) unnormalized is
+
+Y[k]=X[0]+2*sum(X[j]*cos(%pi*j*(k+1/2)/n), j,1,n-1)
+
+
+;; a program based on FFTW document, above.
+
+(DCT(x):=block([X,Y,n:length(x)],
+ local(X,Y),
+ X[i]:=x[i+1],
+ Y[i]:=0,
+ for k:0 thru n-1 do Y[k]: 2*sum(X[j]*cos(?pi*(j+1/2)*k/n), j,0,n-1),
+ makelist(Y[i],i,0,n-1)),
+
+iDCT(x):=block([X,Y,n:length(x)],
+ local(X,Y),
+ X[i]:=x[i+1],
+ Y[i]:=0,
+ for k:0 thru n-1 do Y[k]: X[0]+2*sum(X[j]*cos(?pi*j*(k+1/2)/n), j,1,n-1),
+ makelist(Y[i],i,0,n-1)) )
+
+
+/* normalize */
+(DCT(x):=block([X,Y,n:length(x),d],
+ local(X,Y),
+ d:sqrt(1/float(n)),
+ X[i]:=x[i+1],
+ Y[i]:=0,
+ for k:0 thru n-1 do Y[k]: d*sum(X[j]*cos(?pi*(j+1/2)*k/n), j,0,n-1),
+ makelist(Y[i],i,0,n-1)),
+
+iDCT(x):=block([X,Y,n:length(x),d],
+ local(X,Y),
+ d:sqrt(1/float(n)),
+ X[i]:=x[i+1],
+ Y[i]:=0,
+ for k:0 thru n-1 do Y[k]: d*(X[0]+2*sum(X[j]*cos(?pi*j*(k+1/2)/n), j,1,n-1)),
+ makelist(Y[i],i,0,n-1)),
+RT(z):=(iDCT(DCT(z))) )
+
+/* fourier transform*/
+DFT (a):=block([A,n:length(a),B,h],
+local(A,B),
+ A[i]:=a[i+1],
+ B[i]:=0,
+ for j:0 thru n-1 do (h: exp(j*%i*pi/n),
+           B[j]:sum(A[k]*h^k,k,0,n-1)),
+ makelist(B[j],j,0,n-1))$	
+
+(DFTe (a):=block([A,n:length(a),B,h,d], /*exact fourier, leave pi in*/
+d:1/n,
+local(A,B),
+ A[i]:=a[i+1],
+ Y[i]:=0,
+ for k:0 thru n-1 do (h: cos(2*k*pi/n)+%i*sin(2*k*pi/n),
+           Y[k]:d*sum(A[j]*h^j,j,0,n-1)),
+makelist(Y[i],i,0,n-1)),	
+
+DCTe(x):=block([X,Y,n:length(x),d], /*exact cosine*/
+ local(X,Y),
+ d:sqrt(1/n),
+ X[i]:=x[i+1],
+ Y[i]:=0,
+ for k:0 thru n-1 do Y[k]: d*sum(X[j]*cos(pi*(j+1/2)*k/n), j,0,n-1),
+ makelist(Y[i],i,0,n-1)))
+......................
+this works
+
+(drv(m):=append(space2(m),space2(reverse(m))),
+space2(k):= if k=[] then [] else cons(0,cons( first(k),space2(rest(k)))),
+
+fastDCT(x):=
+ block([n:length(x),a:4*fft(drv(x))],
+2*sqrt(float(n))* makelist(a[i],i,1,n)))

@@ -1,0 +1,80 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 14.09.0 ] */
+
+/* [wxMaxima: input   start ] */
+2*sin(x)*cos(x), trigreduce;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+2*cos(x)*sin(x), trigreduce;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sin(x)^2+cos(x)^2, expand, trigreduce;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(sin(x)+cos(x))^2, expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(sin(x)+cos(x))^2, expand, trigreduce;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+diff(sin(x)*cos(x), x);
+diff(cos(x)*sin(x), x);
+diff(sin(x)*cos(x), x), expand, trigreduce;
+diff(cos(x)*sin(x), x), expand, trigreduce;
+diff(2*sin(x)*cos(x), x);
+diff(2*cos(x)*sin(x), x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+-(sin(x)^2-cos(x)^2), expand, trigreduce;
+-(cos(x)^2-sin(x)^2), expand, trigreduce;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+halfangles:true$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+cos(x)^2-sin(x)^2, expand, trigreduce;
+1-2*sin(x)^2, expand, trigreduce;
+2*cos(x)^2-1, expand, trigreduce;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+2*sin(x)*cos(x), expand, trigreduce;
+2*cos(x)*sin(x), expand, trigreduce;
+(sin(x)+cos(x))^2-1, expand, trigreduce;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sin(2*x), trigexpand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sin(x)^2-cos(x)^2, expand, trigreduce;
+cos(x)^2-sin(x)^2, expand, trigreduce;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(sin(x)-cos(x))^2, expand, trigreduce;
+(cos(x)-sin(x))^2, expand, trigreduce;
+(sin(x)^2-cos(x)^2), expand, trigreduce;
+(cos(x)^2-sin(x)^2), expand, trigreduce;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sin(x)/cos(x), trigreduce;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+tan(2*x);
+tan(2*x), trigexpand;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

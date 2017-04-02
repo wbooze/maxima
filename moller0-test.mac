@@ -1,0 +1,63 @@
+/* moller0-test.mac  */
+
+  invar(D(p1,p1) = m^2,D(p1,p2) = s/2-m^2,D(p1,p3) = m^2-t/2,
+             D(p1,p4) = m^2-u/2,D(p2,p2) = m^2,D(p2,p3) = m^2-u/2,
+             D(p2,p4) = m^2-t/2,D(p3,p3) = m^2,D(p3,p4) = s/2-m^2,
+             D(p4,p4) = m^2);
+  done;
+ 
+  (  M1:D(p3+p1,p4+p2)/D(p1-p3,p1-p3),
+     M2:D(p4+p1,p3+p2)/D(p1-p4,p1-p4),
+     M1:ev_Ds(M1));
+   s/t-u/t;
+   
+   M1:pullfac(M1,1/t);
+   (s-u)/t;
+   
+   M2:ev_Ds(M2);
+    s/u-t/u;
+    
+   M2:pullfac(M2,1/u);
+   (s-t)/u;
+   
+   Mfi:M2+M1;
+   (s-u)/t+(s-t)/u;
+   
+   (  assume(p > 0,th >= 0,th <= %pi),
+      comp_def(p1(E,0,0,p),p2(E,0,0,-p),p3(E,p*sin(th),0,p*cos(th)),
+                p4(E,-p*sin(th),0,-p*cos(th))),
+      s_th:noncov(D(p2+p1,p2+p1)));
+   4*E^2;
+   
+   t_th:factor(noncov(D(p1-p3,p1-p3)));
+    2*p^2*(cos(th)-1);
+    
+   u_th:factor(noncov(D(p1-p4,p1-p4)));
+   -2*p^2*(cos(th)+1);
+   
+   Mfi:sub_stu(Mfi);
+   -4*E^2/(p^2*sin(th)^2)-4/sin(th)^2+2;
+   
+   (Mfi_12:ratsimp(take_parts(Mfi,1,2)),
+         expand (Mfi_12));
+   -4*E^2/(p^2*sin(th)^2)-4/sin(th)^2;
+   
+   Mfi_12n:num(Mfi_12);
+   -4*E^2-4*p^2;
+   
+   (Mfi_12n:factor(expand(subst(p^2 = E^2-m^2,Mfi_12n))),
+         expand (Mfi_12n));
+    4*m^2-8*E^2;
+    
+   (Mfi_12:Mfi_12n/denom(Mfi_12),
+         expand (Mfi_12));
+    4*m^2/(p^2*sin(th)^2)-8*E^2/(p^2*sin(th)^2);
+     
+   (Mfi:pullfac(part(Mfi,3)+Mfi_12,-2),
+          expand (Mfi));
+    -8*E^2/(p^2*sin(th)^2)+4*m^2/(p^2*sin(th)^2)+2;  
+    
+   fr_ao2(1/cos(th/2)^2+1/sin(th/2)^2,th);
+    4/sin(th)^2; 
+    
+   

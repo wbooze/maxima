@@ -1,0 +1,61 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load("angeom");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+ Zu einem bestimmen Zeitpunkt t=0 befinden sich die beiden Flugzeuge in den Punkten 
+$ A_1(-10,5|-12|3) $ und $ B_1(-9,6|15|4,5), 
+$ eine Minute später lauten die Positionen 
+$ A_2(-5,5|-14|3,5) $ und $ B_2(-4,4|9|4,4). $
+
+
+a) Bestimmen Sie geeignete Parameterdartstellungen für die Flugbahnen. 
+Berechnen Sie dii Geschwindigkeiten der Flugzeuge und ermitteln Sie den 
+Steigungswinkel der Flugbahn von Flugzeug A. 
+Untersuchen Sie, ob es einen Zeitpunkt gibt, zu dem sich die Flugzeuge 
+auf gleicher Höhe Höhe befinden, und bestimmen Sie gegebenfalls diesen Zeitpunkt.
+
+(Alle Angaben in km, z-Achse als Höhe)
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+A1:[-10.5,-12,3];B1:[-9.6,15,4.5];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A2:[-5.5,-14,3.5]; B2:[-4.4,9,4.4];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+g1:A1+t*(A2-A1); g2:B1+s*(B2-B1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[A1,B1, A2,B2]; PLOTT_S(z,"","","",g1,g2,-15,15);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lageUntersuchungGeraden(g1,g2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:append(O,lotFusspunkt2Geraden(g1,g2));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+float(%), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_S(z,"","","",g1,g2,-28,28);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+
+   [wxMaxima: comment end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

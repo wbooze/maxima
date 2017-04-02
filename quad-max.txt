@@ -1,0 +1,154 @@
+(
+/* Integrate function over n points from -1 to 1. Compute
+abscissas and weights if not already available. Precision
+is that of the (global) setting for fpprec. */
+
+gaussunit(%ggg,n):= gaussunit1(%ggg,n,ab_and_wts[n,fpprec]),
+
+gaussunit1(%%g,n,aw):= /* the function summing the terms */
+block([sum:0],
+ map(lambda([%%a,%%w],sum:sum+%%w*(%%g(%%a)+%%g(-%%a))),aw[1],aw[2]),
+ sum+ (if oddp(n) then -%%g(0)*aw[2][1] else 0 )),
+
+/* Integrate function from x=lo to x=hi using n points and fpprec */	 
+gaussab(%hh,lo,hi,n):= 
+  block([a:(hi-lo)/2, b:(hi+lo)/2], local(%zz),
+     define (%zz(x),%hh(a*x+b)), /* transformed function */
+    a* gaussunit(%zz,n)),
+
+/* Background subroutines needed for Gauss integration */
+
+legenpd(k,x):=  /* return P[k](x) and P'[k](x) */
+if (k=0) then [1,0]
+  else if (k=1) then [x,1]
+  else
+ block([t0:1,t1:x,ans:0],
+ for i:2 thru k do
+    (ans: ((2*i-1)*x*t1 -(i-1)*t0)/i,
+     t0:t1,
+     t1:ans),
+ [t1, k*(x*t1-t0)/(x^2-1)]),
+
+legenp(k,x):=  /* return P[k](x) */
+if (k=0) then 1
+  else if (k=1) then x
+  else
+ block([t0:1,t1:x,ans:0],
+ for i:2 thru k do
+    (ans: ((2*i-1)*x*t1 -(i-1)*t0)/i,
+     t0:t1,
+     t1:ans),
+t1),
+
+/* return a pair of lists of abscissae and weights */
+
+ab_and_wts[n, fpprec]:=
+block([a:0,v:0.0d0,np1:n+1,nph:1.0d0/(n+1/2),halfn:floor(n/2),
+      val,deriv,abscissae:[],weights:[],float2bf:true],
+ for i:0 thru halfn-1 do 
+   (v:cos(?pi*((i+3/4)*nph)), /*an approx zero of legendre-p[n] */
+    /*refine it by Newton iteration */
+       v:bfloat(v),
+       for k:0 thru ceil(logb(2,fpprec)) do /* should be enough for full prec. */
+       ([val,deriv]:legenpd(n,v), 
+        v:v-val/deriv),
+    push(v,abscissae),
+    push(legenwt(n,v),weights)),
+    if oddp(n) then (push(0,abscissae),
+                     push(2-2*apply("+",weights), weights)),
+   [abscissae,weights]),
+
+/* The weight at x=root of _P[k]:   w[k]:=  -2/ ( (k+1)* P'[k](x)*P[k+1](x)) */
+/*
+legenwt(k,x):=  
+ block([t0:1,t1:x,ans:0,pkp1,dpk],
+   for i:2 thru k do
+    (ans: ((2*i-1)*x*t1 -(i-1)*t0)/i,
+     t0:t1,
+     t1:ans),
+   pkp1:((2*k+1)*x*t1 -(k+1)*t0)/(k+1), dpk: k*(x*t1-t0)/(x^2-1),
+ -2/((k+1)*dpk*pkp1)), */
+/*Here's a correct formula .. */
+
+legenwt(k,x):=2/(1-x^2)/legendrediff[k](x)^2,
+legendrediff[i](z):=diff(legendre_p[i](z),z),
+/* another formula is 
+legenwt2(k,x):= 2*(1-x^2)/k^2/(legendre_p[k-1](x)-x*legendre_p[k](x))^2,
+*/
+
+/*UNCERT: a Macsyma program to provide value of function f and
+uncertainty, heuristic.  uncert(f,v) evaluates function f at (in
+general, vector) point v at some floating-point precision somewhat in
+excess of current setting of fpprec.  It returns a list of two items,
+[y,u], where y is approximate value of f(v), and u = (nonnegative)
+uncertainly in the provided value y. Both y and u are bigfloats. Some
+functions may be devious enough as to mislead this calculation, but
+this should be exceedingly rare.  
+
+Example. 
+[q(x):=1/(asin(atan(x))-atan(asin(x))),  
+uncert(q,[1/10000]), 
+bfloat(q(1/10000))];
+
+Try the above variously with  fpprec:20,  fpprec:100 */
+
+bfapply(%fun,%args,fpprec):= apply(%fun,map(bfloat,%args)),
+
+ uncert(%fun,%args):=
+  block([%ll, %hh,%dd,oldprec:fpprec],
+         %ll: bfapply(%fun,%args,fpprec),
+	fpprec: fpprec+10,
+         %hh: bfapply(%fun,%args,fpprec),
+        %dd: abs(%hh-%ll),
+	fpprec: oldprec,
+   [bfloat(%hh),  bfloat(%dd)]),
+
+/* putting this together with quadrature */
+
+ gaussunit_e(%ggg,n):=   /*with error */
+  gq1(lambda([%z],uncert(%ggg,[%z])),
+                  n,ab_and_wts[n,fpprec]),
+
+gaussab_e(%hh,lo,hi,n):= 
+  block([a:(hi-lo)/2, b:(hi+lo)/2], local(%zz),
+     define (%zz(x),%hh(a*x+b)),
+    a* gaussunit_e(%zz,n)),
+
+/*Tanh/Sinh method, at least the basics. See the BJL paper and its code for
+arranging phases so that the previous phase's result is updated, going from
+n points to 2n to 4n etc points. */
+
+quadtsN(%%g,n):= /* Naive Tanh/Sinh method, integral of g from -1 to 1, 2n+1 points. */
+ block([sum:0, piby2: bfloat(%pi/2), h:4/(n+2), hj, u1,u2, weight],
+  for j from -n thru n do 
+  (hj: bfloat(j*h),
+   u1: piby2*cosh(hj),
+   u2: piby2*sinh(hj),
+   weight:u1/cosh(u2)^2,
+   sum: sum + weight*%%g(bfloat( tanh(u2)))),
+   h*sum),
+
+ quadts(%%g,n):= /* Tanh/Sinh method, integral of g from -1 to 1 */
+ block([sum:0, piby2: bfloat(%pi/2), h:4/n, hj, u1,u2, weight, ab],
+   sum:piby2*%%g(0),
+  for j from 1 thru n do 
+  (hj: bfloat(j*h),
+   t2:exp(hj),
+   u1: piby2*(t2+1/t2)/2,   /*cosh */
+   u2: piby2*(t2-1/t2)/2,   /*sinh */
+   t3: exp(u2), 
+   t4:(t3+1/t3)/2,         /* cosh(u2) */
+   t3:(t3-1/t3)/2,         /* sinh(u2) */
+   weight:u1/(t4*t4),
+   ab: t3/t4,              /*tanh(u2) */
+   sum: sum + weight*(%%g(ab)+%%g(-ab))),
+   h*sum),
+
+/* return a list of the TS approximation and the fp error */
+
+ quadts_e(%ggg,n):=
+  quadts(lambda([%z],uncert(%ggg,[%z])),n)
+)
+$
+
+

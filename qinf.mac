@@ -1,0 +1,548 @@
+/*
+  quantum_information package for the Maxima computer algebra system.
+
+  Copyright 2008, John Lapeyre  All rights reserved.
+
+  This program is free software; you can redistribute it
+  and/or modify it only under the terms of the GNU General
+  Public License version 2 as published by the Free Software
+  Foundation.
+
+*/
+/* qinf Version 0.11 */
+
+
+/*
+  currently prints a bunch of garbage
+  load("itensor");
+*/
+load("qinf.lisp");
+load(lapack);
+load("log2.mac");
+load("eigen");
+load("diag");
+load("qinf_utils.mac");
+
+qudit_states : 2;
+
+
+/*******************************************
+* Linear Algebra routines.
+*****************************************/
+/* Functions that have been recoded in lisp are marked 'to lisp' */
+
+
+/* test predicates */
+/* to lisp identitymatrixp(A) := zeromatrixp(A - ident(length(A)));*/
+
+ketp(e) := matrixp(e) and (length(part(e,1)) = 1); /* is it a ket */
+brap(e) := matrixp(e) and (length(e) = 1);     /* is it a bra */
+braketp(e):= ketp(e) or brap(e);
+square_matp(e) := matrixp(e) and (length(e) = length(part(e,1))); /*square matrix */
+/* this one works only if trigsimp is enough to tell */
+unitary1p(m) := square_matp(m) and ( trigsimp( m . ctranspose(m)) = 1);
+
+/* doesnt do conjugate (?)  */
+normalize_vector(v) :=  v/sqrt(v . conjugate(v));
+
+/* divide m by Tr(m) so that it has trace 1*/
+noramalize_operator(m) := m/mat_trace(m);
+
+
+/*********
+  Follwing routines are all for partial trace function ptrace */
+/*
+   Return integer value from vector (or list) of numeration.
+   vec -- vector of numerals. 
+   b   --  the base. 
+   bits are arranged here from least to most significant
+   left to right.
+   */
+
+/* to lisp
+ptrace_numeration_to_int( vec, b) := block( [i,res:0],
+  for i:0 thru length(vec)-1 do
+  ( res : res + vec[i+1]*b^i ), res);
+*/
+
+/* increment numeration given by vec base b. modulo
+   b^length(vec).
+   vec -- list of numeration numerals
+   b -- base
+*/
+
+/* to lisp
+ptrace_increment_numeration(vec, b) := block ( [i:1,j],
+  for i:1 thru length(vec) do
+  (vec[i] : vec[i] + 1,
+    if vec[i] = b then 
+    for j:1 thru i do vec[j] : 0
+    else i : length(vec) + 1));
+*/
+
+/* Partial trace over one or more components.
+   computes partial trace one component at a time.
+   The partial trace implementation here assumes that each component space
+   is of the same dimension.
+   May be a performance penalty for this.
+*/
+ptrace(A,[qs]) := block ( [i,B,b,nA],
+  qs : sort(qs,"<"),
+  B : A,
+  for i:1 thru length(qs) do (
+    B : ptrace_one_dimension(qudit_states,B,qs[i]),
+    qs : qs - 1),
+  B);
+
+/* The same as ptrace, but qudits of dimension b are used */
+ptracen(b,A,[qs]) := block ( [i,B,nA],
+  qs : sort(qs,"<"),
+  B : A,
+  for i:1 thru length(qs) do (
+    B : ptrace_one_dimension(b,B,qs[i]),
+    qs : qs - 1),
+  B);
+
+/* partial trace over one component */
+ptrace_one_dimension(b,A,q) := block ( [nA,nbitsA,nbitsB, B,x,y,x1,x2,y1,y2,
+  i1,i2,j,k,j1,j2,k1,k2,sum,qm,ind1,ind2],
+  nA : length(A),
+  nbitsA : radcan(log(nA)/log(b)),
+  nbitsB : nbitsA -1,
+  nB : b^nbitsB,
+  B : zeromatrix(nB,nB),
+  x : create_list(0,i,1,nbitsB),
+  y : create_list(0,i,1,nbitsB),
+  q : nbitsA +1 - q,
+  for i1:1 thru nB do (
+    for i2:1 thru nB do (
+      sum : 0,
+      qm : q-1,
+      x1 : rest(x,-(nbitsB-qm)),
+      x2 : rest(x,qm),
+      y1 : rest(y,-(nbitsB-qm)),
+      y2 : rest(y,qm),
+      j1 : ptrace_numeration_to_int(x1,b),
+      j2 : b^q*ptrace_numeration_to_int(x2,b),
+      k1 : ptrace_numeration_to_int(y1,b),
+      k2 : b^q*ptrace_numeration_to_int(y2,b),
+      for j:0 thru b-1 do (
+        ind1 : j1+j*b^qm+j2+1,
+        ind2 : k1+j*b^qm+k2+1,
+        sum : sum + A[ind1,ind2]),
+      B[i1,i2] : sum,
+      ptrace_increment_numeration(y,b)),
+    ptrace_increment_numeration(x,b)),
+   B);
+
+
+/* a is a list of things to take kronecker product of. 
+Takes advantage of associative prop. of kron. prod. */
+tensor_product([a]) := block( [n,c,i],
+  n : length(a),
+  c : a[1],
+  for i:2 thru n do (
+    c : kronecker_product(c,a[i])),
+  c);
+
+
+infix("otimes");
+"otimes"(a,b) := kronecker_product(a,b);
+
+tensor_power(mat,n) := apply(tensor_product,create_list(mat,i,1,n));
+
+/* to lisp
+commutator(A,B):= A . B - B . A;
+anticommutator(A,B):= A . B + B . A;
+*/
+
+
+/*******************************************
+* End of Linear Algebra routines.
+*****************************************/
+
+/*******************************************
+* Quantum information routines
+*****************************************/
+
+
+/* a is list. return correct 'matrix' objects */
+ket([a]) := transpose(matrix(a));
+bra([a]) := matrix(a);
+
+
+/* return product state of qubits in eigenstates
+  of sigma_z, represented in given basis 
+  eg. ket(plusx,minusx,0,1,1,0) returns product of
+  x eigenkets 0,1,1,0, expressed in z basis.
+
+  zero,one -- two basis kets (expressed in z-basis)
+  a -- list of up, down states of each qubit.
+*/
+_ket(zero,one,a) := block ( [v,i],
+  if a[1] = 0 then v:transpose(zero)
+  else v:transpose(one),
+  for i:2 thru length(a) do (
+    if a[i] = 0 then v: tensor_product( v,transpose(zero))
+    else v: tensor_product(v,transpose(one))),
+  v);
+
+/* product state kets of multiple qubits. In several bases. */
+ketz([a]) := _ket([1,0],[0,1],a);
+ketx([a]) := _ket([1,1]/sqrt(2),[1,-1]/sqrt(2),a);
+kety([a]) := _ket([1,%i]/sqrt(2),[1,-%i]/sqrt(2),a);
+
+braz([a]) := transpose(apply(ketz,a));
+brax([a]) := transpose(apply(ketx,a));
+bray([a]) := conjugate(transpose(apply(kety,a)));
+
+ket_n(i,[a]) := block( [],
+  if i = 1 then return(apply(ketx,a)),
+  if i = 2 then return(apply(kety,a)),
+  if i = 3 then return(apply(ketz,a)),
+  false);
+
+bra_n([a]) := conjugate(transpose(apply(ket_n,a)));
+
+/* convert ket to a list */
+listket(k) := part( transpose(k),1);
+
+/* should probably just use something like this 
+ mat_unblocker(matrix([bell[0,0],bell[0,1]]));
+ converts a list of kets to a matrix
+ */
+matkets([k]) := apply(matrix,map(listket,k));
+
+/* Projection operators along z axis */
+Prz[0] : matrix([1,0],[0,0]);
+Prz[1] : matrix([0,0],[0,1]);
+
+/* general projection operator pair for one qubit. This uses a
+  particular parametrization
+  what is that parameterization ?
+ */
+Pr_n(a,phi) := block ( [p1,p2],
+/*  declare(a,real),
+  declare(phi,real), */
+  p1 : matrix([      a ,                sqrt(a*(1-a))*exp(-%i*phi)],
+              [sqrt(a*(1-a))*exp(%i*phi),          1-a            ]),
+  [p1,ident(2)-p1] );
+
+/* Useful ? 
+  convert list v to a matrix (vector) or pass through,
+   if v is already a matrix.
+*/
+tomatrix(v) := block(
+  if listp(v) then
+  v : matrix(v)
+  else if not matrixp(v) then (
+    print("error, arg neither matrix nor list"),
+    return(0)),
+  v );
+
+/* compute projection operator (or density matrix) from a vector, both
+   representing the same pure state. The vector can be
+   either a column or row vector or a list.
+   v -- state vector
+   return: density matrix
+*/
+proj(v) := block( [],
+  v : tomatrix(v),
+  if length(v) = 1 then
+    return( ctranspose(v) . v )
+  else
+    return( v . ctranspose(v) ));
+
+/* compute ket corresponding to projection operator.
+ Sometimes the zero eigenvalues are listed first, sometimes second.
+ It can change because phases are lost in computing the projection operator.
+ implementation: diagonalize matrix and return eivect with eival 1.
+ Best not to test for proj op  because of marginal cases
+*/
+tovect(A) :=  block ( [t,pos],
+  t : simtran(A),
+/*  if not( part(t,1,1) = [0,1] or part(t,1,1) = [1,0] ) then
+    error("tovect: density matrix is not a projection operator"),*/
+  if  sublist_indices(part(t,1,1), lambda([x],x=0)) = [2] then (
+    return(transpose(second(t))) )
+  else
+   return(transpose(last(t))));
+    
+
+pauli_0 : ident(2);
+pauli_z : matrix( [1,0], [0,-1]);
+pauli_y : matrix( [0,-%i], [%i,0]);
+pauli_x : matrix( [0,1], [1,0]);
+
+_pauli : [
+    ident(2),
+    matrix( [0,1], [1,0]),
+    matrix( [0,-%i], [%i,0]),
+    matrix( [1,0], [0,-1])];
+
+pauli[i] := _pauli[i+1];
+
+
+/* expansion of C(2) matrix in pauli matrices.
+   there is a function for converting both ways.
+*/
+
+/* tensor product of pauli matrices from list of integers indexing pauli matrices */
+pauli_product([a]) := apply(tensor_product,map(lambda([i],pauli[i]), a));
+
+
+/* this can be implemented easily in a maxima idiom, but
+ I wonder if this is more efficient.
+ return a matrix in terms of its correlation tensor coefficients
+*/
+invpauliexp(t) := block([n,i,m,nb],
+  n : length(t),
+  nb : radcan(log(n)/log(4)),
+  v : create_list(0,i,1,nb),
+  m : t[1]*apply(pauli_product,v),
+  for i thru n-1 do (
+    ptrace_increment_numeration(v,4),
+    m : m + t[i+1]*apply(pauli_product,v)),
+  m);
+
+/* return linear list of coefficients in pauli expansion of matrix m,
+   which represents an operator in a  tensor product space.
+   So m is a 2^n by 2^n matrix, in the product space of n qubits.
+*/
+_one_pauli_coeff(m,v) :=  mat_trace(apply(tensor_product,map( lambda([i],pauli[i]), v)) . m)/(2^length(v));
+pauliexp(m) := block([nbits,v,i, c:[] ],
+  nbits : log2(length(m)),
+  v : create_list(0,i,1,nbits),
+  for i thru length(m)^2 do (
+    c : append(c, [ _one_pauli_coeff(m,v) ] ),
+    ptrace_increment_numeration(v,4)),
+    c);
+
+/* return one element of tensor stored in linear array output by linvpaulexp */
+correlation_tensor(t,[v]) :=  block([n:length(t)],
+  if n = 4^length(v) then
+   t[ptrace_numeration_to_int(v,4)+1]
+  else
+   error("tensor data requires ",radcan(log(n)/log(4)), " indices"));
+
+/* Rotate through angle gamma about direction
+   (theta,phi) w.r.t z-axis.
+ */
+spinor_rotation_trig(phi,theta,gamma) := block ( [sg],
+    sg: sin(gamma/2),
+    cg: cos(gamma/2),
+    st: sin(theta),
+    ct: cos(theta),
+    sp: sin(phi),
+    cp: cos(phi),
+    matrix(
+     [ cg -%i*ct*sg,            (-%i*st*cp-st*sp)*sg],
+     [ (-%i*st*cp + st*sp)*sg,  cg +%i*ct*sg        ]));
+
+/* this one uses exp instead of cos and sin */
+spinor_rotation(phi,theta,gamma) := block ( [sg],
+    sg: sin(gamma/2),
+    cg: cos(gamma/2),
+    st: sin(theta),
+    ct: cos(theta),
+    sp: sin(phi),
+    cp: cos(phi),
+    matrix(
+     [ cg -%i*ct*sg,            -%i*st*exp(-%i*phi)*sg],
+     [ -%i*st*exp(%i*phi)*sg,   cg +%i*ct*sg          ]));
+
+/* some more operators */
+
+/********************************************************
+ * Gates and related code
+ ********************************************************/
+/* * insert_operator -- construct an operator that operate on a register of 'nbits' qubits,
+ * ie, an operator on the tensor product space of nbits qubits.
+ * the operator for each qubit is the identity, except for those specified by
+ * the list 'insargs'.  Each member of insargs is a list 'arg'. The first member
+ * of arg is a one-qubit operator (2x2 matrix) 'mop'. The remaining elements in 'arg'
+ * are the positions to substitute 'mop' in place of one of the identity operators.
+ * Eg, register_op_insert(10,[pauli[1],2,3],[pauli[2],4,5]) creates a 10-qubit operator,
+ * with pauli[1] operating on qubits  2 and 3, and pauli[2] operating on qubits 4 and 5,
+ * and the identity operating on the remaining qubits.
+ *
+ * * controlled_gate -- n-control gate.  qop is the one-qubit operator. clst is list
+ * of control indices and t is the target index
+ *
+ * * cnot,etc . -- some gates with a single control qubit indexed with c and target with index t.
+ * they operate on a register of nbits qubits.
+ * Thus, a 2 qubit cnot gate is given by cnot(2,1,2).
+ */
+
+insert_operator(nbits, [insargs]) := block ( [oplist : create_list(ident(2),i,1,nbits)],
+  map( lambda([arg], block( [mop:first(arg),posns:rest(arg,1)],
+        map(lambda([i],oplist[i]:mop), posns))),insargs),
+  apply(tensor_product,oplist));
+
+controlled_gate(nbits,qop,t,clst) := ident(2^nbits) +
+          + insert_operator(nbits,cons(proj(ketz(1)),clst),[qop-ident(2),t]);
+
+cnot(nbits,t,[c]) := controlled_gate(nbits,pauli[1],t,c);
+cphase(nbits,t,[c]) := controlled_gate(nbits,pauli[3],t,c);
+crot(nbits,t,[c]) := controlled_gate(nbits,%i*pauli[2],t,c);
+swap(nbits,t1,t2) := cnot(nbits,t1,t2) . cnot(nbits,t2,t1) . cnot(nbits,t1,t2);
+toffoli(nbits,t,c1,c2) := cnot(nbits,t,c1,c2);
+/*toffoli(nbits,t,c1,c2) := controlled_gate(nbits,pauli[1],t,[c1,c2]);*/
+
+fredkin(nbits,t1,t2,c) := controlled_gate(nbits,pauli[1],t2,[c,t1]).
+                          controlled_gate(nbits,pauli[1],t1,[c,t2]).
+                          controlled_gate(nbits,pauli[1],t2,[c,t1]);
+
+hadamard : (1/sqrt(2) * matrix([1,1],[1,-1]));
+/* following inserts one or more hadamard operators in the identiy operator on nbits qubits */
+hadamard(nbits,[t]) := insert_operator(nbits,cons(hadamard,t));
+
+
+/********************************************************
+ * Particular States, Bell GHZ, etc.
+ ********************************************************/
+/* to  lisp  flip(x) := ( mod(x+1,2)); */  /* flip the bit */
+
+/* bell states */
+bell[i,j] := (ketz(0,j) + (-1)^i * ketz(1,flip(j)))/sqrt(2);
+/* bell states with 'decimal' index. */
+array(belln,3); /* indices from 0 to 3 */
+fillarray(belln, map( lambda( [x],  bell[x[1],x[2]]),create_list( [i,j], i,0,1,j,0,1)));
+
+/* gzh states */
+ghz[i,j,k] := (ketz(0,j,k) + (-1)^i * ketz(1,flip(j),flip(k)))/sqrt(2);
+array(ghzn,7); /* indices from 0 to 7 */
+fillarray(ghzn, map( lambda( [x],  ghz[x[1],x[2],x[3]]),create_list( [i,j,k], i,0,1,j,0,1,k,0,1)));
+
+/* this one is a function, not an array function */
+werner(a,i,j) := a*(proj(bell[i,j])) + (1-a)*ident(4)/4;
+
+/* two bit schmidt ket */
+/* to lisp schmidt_ket(a) := sqrt(a) * ketz(0,0) + sqrt(1-a)* ketz(1,1); */
+
+
+/********************************************************
+ * Measures of entanglment and mixedness
+ ********************************************************/
+
+/* von Neumann entropy */
+entropy(rho) :=  block( [x,evs,sum:0],
+  evs : eivals(rho),
+  /* following is kludged transpose */
+  evs : map( lambda([i,j], [i,j]), evs[1], evs[2]),
+  for x in evs do (
+    if not(x[1] = 0) then (
+      sum : sum - x[2]*x[1]*log2(x[1]))),
+  sum);
+
+/* take eigenvals from eivals and make flat list of all vals.
+   example: list_eivals([[c,d,e],[2,3,4]]);
+      [c,c,d,d,d,e,e,e,e]
+ */
+list_eivals(lst) := apply(append,apply(map, cons(lambda([a,b],  create_list(a,i,1,b)), lst)));
+
+/* this returns  [sqrt(v1),sqrt(v2),sqrt(v3),sqrt(v4)],
+   with an attempt to order them properly, but it may fail of course if
+   the results are symbolic. This function allows the user to examine the
+  results */
+concurrence_vals(rho) := sqrt(sort(list_eivals(eivals(rho . (pauli[2] otimes pauli[2]) . 
+                 conjugate(rho)  . (pauli[2] otimes pauli[2]))),">"));
+
+/* Wootter's concurrence */
+concurrence(rho) := block( [vals],
+		 vals : concurrence_vals(rho),
+		 max(0,apply("+",cons(part(vals,1),-1*rest(vals)))));
+
+/* float von Neumann entropy */
+entropyf(rho) :=  block( [x,evs,sum:0],
+  evs : dgeev(rho),
+  evs : part(evs,1),
+  for x in evs do (
+    if not(x = 0.0) then (
+      sum : sum - x*log2(x))),
+  sum);
+
+/* Reny entropy */
+renyi_entropy(a,rho) := block([x,evs,sum:0],
+  evs : eivals(rho),
+  /* following is kludged transpose */
+  evs : map( lambda([i,j], [i,j]), evs[1], evs[2]),
+  for x in evs do (
+    if not(x[1] = 0) then (
+      sum : sum + x[2]*(x[1])^a)),
+  log2(sum)/(1-a));
+
+/* float renyi entropy */
+renyi_entropyf(a,rho) :=  block( [x,evs,sum:0],
+  evs : dgeev(rho),
+  evs : part(evs,1),
+  for x in evs do (
+    if not(x = 0.0) then (
+      sum : sum + x^a)),
+  log2(sum)/(1-a));
+  
+/* tsallis entropy */
+tsallis_entropy(q,rho) := block([x,evs,sum:0],
+  evs : eivals(rho),
+  /* following is kludged transpose */
+  evs : map( lambda([i,j], [i,j]), evs[1], evs[2]),
+  for x in evs do (
+    if not(x[1] = 0) then (
+      sum : sum + x[2]*(x[1])^q)),
+  (1-sum)/(q-1));
+
+/* float tsallis entropy */
+tsallis_entropyf(q,rho) :=  block( [x,evs,sum:0],
+  evs : dgeev(rho),
+  evs : part(evs,1),
+  for x in evs do (
+    if not(x = 0.0) then (
+      sum : sum + x^q)),
+  (1-sum)/(q-1));
+
+
+/* purity(rho) :=  mat_trace(rho . rho);  in lisp */
+
+fidelity(rho1,rho2) := block( [sr2],
+  sr2 : mat_function(sqrt,rho2),
+  mat_trace(mat_function(sqrt, sr2 . rho1 .sr2)));
+
+/* test for separability
+  The idea now is to add other methods here later.
+  Currently works for a pure bipartite state
+  state -- input 2-qubit state as ket or bra (four elements)
+  returns -- a scalar r. If r=1, the state is separable,
+   if r<1 it is entangled.
+  The scalar is purity(ptrace(state,1))
+  The explicit formula is not to long, so we write it out.
+*/
+separable(state) := block( [x1,x2,x3,x4],
+  if brap(state) then state : ctranspose(state),
+  if  not ( ketp(state) and (length(state)=4))
+    then error("argument to separable must be a pure bi-partite state vector"),
+  x1:state[1,1],
+  x2:state[2,1],
+  x3:state[3,1],
+  x4:state[4,1],
+  2*abs(x3)^2*abs(x4)^2+2*abs(x2)^2*abs(x4)^2
+                     +2*conjugate(x1)*x2*x3*conjugate(x4)+x4^4
+                     +2*x1*conjugate(x2)*conjugate(x3)*x4
+                     +2*abs(x1)^2*abs(x3)^2+x3^4+2*abs(x1)^2*abs(x2)^2+x2^4
+                     +x1^4);
+  
+
+/**********************************/
+
+
+/* This returns the *square* of the Schmidt coefficients.
+  It does not test that e is a pure state.
+  The argument can be a ket or a bra or density matrix */
+schmidt_coefficients(e) := ( block [st],
+  if (ketp(e) or brap(e)) then st:proj(e)
+  else st : e,
+  list_eivals(eivals(ptrace(st,1))));
+
+
+
+
+  

@@ -1,0 +1,408 @@
+/* file mbe5batch.mac 
+   Jan. 2009 version.
+   Maxima ver. 5.17.1,
+   run with batch(mbe5batch); */
+   
+" this is mbe5batch.mac batch
+  file: shows plots from Ch. 5,
+     Maxima by Example. "$
+  
+(load(draw),load(qdraw))$
+
+ratprint:false$
+
+
+" 5.1 Quick Plots for Explicit Functions: ex(...) .
+    does not include eps and jpg file examples:
+    
+    enter c; to continue "$
+    
+readonly(" ")$
+
+qdraw( ex( [x,x^2,x^3],x,-3,3 ) )$
+
+qdraw( ex([x,x^2,x^3],x,-3,3 ),yr(-2,2) )$ 
+
+qdraw(ex([x,x^2,x^3],x,-3,3 ),yr(-2,2), lw(6))$
+
+qdraw( ex( [x,x^2,x^3],x,-3,3 ),yr(-2,2),lw(6),key(bottom) )$
+
+qdraw( ex( [x,x^2,x^3],x,-3,3 ),yr(-2,2),
+                 lw(6),key(bottom), cut(grid, xyaxes) )$
+                 
+qdraw( ex( [x,x^2,x^3],x,-3,3 ),yr(-2,2),
+                 lw(6), cut( all ) )$
+
+
+qdraw( ex([x,x^2,x^3],x,-3,3 ),yr(-2,2),lw(6),
+              key(bottom),pts( [ [-1,-1],[0,0],[1,1] ] ) )$
+
+qdraw( ex( [x,x^2,x^3],x,-3,3 ),yr(-2,2), lw(6),key(bottom), 
+              pts([ [-1,-1],[0,0],[1,1] ],ps(2),pc(magenta) ) )$
+      
+qdraw( ex( [x,x^2,x^3],x,-3,3 ),yr(-2,2), lw(6),key(bottom), 
+           pts([ [-1,-1],[0,0],[1,1] ],ps(2),pc(magenta),pk("intersections") ) )$
+           
+qdraw( yr(-2,2),lw(6), ex( [x,x^2,x^3],x,-3,3 ),
+              key(bottom), ex(sin(3*x)*exp(x/3),x,-3,3),
+              pts([ [-1,-1],[0,0],[1,1] ]) )$
+              
+       
+"5.2 Quick Plots for Implicit Functions: imp(...):
+
+      enter c; to continue"$
+
+readonly(" ")$    
+
+qdraw( imp( sin(2*x)*cos(y)=0.4,x,-3,3,y,-3,3 ) ,
+             cut(key) )$
+             
+qdraw( imp( [sin(2*x)*cos(y)=0.4,
+             sin(2*x)*cos(y)=0.7,
+             sin(2*x)*cos(y)=0.9] ,x,-3,3,y,-3,3 ) ,
+             cut(key) )$
+             
+g : sin(2*x)*cos(y)$
+
+             
+qdraw( imp( [g = 0.4,g = 0.7,g = 0.9] ,x,-4.2,4.2,y,-3,3 ) ,
+             cut(key) )$
+             
+
+
+"5.3 Contour Plots with contour(...):
+
+       enter c; to continue"$
+
+readonly(" ")$
+
+qdraw( contour(g, x,-4.2,4.2, y,-3,3, cvals(0.4,0.7,0.9) ) )$
+
+qdraw( contour(g,x,-4.2,4.2,y,-3,3,cvals(0.4,0.7,0.9),
+        lw(2),lc(brown) ), ipgrid(15) )$
+        
+qdraw( contour(g,x,-4.2,4.2,y,-3,3,crange(4,0.2,0.9),
+        lw(2),lc(brown) ), ipgrid(15)  )$
+        
+qdraw( contour(sin(x)*sin(y),x,-2,2,y,-2,2,crange(4,0.2,0.9),
+              lw(3),lc(blue),add(xyaxes) ), ipgrid(15) )$
+              
+
+" 5.4 Density Plots with qdensity(...):
+
+       enter c; to continue"$
+
+readonly(" ")$
+
+qdensity(x*y,[x,0,1,0.2],[y,0,1,0.2] )$
+
+qdensity(x*y,[x,0,1,0.2],[y,0,1,0.2],
+                 palette(gray) )$
+                 
+qdensity(x*y,[x,0,1,0.2],[y,0,1,0.2],
+                 palette(color) )$                 
+                 
+                 
+qdensity(x*y,[x,0,1,0.05],[y,0,1,0.05] )$
+
+qdensity(sin(x)*sin(y),[x,-2,2,0.05],[y,-2,2,0.05] )$
+
+
+" 5.5 Explicit Plots with Greater Control: ex1(...):
+
+        enter c; to continue"$
+
+readonly(" ")$
+
+qdraw( xr(-1.4,2.8),yr(-1,2),
+        ex1(x^2,x,-2,2,lw(5),lc(brown),lk("X^2")),
+        ex1(2*x-1,x,-2,2,lw(2),lc(blue),lk("TANGENT")),
+        ex1(-x/2 + 3/2,x,-2,2,lw(2),lc(magenta),lk("NORMAL") ) ,
+         pts( [ [1,1] ],ps(2),pc(red) ) )$
+         
+qdraw( ex1(bessel_j(0,x),x,0,20,lc(red),lw(6),lk("bessel_j ( 0, x)") ),
+          ex1(bessel_j(1,x),x,0,20,lc(blue),lw(5),lk("bessel_j ( 1, x)")),
+          ex1(bessel_j(2,x),x,0,20,lc(brown),lw(4),lk("bessel_j ( 2, x)") ),
+          ex1(bessel_j(3,x),x,0,20,lc(green),lw(3),lk("bessel_j ( 3, x)") ) )$
+          
+qdraw( ex1(bessel_j(0, sqrt(x)),x,0,50 ,lc(blue),
+              lw(7),lk("J0( sqrt(x) )") ) , 
+         line(0,0,50,0,lc(red),lw(2) ) )$
+         
+" 5.6 Explicit Plots with ex1(...) and Log Scaled Axes:
+
+         enter c; to continue"$
+
+readonly(" ")$
+
+g : x*exp(-x)$
+
+qdraw( ex1( log(g),x,0.001,10, lc(red) ),yr(-8,0)  )$
+
+qdraw( ex1(g, x, 0.001,10,lc(red) ),
+                 yr(0.0001, 1), log(y) )$
+                 
+qdraw( ex1(g, x, 0.001,10,lc(red),lw(7) ),
+                 yr(0,0.4), log(x) )$
+                 
+qdraw( ex1(g, x, 0.001,10,lc(red) ),
+                  yr(0.0001,1), log(xy) )$
+                  
+" 5.7 Data Plots with Error Bars: pts(...) and errorbars(...),
+               this section needs fit1.dat and fit2.dat:
+               
+                 enter c; to continue"$
+               
+readonly(" ")$
+               
+plist : read_nested_list("fit1.dat");
+
+qdraw( pts(plist) )$
+
+qdraw( pts(plist, ps(2)), xr(0,12),yr(0,15) )$
+
+qdraw( pts(plist,pc(blue),pk("fit1"), ps(2)), xr(0,12),yr(0,15),
+          key(bottom), errorbars( plist, 1) )$
+          
+qdraw( pts(plist,pc(blue),pk("fit1"), ps(2)), xr(0,12),yr(0,15),
+          key(bottom), errorbars( plist, 1, lw(3),lc(red) )  )$
+          
+dyl : [0.2,0.3,0.5,1.5,0.8,1,1.4,1.8,2,2]$
+
+map(length,[plist,dyl] );
+
+qdraw( pts(plist,pc(blue),pk("fit1"), ps(2)), xr(0,12),yr(0,15),
+          key(bottom), errorbars( plist, dyl, lw(3),lc(red) )  )$
+          
+display2d:false$
+
+pmatrix : apply( 'matrix, plist );
+
+load(lsquares);
+
+soln : (lsquares_estimates(pmatrix,[x,y],y=a*x+b,
+                   [a,b]), float(%%) );
+                   
+[a,b] : (fpprintprec:5, map( 'rhs, soln[1] ) )$
+
+[a,b];
+
+qdraw( pts(plist,pc(blue),pk("fit1"), ps(2)), xr(0,12),yr(0,15),
+          key(bottom), errorbars( plist, dyl, lw(3),lc(red) ),
+         ex1( a*x + b,x,0,12, lc(brown),lk("linear fit") )  )$
+         
+printfile("fit2.dat");
+
+p2list: read_nested_list("fit2.dat");
+
+qdraw( pts(plist,pc(blue),pk("fit1"), ps(2)), xr(0,12),yr(0,15),
+          key(bottom), errorbars( plist, dyl, lw(3),lc(red) ),
+         ex1( a*x + b,x,0,12, lc(brown),lk("linear fit 1") ),
+         pts(p2list, pc(magenta),pk("fit2"),ps(2)),
+         errorbars( p2list,0.5,lw(3) ) )$
+         
+
+" 5.8 Implicit Plots with Greater Control: imp1(...):
+
+         enter c; to continue"$
+
+readonly(" ")$
+
+eqn1 : 5*x^2 + 4*x*y + 8*y^2 - 16*x + 8*y - 16 = 0$
+
+eqn2 : y+1 = 2*(x-2)$
+
+eqn3 : y+1 = -(x-2)/2$
+
+qdraw( imp1(eqn1,x,-2,6.4,y,-4,2,lc(red),lw(6),lk("ELLIPSE")),
+              imp1(eqn2,x,-2,6.4,y,-4,2,lc(blue),lw(4),lk("ROT X AXIS")),
+              imp1(eqn3,x,-2,6.4,y,-4,2,lc(brown),lw(4),lk("ROT Y AXIS") ),
+          pts([ [2,-1] ],ps(2),pc(magenta),pk("TRANSLATED ORIGIN") ) )$
+          
+qdraw( imp1(y^3=x^2,x,-3,3,y,-1,3,lw(10),lc(dark-blue)) )$
+
+" 5.9 Parametric Plots with para(...):
+
+           enter c; to continue"$
+
+readonly(" ")$
+
+qdraw(xr(-1.5,2),yr(-2,2), 
+         para(sin(t),sin(2*t),t,0,2*%pi ) ,
+         pts( [ [sin(%pi/8),sin(%pi/4)] ],ps(2),pc(blue),pk("t = pi/8")),
+         pts( [ [1,0] ],ps(2),pc(red),pk("t = pi/2")) )$
+         
+qdraw(xr(-3,4),yr(-1,40), para(2*cos(u),u^2,u,0,2*%pi) ,
+         pts([ [2,0] ],ps(2),pc(blue),pk("u = 0")),
+         pts( [ [0,(%pi/2)^2] ],ps(2), pc(red), pk("u = pi/2")),
+         pts([ [-2,%pi^2]],ps(2),pc(green),pk("u = pi")),
+         pts( [[0,(3*%pi/2)^2]],ps(2),pc(magenta),pk("u = 3*pi/2")) )$
+         
+
+" 5.10 Polar Plots with polar(...):
+
+          enter c; to continue"$
+
+readonly(" ")$
+
+qdraw( polar(10/t,t,1,3*%pi,lc(brown),lw(5)),nticks(200),
+            xr(-4,6),yr(-3,9),key(bottom) ,
+       pts( [[10*cos(1),10*sin(1)]],ps(3),pc(red),pk("t = 1 rad")),         
+     pts([[5*cos(2),5*sin(2)]],ps(3),pc(blue),pk("t = 2 rad") ),
+              line(0,0,5*cos(2),5*sin(2)) )$
+              
+
+               
+" 5.11 Geometric Figures: line(...), needs doplot1.mac:
+
+             enter c; to continue"$
+              
+readonly(" ")$
+
+qdraw( line(0,0,1,1) )$
+
+qdraw( line(0,0,1,1,lc(blue),lw(6),lk("radius") ),
+              xr(0,2),yr(0,2),key(bottom),
+              pts([ [1,1] ] ,pc(red),pk("point")) )$
+              
+" series of vertical colored lines "$
+
+
+load(doplot1)$
+
+doplot1(20)$
+
+" 5.12 Geometric Figures: rect(...):
+
+           enter c; to continue"$
+
+readonly(" ")$
+
+qdraw( xr(-1,2),yr(-1,2),rect(0,0,1,1) )$
+
+qdraw( xr(-1,2),yr(-1,2),
+            rect(0,0,1,1,lw(5),lc(brown),fill(khaki) ) )$
+            
+qdraw( xr(-3,3),yr(-3,3), rect( -2.5,-2.5,2.5,2.5,lw(4),lc(blue) ),
+         rect( -2,-2,2,2,lw(4),lc(red) ),
+         rect( -1.5,-1.5,1.5,1.5,lw(4),lc(green) ),
+         rect( -1,-1,1,1,lw(4),lc(brown) ),
+         rect( -.5,-.5,.5,.5,lw(4),lc(magenta) ),
+           cut(all) )$
+           
+" 5.13 Geometric Figures: poly(...), needs file doplot2.mac:
+
+            enter c; to continue"$
+             
+readonly(" ")$
+
+qdraw( xr(-2,2),yr(-1,2),cut(all),
+            poly([ [-1,-1],[1,-1], [2,2] ]  ) )$
+            
+
+" eighteen triangles in color "$
+
+load(doplot2)$
+
+doplot2()$
+
+" 5.14 Geometric Figures: circle(...) and ellipse(...):
+
+            enter c; to continue"$
+
+readonly(" ")$
+             
+qdraw( xr(-2, 2), yr(-2, 2), circle( 0, 0, 1 ) )$
+
+qdraw(xr(-2.1,2.1),yr(-1.5,1.5),cut(all),
+            circle(0,0,1,lw(5),lc(brown),fill(khaki) ),
+              line(-1.5,-1.5,1.5,1.5,lw(8), lc(red) ),
+                key(bottom) )$
+                
+qdraw(xr(-2.1,2.1),yr(-1.5,1.5),cut(all),
+            line(-1.5,-1.5,1.5,1.5,lw(8),lc(red) ),
+            circle(0,0,1,lw(8),lc(brown),fill(khaki) ),
+                key(bottom) )$
+
+qdraw( xr(-4.2,4.2),yr(-3,3),
+         ellipse(0,0,3,2,90,270) )$
+			
+qdraw( xr(-5.6,5.6),yr(-4,4),ex1(x,x,-4,4,lc(blue),lw(5)),
+                  ex1(4*cos(x),x,-4,4,lc(red),lw(5) ),
+         ellipse(0,0,3,1,90,270,lc(brown),lw(5),fill(khaki)) ,
+             cut(all) )$
+             
+
+" 5.15 Geometric Figures: vector(..):
+
+           enter c; to continue"$
+
+readonly(" ")$
+
+qdraw( xr(-2,2), yr(-2,2), vector( [-1,-1], [2,2] ) )$ 
+
+qdraw(xr(-2,2),yr(-2,2),
+           vector([-1,-1],[2,2],lw(5),lc(brown),lk("vec 1")),
+            key(bottom) )$
+            
+qdraw(xr(-2,2),yr(-2,2),
+           vector([0,0],[1,1],lw(5),lc(blue),lk("vec 1"),
+                  ht(e),hb(t),ha(45) ), key(bottom) )$
+
+qdraw(xr(-2.8,2.8),yr(-2,2),
+           vector([0,0],[1,1],lw(5),lc(blue),lk("vec 1"),
+                       ht(e),hb(t),ha(45) ),
+           vector([0,0],[-1,-1],lw(5),lc(red),lk("vec 2")),
+            key(bottom) )$
+
+" 5.16 Geometric Figures: arrowhead(..):
+
+             enter c; to continue"$
+
+readonly(" ")$
+
+qdraw(xr(-2.8,2.8),yr(-2,2),
+            arrowhead(1.5,0,180,.3),arrowhead(0,1,270,.3),
+            arrowhead(-1.5,0,0,.3),arrowhead(0,-1,90,.3) )$
+            
+
+" 5.17.3 Using Windows Fonts with the Gnuplot Console Window:
+           As described in the text, right click the graphics window
+           icon in the upper left hand corner, choose Options,
+           Choose Font, and in the fonts panel, choose Graecall font
+           from the left panel, choose "regular" from the middle
+           panel, and choose size 36 from the right panel, and
+           then click "ok".  The "q" will be converted to
+           the Greek lower case theta.
+
+           enter c; to continue"$
+
+readonly(" ")$
+
+qdraw(xr(0,2.8),yr(0,2),
+             line(0,0,2.8,0),
+             line(0,0,2,2,lc(blue),lw(5) ),
+           ellipse(0,0,1,1,0,45 ),
+           arrowhead(0.707,0.707,135,0.15),
+            label(["q",1,0.4]), cut(all) )$
+            
+
+            
+" 5.18 Even More with more(...):
+         The Windows console version not as powerful as 
+         the eps version shown in the text, but for what it's worth:
+
+          enter c; to continue"$
+            
+
+readonly(" ")$
+
+            
+qdraw(  ex([x,x^2,x^3],x,-2,2),
+          more(xlabel = "X AXIS", title="intersections of x, x^2, x^3" ),
+		   cut(key), vector([-1,5],[-0.4,-2.7],lc(red),hl(0.1) ),
+               label(["x^2",-0.9,6]),
+               vector([-1.2,-6],[-0.5,0],lc(turquoise),lw(5)),
+               label( ["x^3", -1,-5.5] ),
+              pts( [[-1,-1],[0,0],[1,1]],ps(2),pc(magenta) ) )$
+              

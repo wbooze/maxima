@@ -1,0 +1,36 @@
+/* fdf.mac */
+
+/************************************************************************
+    fdf.mac is a software file which accompanies Chapter 9 of
+    Maxima by Example, Bigfloats and Arbitrary Precision Quadrature.
+    
+    Copyright (C) 2008,2009  
+    Edwin L Woollett,  woollett@charter.net
+    http://www.csulb.edu/~woollett
+    
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU GENERAL PUBLIC LICENSE, Version 2, June 1991,
+    as published by the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details. You should have received a
+    copy of the GNU General Public License along with this program.
+    If not, see http://www.fsf.org/licensing/.
+************************************************************************/
+  
+  
+disp(" fdf(f,x,dfp) finds the absolute value
+       of the difference of f(x) at the current
+     value of fpprec and at the value (fpprec+dfp),
+     and returns [f(x), df(x)] ")$
+     
+fdf (%ff, %xx, %dfp) :=
+   block([fv1,fv2,df],
+    fv1:bfloat(%ff(bfloat(%xx))),
+    block([fpprec:fpprec + %dfp ],
+     fv2:  bfloat(%ff(bfloat(%xx))),
+     df: abs(fv2 - fv1) ),
+   [bfloat(fv2),bfloat(df)] )$     
+   

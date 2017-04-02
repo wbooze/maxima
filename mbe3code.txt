@@ -1,0 +1,411 @@
+Maxima by Example, Chapter 3,
+  Ordinary Differential Equation Tools
+  
+  Maxima code file mbe3code.txt
+  
+  
+3.1 Solving Ordinary Differential Equations
+
+3.2 Solution of One First Order Ordinary Differential Equation (ODE)
+
+3.2.1 Summary Table
+
+3.2.2 Exact Solution with ode2 and ic1
+
+(%i1) de : 'diff(u,t)- u - exp(-t);
+(%i2) gsoln : ode2(de,u,t);
+(%i3) psoln : ic1(gsoln,t = 2, u = -0.1),ratprint:false;
+(%i4) rhs(psoln),t=2,ratsimp;
+(%i5) de,psoln,diff,ratsimp;
+(%i6) us : rhs(psoln);
+(%i7) plot2d(us,[t,0,7],
+           [style,[lines,5]],[ylabel," "],
+           [xlabel,"t0 = 2, u0 = -0.1, du/dt = exp(-t) + u"])$
+
+3.2.3 Exact Solution with desolve
+
+(%i1) eqn : 'diff(u(t),t) - exp(-t) - u(t) = 0;
+(%i2) gsoln : desolve(eqn,u(t));
+(%i3) eqn,gsoln,diff,ratsimp;
+(%i4) bc : subst ( t=2, rhs(gsoln)) = - 0.1;
+(%i5) solve ( eliminate ( [gsoln, bc],[u(0)]), u(t) ),ratprint:false;
+(%i6) us : rhs(%[1]);
+(%i7) us, t=2, ratsimp;
+(%i8) plot2d(us,[t,0,7],
+           [style,[lines,5]],[ylabel," "],
+           [xlabel,"t0 = 2, u0 = -0.1, du/dt = exp(-t) + u"])$
+(%i9) us : subst( u(0) = -1,rhs(gsoln) ),ratsimp;
+(%i10) us,t=0,ratsimp;
+
+
+
+3.2.4 Numerical Solution and Plot with plotdf
+
+(%i1) plotdf(exp(-t) + u, [t, u], [trajectory_at,2,-0.1],
+             [direction,forward], [t,0,7], [u, -6, 1] )$
+
+
+3.2.5 Numerical Solution with Fourth Order Runge-Kutta: rk
+
+(%i1) fpprintprec:8$
+(%i2) points : rk (exp(-t) + u, u, -0.1, [ t, 2, 7, 0.01 ] )$
+(%i3) %, fll;
+(%i4) plot2d( [ discrete, points ], [ t, 0, 7],
+           [style,[lines,5]],[ylabel," "],
+           [xlabel,"t0 = 2, u0 = -0.1, du/dt = exp(-t) + u"])$
+
+
+3.3  Solution of One Second Order or Two First Order ODE's
+
+3.3.1  Summary Table
+
+3.3.2  Exact Solution with ode2, ic2, and eliminate
+
+(%i1) de : 'diff(u,t,2) - 4*u;
+(%i2) gsoln : ode2(de,u,t);
+(%i3) de,gsoln,diff,ratsimp;
+(%i4) psoln : ic2(gsoln,t=2,u=1,'diff(u,t) = 0);
+(%i5) us : rhs(psoln);
+(%i6) us, t=2, ratsimp;
+(%i7) plot2d(us,[t,0,4],[y,0,10],
+           [style,[lines,5]],[ylabel," "],
+           [xlabel," U versus t, U''(t) = 4 U(t), U(2) = 1, U'(2) = 0 "])$
+(%i8) vs : diff(us,t),ratsimp;
+(%i9) for i thru 3 do
+        d[i]:[discrete,[float(subst(t=i,[us,vs]))]]$
+(%i10) plot2d( [[parametric,us,vs,[t,1,3]],d[1],d[2],d[3] ],
+            [x,0,8],[y,-12,12],
+          [style, [lines,5,1],[points,4,2,1],
+            [points,4,3,1],[points,4,6,1]],
+          [ylabel," "],[xlabel," "],
+           [legend," du/dt vs u "," t = 1 ","t = 2","t = 3"] )$
+-------------------------------
+(%i4) bc1 : subst(t=0,rhs(gsoln)) = 1$
+(%i5) bc2 : subst(t = 2, rhs(gsoln)) = 4$
+(%i6) solve(
+        eliminate([gsoln,bc1,bc2],[%k1,%k2]), u ),
+           ratsimp, ratprint:false;
+(%i7) us : rhs(%[1]);
+(%i8) us,t=0,ratsimp;
+(%i9) us,t=2,ratsimp;
+
+3.3.3  Exact Solution with desolve, atvalue, and eliminate
+
+(%i1) eqn : 'diff(u(t),t,2) - 4*u(t) = 0;
+(%i2) atvalue ( 'diff(u(t),t), t=0, v(0) )$
+(%i3) gsoln : desolve(eqn,u(t));
+(%i4) eqn,gsoln,diff,ratsimp;
+(%i5) ug : rhs(gsoln);
+(%i6) vg : diff(ug,t),ratsimp$
+(%i7) ubc : subst(t = 2,ug) = 1$
+(%i8) vbc : subst(t = 2,vg) = 0$
+(%i9) solve (
+          eliminate([gsoln, ubc, vbc],[u(0), v(0)]), u(t) ),
+           ratsimp,ratprint:false;
+(%i10) us : rhs(%[1]);
+(%i11) subst(t=2, us),ratsimp;
+(%i12) vs : diff(us,t),ratsimp;
+(%i13) subst(t = 2,vs),ratsimp;
+(%i14) plot2d(us,[t,0,4],[y,0,10],
+           [style,[lines,5]],[ylabel," "],
+           [xlabel," U versus t, U''(t) = 4 U(t), U(2) = 1, U'(2) = 0 "])$
+(%i15) for i thru 3 do
+        d[i]:[discrete,[float(subst(t=i,[us,vs]))]]$
+(%i16) plot2d( [[parametric,us,vs,[t,1,3]],d[1],d[2],d[3] ],
+            [x,0,8],[y,-12,12],
+          [style, [lines,5,1],[points,4,2,1],
+            [points,4,3,1],[points,4,6,1]],
+          [ylabel," "],[xlabel," "],
+           [legend," du/dt vs u "," t = 1 ","t = 2","t = 3"] )$
+(%i17) up : subst(u(0) = 1, ug);
+(%i18) ubc : subst ( t=3, up) = 2;
+(%i19) solve(
+          eliminate ( [ u(t) = up, ubc ],[v(0)] ), u(t) ),
+             ratsimp, ratprint:false;
+(%i20) us : rhs (%[1]);
+(%i21) subst(t = 0, us),ratsimp;
+(%i22) subst (t = 3, us),ratsimp;
+(%i23) plot2d(us,[t,0,4],[y,0,10],
+           [style,[lines,5]],[ylabel," "],
+           [xlabel," U versus t, U''(t) = 4 U(t), U(0) = 1, U(3) = 2 "])$
+(%i24) ubc1 : subst ( t=1, ug) = -1$
+(%i25) ubc2 : subst ( t=3, ug) = 2$
+(%i26) solve(
+         eliminate ( [gsoln, ubc1, ubc2],[u(0),v(0)]), u(t) ),
+          ratsimp, ratprint:false;
+(%i27) us : rhs(%[1]);
+(%i28) subst ( t=1, us), ratsimp;
+(%i29) subst ( t=3, us), ratsimp;
+(%i30) plot2d ( us, [t,0,4], [y,-2,8],
+           [style,[lines,5]],[ylabel," "],
+           [xlabel," U versus t, U''(t) = 4 U(t), U(1) = -1, U(3) = 2 "])$
+---------------------------
+(%i4) psoln : subst([u(0) = 1,v(0)=0],gsoln);
+(%i5) us : rhs(psoln);
+
+
+3.3.4  Numerical Solution and Plot with plotdf
+
+(%i1) plotdf ( [v, 4*u], [u, v], [trajectory_at, 1, 0],
+            [u, 0, 8], [v, -10, 10], [versus_t, 1],
+              [tinitial, 2])$
+
+
+3.3.5  Numerical Solution with Fourth Order Runge-Kutta: rk
+
+(%i1) fpprintprec:8$
+(%i2) points : rk([v,4*u],[u,v],[1,0],[t,2,3.6,0.01])$
+(%i3) %, fll;
+(%i4) uL : makelist([points[i][1],points[i][2]],i,1,length(points))$
+(%i5) %, fll;
+(%i6) vL : makelist([points[i][1],points[i][3]],i,1,length(points))$
+(%i7) %, fll;
+(%i8) plot2d([ [discrete,uL],[discrete,vL]],[x,1,5],
+           [style,[lines,5]],[y,-1,24],[ylabel," "],
+           [xlabel,"t"],[legend,"u(t)","v(t)"])$
+(%i9) uvL : makelist([points[i][2],points[i][3]],i,1,length(points))$
+(%i10) %, fll;
+(%i11) plot2d( [ [discrete,uvL]],[x,0,13],[y,-1,25],
+                [style,[lines,5]],[ylabel," "],
+                [xlabel," v vs. u "])$
+
+
+3.4 Examples of ODE Solutions
+
+3.4.1  Ex.1: Fall in Gravity with Air Friction: Terminal Velocity
+
+(%i1) de : 'diff(v,t) - g + a*v;
+(%i2) gsoln : ode2(de,v,t);
+(%i3) de, gsoln, diff,ratsimp;
+(%i4) psoln : expand ( ic1 (gsoln,t = 0, v = v0 ) );
+(%i5) vs : rhs(psoln);
+(%i6) assume(a>0)$
+(%i7) limit( vs, t, inf );
+(%i8) expand(vs*a/g);
+(%i9) %,[t=u/a,v0=w0*g/a];
+(%i10) ws : collectterms (%, exp (-u));
+(%i11) plot2d([[discrete,[[0,1],[5,1]]],subst(w0=0,ws),subst(w0=0.6,ws),
+                    subst(w0=1.5,ws)],[u,0,5],[y,0,2],
+           [style,[lines,2,7],[lines,4,1],[lines,4,2],[lines,4,3]],
+           [legend,"terminal speed", "w0 = 0", "w0 = 0.6", "w0 = 1.5"],
+         [ylabel, " "],
+         [xlabel, " dimensionless speed w vs dimensionless time u"])$
+(%i12) integrate(1,z,0,zf) = integrate(ws,u,0,uf);
+(%i13) zs : expand(rhs(%)),uf = u;
+(%i14) zs, u=0;
+(%i15) plot2d([subst(w0=0,zs),subst(w0=0.6,zs),
+          subst(w0=1.5,zs)],[u,0,1],[style,[lines,4,1],[lines,4,2],
+		  [lines,4,3]], [legend,"w0 = 0", "w0 = 0.6", "w0 = 1.5"],
+          [ylabel," "],
+          [xlabel,"dimensionless distance z vs dimensionless time u"],
+          [gnuplot_preamble,"set key top left;"])$
+
+
+3.4.2  Ex.2: One Nonlinear First Order ODE
+
+(%i1) de : x^2*y*'diff(y,x) - x*y^2 - x^3 + 1;
+(%i2) gsoln : ode2(de,y,x);
+(%i3) psoln : ic1(gsoln,x=1,y=1);
+(%i4) [y1,y2] : map('rhs, solve(psoln,y) );
+(%i5) [y1,y2], x = 1, ratsimp;
+(%i6) de, diff, y= y2, ratsimp;
+(%i7) plot2d([y1,y2],[x,0.01,5],
+        [style,[lines,5]],[ylabel, " Y "],
+          [xlabel," X "] , [legend,"Y1", "Y2"],
+         [gnuplot_preamble,"set key bottom center;"])$
+
+
+3.4.3  Ex.3: One First Order ODE Which is Not Linear in Y'
+
+(%i1) de: 'diff(x,t)^2 + 5*x^2 - 8;
+(%i2) ode2(de,x,t);
+(%i3) solve(de,'diff(x,t));
+(%i4) ode2 ( %[2], x, t );
+(%i5) solve(%,x);
+(%i6) gsoln2 : %[1];
+(%i7) trigsimp ( ev (de,gsoln2,diff ) );
+(%i8) psoln : ic1 (gsoln2, t=0, x=0);
+(%i9) xs : rhs(psoln);
+(%i10) xs,t=0;
+
+
+3.4.4  Ex.4: Linear Oscillator with Damping
+
+(%i1) de : 'diff(x,th,2) + 2*a*'diff(x,th) + x ;
+(%i2) for i thru 3 do
+          x[i] : rhs ( ic2 (ode2 (subst(a=i/2,de),x,th), th=0,x=1,diff(x,th)=0))$
+(%i3) plot2d([x[1],x[2],x[3]],[th,0,10],
+          [style,[lines,4]],[ylabel," "],
+           [xlabel," Damped Linear Oscillator " ],
+           [gnuplot_preamble,"set zeroaxis lw 2"],
+           [legend,"a = 0.5","a = 1","a = 1.5"])$
+(%i4) v1 : diff(x[1],th)$
+(%i5) fpprintprec:8$
+(%i6) [x5,v5] : [x[1],v1],th=5,numer;
+(%i7) plot2d ( [ [parametric, x[1], v1, [th,0,10],[nticks,80]],
+             [discrete,[[1,0]]], [discrete,[ [x5,v5] ] ] ],
+         [x, -0.4, 1.2],[y,-0.8,0.2], [style,[lines,3,7],
+                   [points,3,2,1],[points,3,6,1] ],
+          [ylabel," "],[xlabel,"th = 0, x = 1, v = 0"],
+          [legend," v vs x "," th = 0 "," th = 5 "])$
+(%i8) plotdf([v,-v-x],[x,v],[trajectory_at,1,0],
+           [direction,forward],[x,-0.4,1.2],[v,-0.6,0.2],
+            [nsteps,400],[tstep,0.01])$
+
+
+
+3.4.5  Ex.5: Underdamped Linear Oscillator with Sinusoidal Driving Force
+
+(%i1) de : 'diff(y,th,2) + 'diff(y,th) + y - cos(q*th);
+(%i2) gsoln : ode2(de,y,th);
+(%i3) psoln : ic2(gsoln,th=0,y=1,diff(y,th)=0);
+(%i4) ys : subst(q=4,rhs(psoln));
+(%i5) vs : diff(ys,th)$
+(%i6) plot2d([ys,vs],[th,0,12],
+        [nticks,100],
+        [style,[lines,5]],
+        [legend," Y "," V "],
+        [xlabel," dimensionless Y and V vs. theta"])$
+(%i7) plot2d([parametric,ys,vs,[th,0,8]],
+           [style,[lines,5]],[nticks,100],
+            [xlabel," V (vert) vs. Y (hor) "])$
+
+
+3.4.6  Ex.6: Regular and Chaotic Motion of a Driven Damped Planar Pendulum
+
+3.4.7     Free Oscillation Case
+
+(%i1) plotdf([v,-sin(u)],[u,v],[trajectory_at,float(2*%pi/3),0],
+            [direction,forward],[u,-2.5,2.5],[v,-2.5,2.5],
+             [tstep, 0.01],[nsteps,600])$
+
+
+3.4.8     Damped Oscillation Case
+
+(%i2)  plotdf([v,-sin(u)-0.5*v],[u,v],[trajectory_at,float(2*%pi/3),0],
+            [direction,forward],[u,-1,2.5],[v,-1.5,1],
+             [tstep, 0.01],[nsteps,450])$
+
+
+3.4.9     Including a Sinudoidal Driving Torque
+
+3.4.10    Regular Motion Parameters Case
+
+(%i1) fpprintprec:8$
+(%i2) (nsteps : 31, ncycles : 30, a : 0.2, b : 0.52, w : 0.694)$
+(%i3) [dudt : v, dvdt : -sin(u) - a*v + b*cos(w*t),
+           T : float(2*%pi/w ) ];
+(%i4) [dt : T/nsteps, tmax : ncycles*T ];
+(%i5) tuvL : rk ([dudt,dvdt],[u,v],[0.8,0.8],[t,0,tmax, dt])$
+(%i6) %, fll;
+(%i7) 930*dt;
+(%i8) tuL : makelist ([tuvL[i][1],tuvL[i][2]],i,1,length(tuvL))$
+(%i9) %, fll;
+(%i10) tvL : makelist ([tuvL[i][1],tuvL[i][3]],i,1,length(tuvL))$
+(%i11) %, fll;
+(%i12) plot2d([ [discrete,tuL], [discrete,tvL]],[x,0,280],
+          [style,[lines,3]],[xlabel,"t"],
+           [legend, "u", "v"],
+             [gnuplot_preamble,"set key bottom left;"])$
+(%i13) uvL : makelist ([tuvL[i][2],tuvL[i][3]],i,1,length(tuvL))$
+(%i14) %, fll;
+(%i15) plot2d ( [discrete,uvL],[x,-60,5],[y,-5,5],
+                   [style,[lines,3]],
+             [ylabel," "],[xlabel," v vs u "] )$
+(%i16) pi : float(%pi);
+(%o16)                             3.1415927
+(%i17) reduce(yy) := pi - mod (pi - yy,2*pi)$
+(%i18) float( [-7*%pi/2,-3*%pi/2 ,3*%pi/2, 7*%pi/2] );
+(%i19) map('reduce, % );
+(%i20) uvL_red : makelist ( [ reduce( tuvL[i][2]),
+                         tuvL[i][3]],i,1,length(tuvL))$
+(%i21) %, fll;
+(%i22) uvL_regular : rest (uvL_red, round(length (uvL_red)/3) )$
+(%i23) %, fll;
+(%i24) plot2d ( [discrete,uvL_regular],[x,-3.2,3.2],[y,-3.2,3.2],
+                   [style,[lines,2]],
+             [ylabel," "],[xlabel,"reduced phase space v vs u "] )$
+(%i25) solve(311 + j*31 = 931);
+(%i26) pL : makelist (1+10*nsteps + j*nsteps, j, 0, 20);
+(%i27) length(pL);
+(%i28) poincareL : makelist (uvL_red[i], i, pL)$
+(%i29) %,fll;
+(%i30) plot2d ( [discrete,poincareL],[x,-0.5,2],[y,-1.5,1.5],
+                   [style,[points,1,1,1 ]],
+             [ylabel," "],[xlabel," Poincare Section v vs u "] )$
+
+
+3.4.11    Chaotic Motion Parameters Case
+
+(%i1) fpprintprec:8$
+(%i2) (nsteps : 31, ncycles : 240, a : 1/2, b : 1.15, w : 2/3)$
+(%i3) [dudt : v, dvdt : -sin(u) - a*v + b*cos(w*t),
+           T : float(2*%pi/w ) ];
+(%i4) [dt : T/nsteps, tmax : ncycles*T ];
+(%i5) tuvL : rk ([dudt,dvdt],[u,v],[0.8,0.8],[t,0,tmax, dt])$
+(%i6) %, fll;
+(%i7) dt*( last(%) - 1 );
+(%i8) tuL : makelist ([tuvL[i][1],tuvL[i][2]],i,1,length(tuvL))$
+(%i9) %, fll;
+(%i10) tvL : makelist ([tuvL[i][1],tuvL[i][3]],i,1,length(tuvL))$
+(%i11) %, fll;
+(%i12) plot2d([ [discrete,tuL], [discrete,tvL]],[x,0,2000],
+               [y,-15,30],
+          [style,[lines,2]],[xlabel,"t"], [ylabel, " "],
+           [legend, "u","v" ] ,[gnuplot_preamble,"set key bottom;"])$
+(%i13) uvL : makelist ([tuvL[i][2],tuvL[i][3]],i,1,length(tuvL))$
+(%i14) %, fll;
+(%i15) uvL_first : rest(uvL, -5441)$
+(%i16) %, fll;
+(%i17) plot2d ( [discrete,uvL_first],[x,-12,30],[y,-3,3],
+                   [style,[points,1,1,1]],
+             [ylabel," "],[xlabel," v vs u "])$
+(%i18) plot2d ( [discrete,uvL_first],[x,-12,30],[y,-3,3],
+             [ylabel," "],[xlabel," v vs u "])$
+(%i19) pi : float(%pi);
+(%i20) reduce(yy) := pi - mod (pi - yy,2*pi)$
+(%i21) uvL_red : makelist ( [ reduce( first( uvL[i] )),
+                        second( uvL[i] ) ],i,1,length(tuvL))$
+(%i22) %, fll;
+(%i23) uvL_cut : rest(uvL_red, 400)$
+(%i24) %, fll;
+(%i25) uvL_first : rest (uvL_cut, -6041)$
+(%i26) %, fll;
+(%i27) plot2d ( [discrete,uvL_first],[x,-3.5,3.5],[y,-3,3],
+                 [style,[points,1,1,1]],
+             [ylabel," "],[xlabel,"reduced phase space v vs u "])$
+(%i28) plot2d ( [discrete,uvL_first],[x,-3.5,3.5],[y,-3,3],
+             [ylabel," "],[xlabel,"reduced phase space v vs u "])$
+(%i29) uvL_first : rest (uvL_cut, -4041)$
+(%i30) %, fll;
+(%i31) plot2d ( [discrete,uvL_first],[x,-3.5,3.5],[y,-3,3],
+                 [style,[points,1,1,1]],
+             [ylabel," "],[xlabel,"reduced phase space v vs u "])$
+(%i32) plot2d ( [discrete,uvL_first],[x,-3.5,3.5],[y,-3,3],
+             [ylabel," "],[xlabel,"reduced phase space v vs u "])$
+(%i33) pL : makelist(1+10*nsteps + j*nsteps, j, 0, ncycles - 10)$
+(%i34) %, fll;
+(%i35) poincareL : makelist(uvL_red[i], i, pL)$
+(%i36) %, fll;
+(%i37) plot2d ( [discrete,poincareL],[x,-3,3],[y,-4,4],
+                   [style,[points,1,1,1]],
+             [ylabel," "],[xlabel," Poincare Section v vs u "] )$
+
+3.5 Using contrib_ode for ODE's
+
+(%i1) de : 'diff(u,t)- u - exp(-t);
+(%i2) gsoln : ode2(de,u,t);
+(%i3) contrib_ode(de,u,t);
+(%i4) load('contrib_ode);
+(%i5) contrib_ode(de,u,t);
+(%i6) ode_check(de, %[1] );
+(%i7) de : 'diff(u,t,2) - 4*u;
+(%i8) gsoln : ode2(de,u,t);
+(%i9) contrib_ode(de,u,t);
+(%i10) ode_check(de, %[1] );
+(%i11) de : 'diff(u,t,2) + 'diff(u,t) + t*u;
+(%i12) ode2(de,u,t);
+(%i13) gsoln : contrib_ode(de,u,t);
+(%i14) ode_check(de, %[1] );
+
+

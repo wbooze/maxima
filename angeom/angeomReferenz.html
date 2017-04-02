@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head>
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+  <title>angeomReferenz</title>
+
+  <script language="JavaScript">
+	function copy(){
+	var clip1 = new ZeroClipboard.Client();	
+	clip1.setText( 'defPunkte("A 1 2 3 B 4 5 6")$' ); clip1.glue( "defPunkte");
+	var clip2 = new ZeroClipboard.Client();	
+	clip2.setText( "A:[0,-1,0]$ B:[1,-4,0]$ C:[4,-3,0]$ D:[0,0,3]$" ); 	clip2.glue( 'c_punkte' );
+	var clip8 = new ZeroClipboard.Client();	
+	clip8.setText( "g1:[3,0,0]+l*[2,0,-3]$ show(%);" ); 	clip8.glue( 'g1show' );
+	var clip9 = new ZeroClipboard.Client();	
+	clip9.setText( "punktAufGerade(P,g);" ); 	clip9.glue( 'punktAufGerade' );
+	var clip11 = new ZeroClipboard.Client();	
+	clip11.setText( "spurPunkteGerade(g);" ); 	clip11.glue( 'spurPunkteGerade' );
+	var clip12 = new ZeroClipboard.Client();	
+	clip12.setText( 'defGeradeAB("g1 l A B")$' ); 	clip12.glue( 'defGeradeAB' );
+	var clip13 = new ZeroClipboard.Client();	
+	clip13.setText( 'defGeradeRV("g1 t A rv")$' ); 	clip13.glue( 'defGeradeRV' );
+	var clip14 = new ZeroClipboard.Client();	
+	clip14.setText( 'nv:(B-A)><(C-A)$ NE1:nv.([x,y,z]-A)$' ); 	clip14.glue( 'nvxyz' );
+	var clip15 = new ZeroClipboard.Client();	
+	clip15.setText( 'defEbeneABC("E1 l t A B C")$' ); 	clip15.glue( 'defEbeneABC' );
+	var clip16 = new ZeroClipboard.Client();	
+	clip16.setText( 'defEbeneRV("E2 r s A rv1 rv2")$' ); 	clip16.glue( 'defEbeneRV' );
+	var clip17 = new ZeroClipboard.Client();	
+	clip17.setText( 'defEbeneNF("NE1 nv A")$' ); 	clip17.glue( 'defEbeneNF1' );
+	var clip18 = new ZeroClipboard.Client();	
+	clip18.setText( 'defEbeneNF("NE2 A B C")$' ); 	clip18.glue( 'defEbeneNF2' );
+	var clip19 = new ZeroClipboard.Client();	
+	clip19.setText( 'E1:A+r*(B-A)+s*(C-A)$ show(%);' ); 	clip19.glue( 'E1ABCShow' );
+	var clip20 = new ZeroClipboard.Client();	
+	clip20.setText( 'ev:EOV(E1); rv:ERV1(E1); vv:ERV2(E1);' ); 	clip20.glue( 'evrvvv' );
+	var clip21 = new ZeroClipboard.Client();	
+	clip21.setText( 'NFE1:normalForm(E1),ratsimp;' ); 	clip21.glue( 'NFE1' );
+	var clip22 = new ZeroClipboard.Client();	
+	clip22.setText( 'HNF1:hesseNF(NFE1);' ); 	clip22.glue( 'hesseNF' );
+	var clip23 = new ZeroClipboard.Client();	
+	clip23.setText( 'F(g1,[0]);' ); 	clip23.glue( 'FE1' );
+	var clip24 = new ZeroClipboard.Client();	
+	clip24.setText( 'F(E1,[1,-1]);' ); 	clip24.glue( 'FE111' );
+	var clip25 = new ZeroClipboard.Client();	
+	clip25.setText( 'F(NFE,[1,2,3]);' ); 	clip25.glue( 'NFE123' );
+	var clip26 = new ZeroClipboard.Client();	
+	clip26.setText( 'gv:GOV(g1); rv:GRV(g1);' ); 	clip26.glue( 'GOV' );
+	var clip27 = new ZeroClipboard.Client();	
+	clip27.setText( 'O:[A,B,C,D,E,F,G,H]$' ); 	clip27.glue( 'OABC' );
+	var clip28 = new ZeroClipboard.Client();	
+	clip28.setText( 'PLOTT_L([NFE1],[g1],-5,5)$' ); 	clip28.glue( 'PLOTTL' );
+	var clip30 = new ZeroClipboard.Client();	
+	clip30.setText( 'S_Figur:mesh([A,B,C,D,A],[A,B,S,A],[C,D,S,C])$ ' ); 	clip30.glue( 'S_Figur' );
+	var clip31 = new ZeroClipboard.Client();	
+	clip31.setText( 'wx_ScVon:-2$ wx_ScBis:5$' ); 	clip31.glue( 'wx_ScVon' );
+	var clip32 = new ZeroClipboard.Client();	
+	clip32.setText( 'wx_Hrot:30$ wx_Vrot:60$' ); 	clip32.glue( 'wx_Hrot' );
+	var clip33 = new ZeroClipboard.Client();	
+	clip33.setText( 'PLOTT_D([],[],-10,10)$' ); 	clip33.glue( 'PLOTTD' );
+	var clip34 = new ZeroClipboard.Client();	
+	clip34.setText( 'abc_Labels()$' ); 	clip34.glue( 'abc_Labels' );
+	var clip35 = new ZeroClipboard.Client();	
+	clip35.setText( 'pqr_Labels()$' ); 	clip35.glue( 'pqr_Labels' );
+	var clip36 = new ZeroClipboard.Client();	
+	clip36.setText( 'schwerPunktABC(A,B,C);' ); 	clip36.glue( 'schwerPunktABC' );
+	var clip37 = new ZeroClipboard.Client();	
+	clip37.setText( 'winkelHalbierende(B-A,C-A);' ); 	clip37.glue( 'winkelHalb' );
+	var clip38 = new ZeroClipboard.Client();	
+	clip38.setText( 'mittelSenkrechtenDreieck(A,B,C);' ); 	clip38.glue( 'mittelSenk' );
+	var clip39 = new ZeroClipboard.Client();	
+	clip39.setText( 'lageUntersuchung3Punkte(A,B,C);' ); 	clip39.glue( 'lage3Punkte' );
+	var clip40 = new ZeroClipboard.Client();	
+	clip40.setText( 'spatProdukt(a,b,c);' ); 	clip40.glue( 'spatProdukt' );
+	var clip41 = new ZeroClipboard.Client();	
+	clip41.setText( 'betragLaenge(p);' ); 	clip41.glue( 'betragLaenge' );
+	
+	};
+	
+	function makeclip(id){
+	var clip = new ZeroClipboard.Client();	
+	clip.setText( id ); clip.glue( id );
+	};
+</script>
+  
+
+</head><body onload="copy();">
+
+<script type="text/javascript" src="ZeroClipboard.js"> </script> 
+
+<h4><img align="left" src="http://www.lemitec.de/images/idee.png" alt="Download Link"><strong><a href="http://www.lemitec.de/load.php?name=MFMedia&amp;mid=18">
+ANGEOM</a></strong> Lisp-Mac-Bibliothek (<a href="http://www.lemitec.de/load.php?name=MFMedia&amp;mid=18">Download</a>)
+<span style="color: rgb(51, 102, 255); font-weight:100"> <br>
+Zweifachklick kopiert Anweisung in Ablage</span>
+</h4>
+
+<div style="font-size:14pt; color: rgb(153, 0, 0); font-family:Calibri,Arial,SansSerif; ">Analytische Geometrie mit Maxima/angeom.mac</div>
+<pre>
+<font size="3">ev(Ausdruck, Argument=Wert);  
+<span id="a+b, a=5, b=-1;" onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	a+b, a=5, b=-1;</span>
+<span> solve(Gleichung, Argument); </span> 
+<span> to_poly_solve(wurzelgleichung, Argument)</span> 
+<span> Terme vereinfachen faktorisieren ausmultiplizieren</span> 
+<span> %, ratsimp; %, expand; %, factor;</span> 
+<span id="ratsimp(%);" onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	ratsimp(%);</span> 
+<span id="expand(%);" onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	expand(%);</span> 
+<span id="factor(%):" onclick="makeclip(this.id);"style="color: rgb(51, 102, 255);">	factor(%);</span>
+Zahlendarstellung (Bignumbers)
+<span id="%, numer; %, float;" onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	%, numer; %, float;</span>
+<span id="set_display(ascii); pprec : 100;" onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	set_display(ascii); pprec : 100;</span>
+<span id="set_display(xml); pprec : 16;" onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	set_display(xml); pprec : 16;</span>
+Punkte und Vektoren 
+<span id="c_punkte" style="color: rgb(51, 102, 255);">	A:[0,-1,0]$ B:[1,-4,0]$ C:[4,-3,0]$ D:[0,0,3]$</span>
+<span id="defPunkte" style="color: rgb(51, 102, 255);">	defPunkte("A 1 2 3 B 4 5 6")$</span>
+Geradengleichung show und °<font size="3">
+<span id="g1show" style="color: rgb(51, 102, 255);">	g1:[3,0,0]+l*[2,0,-3]$ show(%);</span>
+<span id="punktAufGerade" style="color: rgb(51, 102, 255);">	punktAufGerade(P,g);</span>	
+<span id="spurPunkteGerade" style="color: rgb(51, 102, 255);">	spurPunkteGerade(g);</span>	
+<span id="defGeradeAB" style="color: rgb(51, 102, 255);">	defGeradeAB("g1 l A B")$</span>
+<span id="defGeradeRV" style="color: rgb(51, 102, 255);">	defGeradeRV("g1 t A rv")$</span>
+Ebenengleichungen
+<span id="nvxyz" style="color: rgb(51, 102, 255);">	nv:(B-A)&gt;&lt;(C-A)$ 
+	NE1:nv.([x,y,z]-A)$</span>
+<span id="defEbeneABC" style="color: rgb(51, 102, 255);">	defEbeneABC("E1 l t A B C")$</span>
+<span id="defEbeneRV" style="color: rgb(51, 102, 255);">	defEbeneRV("E2 r s A rv1 rv2")$</span>
+<span id="defEbeneNF1" style="color: rgb(51, 102, 255);">	defEbeneNF("NE1 nv A")$</span>
+<span id="defEbeneNF2" style="color: rgb(51, 102, 255);">	defEbeneNF("NE2 A B C")$</span>
+Parameterform:
+<span id="E1ABCShow" style="color: rgb(51, 102, 255);">	E1:A+r*(B-A)+s*(C-A)$ show(%); </span>
+<span id="evrvvv" style="color: rgb(51, 102, 255);">	ev:EOV(E1); rv:ERV1(E1); vv:ERV2(E1);</span>
+Koordinatengleichung
+<span id="NFE1" style="color: rgb(51, 102, 255);">	NFE1:normalForm(E1),ratsimp;</span>
+<span id="hesseNF" style="color: rgb(51, 102, 255);">	HNF1:hesseNF(NFE1);</span>
+F(Gleichung,[werteliste der laufparameter])
+<span id="FE1" style="color: rgb(51, 102, 255);">	F(g1,[0]); </span>
+<span id="FE111" style="color: rgb(51, 102, 255);">	F(E1,[1,-1]);</span>
+<span id="NFE123" style="color: rgb(51, 102, 255);">	F(NFE,[1,2,3]);</span>
+Skalarprodukt 
+Vektor- oder Kreuzprodukt 
+Orts- und Richtungsvektoren
+<span id="GOV" style="color: rgb(51, 102, 255);">	gv:GOV(g1); rv:GRV(g1);</span>
+<font size="3">PLOTT Funktionen </font>
+<span id="OABC" style="color: rgb(51, 102, 255);">	O:[A,B,C,D,E,F,G,H]$</span> 
+<span id="PLOTTL" style="color: rgb(51, 102, 255);">	PLOTT_L([NFE1],[g1],-5,5)$</span>
+<span id='S_Labels[5]:"S"$' onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	S_Labels[5]:"S"$</span>
+<span id="S_Figur" style="color: rgb(51, 102, 255);">	S_Figur:mesh([A,B,C,D,A],[A,B,S,A],[C,D,S,C])$ </span>
+<span id="wx_ScVon" style="color: rgb(51, 102, 255);">	wx_ScVon:-2$ wx_ScBis:5$ </span>
+<span id="wx_Hrot" style="color: rgb(51, 102, 255);">	wx_Hrot:30$ wx_Vrot:60$</span>
+<span id="PLOTTD" style="color: rgb(51, 102, 255);">	PLOTT_D([],[],-10,10)$</span>
+<span id="abc_Labels" style="color: rgb(51, 102, 255);">	abc_Labels()$</span>
+<span id="pqr_Labels" style="color: rgb(51, 102, 255);">	pqr_Labels()$</span>
+<span id="clear_Labels()$" onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	clear_Labels()$</span>
+<span id="clearPlottVektors()$" onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	clearPlottVektors()$</span>
+Vektoren und Punkte 
+<span id="schwerPunktABC" style="color: rgb(51, 102, 255);">	schwerPunktABC(A,B,C);</span>
+<span id="winkelHalb" style="color: rgb(51, 102, 255);">	winkelHalbierende(B-A,C-A); </span>
+<span id="mittelSenk" style="color: rgb(51, 102, 255);">	mittelSenkrechtenDreieck(A,B,C);</span>
+<span id="lage3Punkte" style="color: rgb(51, 102, 255);">	lageUntersuchung3Punkte(A,B,C);</span>
+<span id="spatProdukt" style="color: rgb(51, 102, 255);">	spatProdukt(a,b,c);</span>
+<span id="betragLaenge" style="color: rgb(51, 102, 255);">	betragLaenge(p); </span>
+Geradenfunktionen; 
+<span id="punktAufGerade(P,g);" onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	punktAufGerade(P,g); </span>
+<span id="abstandPunktGeradeFp(P,g);" onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	abstandPunktGeradeFp(P,g); </span>
+<span id="spurPunkteGerade(g);" onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	spurPunkteGerade(g); </span>
+<span id="lageUntersuchungGeraden(g1,g2); " onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	lageUntersuchungGeraden(g1,g2); </span>
+<span id="schnittwinkelGeraden(g1,g2);" onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	schnittwinkelGeraden(g1,g2); </span>
+Ebenen und Geraden
+<span id="lotFusspunkt();" onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	lotFusspunkt(); </span>
+<span id="schnittEbeneGerade(E,g);" onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	schnittEbeneGerade(E,g); </span>
+<span id="schnittwinkelEbeneGerade(E,g);" onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	schnittwinkelEbeneGerade(E,g);</span>
+Ebenen 
+<span id="normalForm(E);" onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	normalForm(E);</span>
+<span id="normalVektorNF(NFE1);" onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	normalVektorNF(NFE1); </span>
+<span id="paramForm(NF,s,t);" onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	paramForm(NF,s,t);</span>
+<span id="spurPunkteEbene(NFE);" onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	spurPunkteEbene(NFE);</span>
+<span id="schnitt2Ebenen(NF1,NF2, t);" onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	schnitt2Ebenen(NF1,NF2, t);</span>
+<span id="abstandPunktEbene(NF1,P);" onclick="makeclip(this.id);" style="color: rgb(51, 102, 255);">	abstandPunktEbene(NF1,P);</span>
+<font size="3">Anhang  </font>
+Kugelgleichung 
+<span id='defKugel("KU M r");' onclick="makeclip(this.id);"  style="color: rgb(51, 102, 255);">	defKugel("KU M r");</span>
+<span id="KO:(([x,y,z] - M)^^2 - ro^2)[1][1];" onclick="makeclip(this.id);"  style="color: rgb(51, 102, 255);">	KO:(([x,y,z] - M)^^2 - ro^2)[1][1];</span>
+<span id="KK:(M[1]+x)^2+(M[2]+y)^2+(M[3]+z)^2-ro^2;" onclick="makeclip(this.id);"  style="color: rgb(51, 102, 255);">	KK:(M[1]+x)^2+(M[2]+y)^2+(M[3]+z)^2-ro^2;</span>
+Kreisgleichung 
+<span id="Kt:M+ro*uv/betragLaenge(uv)*cos(t)+ro*vv/betragLaenge(vv)*sin(t);" onclick="makeclip(this.id);"  style="color: rgb(51, 102, 255);">	Kt:M+ro*uv/betragLaenge(uv)*cos(t)+ro*vv/betragLaenge(vv)*sin(t);</span>
+Abbildungen
+Spiegelung an Geraden, Ebenen, Drehungen
+<span id="S(achse):=ident(3)*assoc(achse,[[x,[1,-1,-1]],[y,[-1,1,-1]],[z,[-1,-1,1]]]);" onclick="makeclip(this.id);"  style="color: rgb(51, 102, 255);">	S(achse):=ident(3)*assoc(achse,[[x,[1,-1,-1]],[y,[-1,1,-1]],[z,[-1,-1,1]]]);</span>
+<span id="Dx(a):=matrix([1,0,0],[0,cos(a),-sin(a)],[0,sin(a),cos(a)]);" onclick="makeclip(this.id);"  style="color: rgb(51, 102, 255);">	Dx(a):=matrix([1,0,0],[0,cos(a),-sin(a)],[0,sin(a),cos(a)]);</span>
+<span id="Dy(a):=matrix([cos(a),0,sin(a)],[0,1,0],[-sin(a),0,cos(a)]);" onclick="makeclip(this.id);"  style="color: rgb(51, 102, 255);">	Dy(a):=matrix([cos(a),0,sin(a)],[0,1,0],[-sin(a),0,cos(a)]);</span>
+<span id="Dz(a):=matrix([cos(a),-sin(a),0],[sin(a),cos(a),0],[0,0,1]);" onclick="makeclip(this.id);"  style="color: rgb(51, 102, 255);">	Dz(a):=matrix([cos(a),-sin(a),0],[sin(a),cos(a),0],[0,0,1]);</span>
+Gauss Algorithmus
+<span id='A:defMatrix("1 2 3 0  0 1 2 3  0 0 1 2  2 3 4 a"); A:addcol(%,[0,0,0,1]);' onclick="makeclip(this.id);"  style="color: rgb(51, 102, 255);">	defMatrix("1 2 3 0  0 1 2 3  0 0 1 2  2 3 4 a"); A:addcol(%,[0,0,0,1]);</span>
+<span id="gaussLinGLS(A,[x,y,z]);" onclick="makeclip(this.id);"  style="color: rgb(51, 102, 255);">	gaussLinGLS(A,[x,y,z]);</span>
+</font>
+</pre>
+
+<pre><font size="2">(GPL 2011)hw::lemitec.de</font>
+<font size="2">Clipbordcopy make use of ZeroClipboard.js and ZeroClipboard.swf</font>
+</pre>
+
+</body></html>

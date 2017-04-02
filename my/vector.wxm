@@ -1,0 +1,60 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 13.04.2 ] */
+
+/* [wxMaxima: input   start ] */
+a:[-2, 3, 8]; b:[3, -2, -4];
+mag_a: sqrt(a.a)$
+mag_b: sqrt(b.b)$
+sqrtdispflag:true$
+theta: acos((a.b)/(mag_a*mag_b));
+theta, numer;
+angle:(theta*180/%pi), numer;
+mag_a; sqrt((-2)^2+3^2+8^2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(acos((6.34^2-2*4.23^2)/(2*4.23^2))*180)/%pi, numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+a:4.23$ b:4.23$ c:6.34$
+acos((c^2-a^2-b^2)/(2*a^2))*180/%pi, numer;
+acos((c^2-a^2-b^2)/(a^2+b^2))*180/%pi, numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sqrt(ax+bx)^2+sqrt(ay+by)^2=95^2*sqrt(ax-bx)^2+sqrt(ay-by)^2
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sin(sqrt(0.5/9))*180/%pi, numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kronecker_product(transpose(a),transpose(b));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kron_delta(a, b);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+a:[0, 1, 0]; b:[1, 0, 1]; kron_delta(a,b);
+kronecker_product(transpose(a), transpose(b));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??ic2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??ode2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq:diff(f(x), x)-f(x)$
+ic1(ode2(eq, f(x), x), x=x0, y=y);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

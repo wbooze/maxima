@@ -1,0 +1,292 @@
+/* Copyright (C) 2009-2010  Stefano Ferri
+
+This file is part of SymSAP.
+
+SymSAP is free software $ you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation $ either version 3
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY $ without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
+
+/*--------------------------------------------------------
+ CORRECTNESS CHECKS IN STRUCTURE INPUT FILE
+---------------------------------------------------------- */
+
+/* This file contains code for basic errors checking */
+
+
+print("Checking correctness of inputs in structure file...") $
+
+/* Check if all matrices are present */
+
+for _i in [NodeCoord, ConnectMatrix, ConstrCond, ElasticConstrCond, ConcDist, Disconnections, BeamCar, Def, NodalLoads, DistributedLoads, ThermalLoads] do
+	if not matrixp(_i) then
+		error("ERROR: matrix", _i, "not defined.") $
+
+
+
+/* total number of nodes and beams */
+
+nNodes : length(NodeCoord) $
+nBeams : length(ConnectMatrix) $
+
+
+if nNodes < 2 then
+	error("ERROR: at least 2 nodes must be defined.") $
+
+/* the number of columns in coordinate matrix and in connectivity
+matrix has to be equal to 2 (2 nodes per beam) */
+
+if notequal(matrix_size(NodeCoord)[2], 2) then
+	error("ERROR: bad matrix of nodal coordinates. NodeCoord must have 2 columns.") $
+
+if notequal(matrix_size(ConnectMatrix)[2], 2) then
+	error("ERROR: bad connectivity matrix. ConnectMatrix must have 2 columns.") $
+
+/* Matrices of constraints, distributed loads, concentrated loads, thermal
+distortions, must contain indices coherent with the total number of beams
+and nodes. Moreover, these numbers must be positive integers */
+
+/* Constraint conditions checks */
+
+for _i:1 thru length(ConstrCond) do
+	if ConstrCond[_i,1]<0 or not integerp(ConstrCond[_i,1]) or ConstrCond[_i,1] > nNodes then
+		error("ERROR: node index in matrix ConstrCond must be an
+		integer > 0, not higher than the total number of nodes.") $
+
+for _i:1 thru length(ElasticConstrCond) do
+	if ElasticConstrCond[_i,1]<0 or not integerp(ElasticConstrCond[_i,1]) or ElasticConstrCond[_i,1] > nNodes then
+		error("ERROR: node index in matrix ConstrCond must be
+		an integer > 0, not higher than the total number of nodes.") $
+
+
+/* Checks on disconnections matrix */
+
+for _i:1 thru length(Disconnections) do
+	if not member(Disconnections[_i,1],[1,2,3,4,5,6]) then error(
+"Error in matrix Disconnections, line", _i,".
+Undefined constraint type.") $
+
+
+for _i:1 thru length(Disconnections) do
+	if not listp(Disconnections[_i,2]) then error(
+"Error in matrix Disconnections, line", _i,".
+Overlapping nodes list not defined.") $
+
+
+/* This check must be done after the above list check to avoid errors */
+for _i:1 thru length(Disconnections) do
+	if length(Disconnections[_i,2]) < 2 then error(
+"Error in matrix Disconnections, line", _i,".
+Overlapping nodes must be 2 at least.") $
+
+
+for _i:1 thru length(Disconnections) do (
+	_ii : Disconnections[_i,2][1],
+	for _j:2 thru length(Disconnections[_i,2]) do (
+		_jj : Disconnections[_i,2][_j],
+		if row(NodeCoord,_ii) # row(NodeCoord,_jj) then error(
+"Error in matrix Disconnections: nodes",_i,"and",_j,"must have the same coordinates.")
+	)
+)$
+
+
+/* Checks on concentrated distortion matrix */
+
+for _i:1 thru length(ConcDist) do (
+	_ii : ConcDist[_i,1],
+	_jj : ConcDist[_i,2],
+	if row(NodeCoord,_ii) # row(NodeCoord,_jj) then error(
+"Error in matrix ConcDist: nodes",_ii,"and",_jj,"must have the same coordinates.")
+	)$
+
+
+for _i:1 thru length(ConcDist) do (
+	lista : [ConcDist[_i,1],ConcDist[_i,2]],
+	for _j:_i+1 thru length(ConcDist) do (
+		lista2 : [ConcDist[_j,1],ConcDist[_j,2]],
+		if lista = lista2 or lista = reverse(lista2) then error(
+"Error in matrix ConcDist: only one concentrated distortion is admitted for each beam section.
+Section between nodes",ConcDist[_i,1],"and",ConcDist[_i,2],"has more than one distortion.")
+		)
+	)
+$
+
+for _i:1 thru length(ConcDist) do (
+	lista : [ConcDist[_i,1],ConcDist[_i,2]],
+	for _j:1 thru length(Disconnections) do (
+		lista2 : Disconnections[_j,2],
+		if lista = lista2 or lista = reverse(lista2) then error(
+"Error: a concentrated distortion is not admitted where a disconnection is present.
+Between nodes",lista[1],"and",lista[2],"both a disconnection and a concentrated distortion are defined.")
+		)
+	)
+$
+
+for _i:1 thru length(ConcDist) do (
+	lista : [ConcDist[_i,1],ConcDist[_i,2]],
+	for _j:1 thru length(ConstrCond) do (
+		if member(ConstrCond[_j,1],lista) then error(
+"Error: a cocentrated distortion is not admitted were a constraint condition is present.
+Check matrix ConcDist and remove node",ConstrCond[_j,1])
+		)
+	)
+$
+
+
+/* Concentrated loads matrix */
+for _i:1 thru length(NodalLoads) do
+	if NodalLoads[_i,1]<0 or not integerp(NodalLoads[_i,1]) or NodalLoads[_i,1] > nNodes then
+error("Error: node index in matrix NodalLoads must be
+		an integer > 0, not higher than the total number of nodes.") $
+
+/* Distributed loads matrix */
+for _i:1 thru length(DistributedLoads) do
+	if DistributedLoads[_i,1]<0 or not integerp(DistributedLoads[_i,1]) or DistributedLoads[_i,1] > nBeams  then
+		error("Error: beam index in matrix DistributedLoads must be
+		an integer > 0, not higher than the total number of beams.") $
+	
+
+/* Thermal loads matrix */
+for _i:1 thru length(ThermalLoads) do
+	if ThermalLoads[_i,1]<0 or not integerp(ThermalLoads[_i,1]) or ThermalLoads[_i,1] > nBeams then
+		error("Error: beam index in matrix ThermalLoads must be
+		an integer > 0, not higher than the total number of beams.") $
+
+/* Have mechanical properties of each beam been correctly defined? */
+if notequal(length(BeamCar), nBeams) then
+	error("Error: mechanical properties of beams are not correctly defined.
+		Check matrix BeamCar.") $
+
+if notequal(length(Def), nBeams) then
+	error("Error: deformability hypotheses are not correctly defined.
+		Check matrix Def.") $
+
+
+/* Each node (identified by its row index in NodeCoord) must
+have at least one entry in ConnectMatrix, otherwise an isolated
+node could cause a lability */
+
+connectlist : [] $
+for _i:1 thru length(ConnectMatrix) do
+	connectlist : append(connectlist,ConnectMatrix[_i]) $
+connectlist : unique(connectlist) $
+for _i:1 thru length(NodeCoord) do
+	if not member(_i,connectlist) then
+		error("Error: no entry for node", _i,"in matrix ConnectMatrix.") $
+
+for _i:1 thru length(ConnectMatrix) do (
+	_node1 : ConnectMatrix[_i,1],
+	_node2 : ConnectMatrix[_i,2],
+	if NodeCoord[_node1] = NodeCoord[_node2] then
+		error("A beam has been defined between nodes", _node1, "and", _node2, "but they have the same coordinates.")
+) $
+
+
+/* COHERENCE CHECKS OVER BEAMS DEFORMABILITY HYPOYHESES */
+
+/* elements of Def can only be equal to nor, negl, null */
+
+for _i:1 thru length(Def) do
+	for _j:1 thru matrix_size(Def)[2] do
+		if Def[_i,_j] # nor and Def[_i,_j] # negl and Def[_i,_j] # null then
+			error("Error: elements of matrix Def must be equal either to nor, negl or null.") $
+
+
+/* Coherence checks about deformability hypotheses:
+couple [negl, negl] is not admitted, while [null, negl]
+and [negl, null] are equivalent to [null, null] */
+
+for _i:1 thru length(Def) do (
+	/* only not admitted or equivalence cases are considered */
+	if row(Def,_i) = matrix([negl,negl]) then
+		/* creation of an array containing indices of incoherent hypotheses */
+		negllist[_i] : _i
+	elseif row(Def,_i) = matrix([null, negl]) or row(Def,_i) = matrix([negl, null]) then (
+		Def[_i,1] : null,
+		Def[_i,2] : null,
+		print("Row",_i,"of matrix Def modifyed to [null,null]"))
+	)$
+
+
+/* Incoherent hypotheses error printing */
+
+if member(negllist,arrays) then
+	error("Error: incoherent hypotheses about deformability negligibility for beams", listarray(negllist),
+		"Couple [negl,negl] is not admitted.") $
+
+
+/* Here we check that deformability hypotheses about a beam are consistent with
+the ones about all other beams. If two beams have identical mechanical and geometric
+characteristics, deformability hypotheses have to be the same. */
+
+
+SameArea : matrix()$
+SameInertia : matrix()$
+
+for _i:1 thru length(BeamCar) - 1  do (
+	kill(SameAreaBeams, SameInertiaBeams),
+	flagA : false,
+	flagI : false,
+	for _j:_i+1 thru length(BeamCar) do (
+		if BeamCar[_j,2] = BeamCar[_i,2] then (
+			SameAreaBeams[_j] : _j,
+			flagA : true
+		),
+		if BeamCar[_j,3] = BeamCar[_i,3] then (
+			SameInertiaBeams[_j] : _j,
+			flagI : true
+		)
+	),
+		if flagA then
+			SameArea : addrow(SameArea,[BeamCar[_i,2],cons(_i,listarray(SameAreaBeams))]),
+		if flagI then
+			SameInertia : addrow(SameInertia,[BeamCar[_i,3],cons(_i,listarray(SameInertiaBeams))])
+)$
+
+
+/* now it is possible that more than one row are related to the same value of 
+area or moment of inertia. The following loop eliminates exceeding rows, starting
+form the bottom because only the first row has to be kept. */
+
+if length(SameArea) > 0 then
+	for _i:length(SameArea) step -1 thru 2 do
+		for _j:_i-1 step -1 thru 1 do
+			if SameArea[_i,1] = SameArea[_j,1] then
+				exclA[_i] : _i$
+
+if member(exclA,arrays) then
+	SameArea : apply(submatrix,(endcons(SameArea,listarray(exclA))))$
+
+if length(SameInertia) > 0 then
+	for _i:length(SameInertia) step -1 thru 2 do
+		for _j:_i-1 step -1 thru 1 do
+			if SameInertia[_i,1] = SameInertia[_j,1] then
+				exclI[_i] : _i$
+
+if member(exclI,arrays) then
+	SameInertia : apply(submatrix,(endcons(SameInertia,listarray(exclI))))$
+
+
+for _i:1 thru length(SameArea) do
+	for _j:1 thru length(SameArea[_i,2]) - 1 do
+		if row(Def,SameArea[_i,2][_j]) # row (Def,SameArea[_i,2][_j+1]) then
+			error("Error: incoherent deformability hypotheses for two beams having the same area.") $
+
+for _i:1 thru length(SameInertia) do
+	for _j:1 thru length(SameInertia[_i,2]) - 1 do
+		if row(Def,SameInertia[_i,2][_j]) # row (Def,SameInertia[_i,2][_j+1]) then
+			error("Error: incoherent deformability hypotheses for two beams having the same moment of inertia.") $
+
+
+

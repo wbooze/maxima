@@ -1,0 +1,43 @@
+
+Iplus(x,y):=[x[1]+y[1],x[2]+y[2]];
+Iprod(x,y):=[min(x[1]*y[1],x[1]*y[2],x[2]*y[1],x[2]*y[2]),max(x[1]*y[1],x[1]*y[2],x[2]*y[1],x[2]*y[2])];
+Idiv(x,y):=Iprod(x, [1/y[2], 1/y[1]]);
+Iminus(x):=[-x[2],-x[1]];
+Ipower(x,n):=block([y:x], if n=0 then x:1 else 
+          (if n=1 then return(y) else for i:1  thru n-1 do x:Iprod(y,x),return(x)));
+
+
+/* The next routine is to apply interval arithmetic to polynomials in
+one variable */
+
+
+Iapply(p,xx):= block( [xt,yt,q,ii,jj,cc],
+         q: expand(p),  /* expand the polynomial p */
+        cc:[coeff(q,x,0),coeff(q,x,0)], /* form the trivial interval
+                                           for the constant term */
+
+        xt: cc, prt("cc = ",cc), 
+
+       for i:1 thru hipow(q,x) do 
+        (xt: Iplus(xt,Iprod([coeff(q,x,i),coeff(q,x,i)],Ipower(xx,i)))),
+        return(xt)
+                   )$
+
+Iratapply(p,q,xx):= block( [xt,yt,p1,q1,ii,jj,c1, c2],
+         p1: expand(p),  /* expand the polynomial p, q */
+         q1: expand(q),
+         c1:[coeff(p1,x,0),coeff(p1,x,0)], /* form the trivial interval
+                                            for the constant terms */
+         c2:[coeff(q1,x,0),coeff(q1,x,0)], 
+
+        xt: c1, yt: c2,
+
+/* next the interval version for p applied to the interval xx */
+       for i:1 thru hipow(p1,x) do 
+        (xt:Iplus(xt,Iprod([coeff(p1,x,i),coeff(p1,x,i)],Ipower(xx,i)))),
+
+/* next the interval version for q applied to the interval xx */
+       for i:1 thru hipow(q1,x) do 
+        (yt:Iplus(yt,Iprod([coeff(q1,x,i),coeff(q1,x,i)],Ipower(xx,i)))),
+        return(Idiv(xt,yt))
+                   )$

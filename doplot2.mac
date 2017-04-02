@@ -1,0 +1,42 @@
+/* file doplot2.mac */
+
+/*  eighteen triangles  */
+disp("doplot2()")$
+print("eighteen colored triangles")$
+doplot2() := 
+  block([cc, qlist,x1,x2,y1,y2,i,val ],
+     cc : [aquamarine,beige,blue,brown,cyan,gold,goldenrod,green,khaki,
+            magenta,orange,pink,plum,purple,red,salmon,skyblue,turquoise,
+            violet,yellow ],            
+     qlist : [ xr(-3.3,3.3), yr(-3.3,3.3) ],     
+  /* top row of triangles  */
+     y1  : 1,
+     y2 : 3,
+     for i:0 thru 5 do ( 
+       x1 : -3 + i,
+       x2 : x1 + 1,
+       val : poly( [ [x1,y1],[x2,y1],[x1,y2]], fill( cc[i+1] ) ),
+       qlist : append(qlist, [val ] ) 
+     ),
+  /* middle row of triangles  */
+     y1 : -1,
+     y2 : 1,
+     for i:0 thru 5 do (
+        x1 : -3 + i,
+        x2 : x1 + 1,
+        val : poly( [ [x1,y1],[x1,y2],[x2,y2]], fill( cc[i+7] ) ),
+        qlist : append(qlist, [val ] ) 
+     ),
+      /* bottom row of triangles  */
+     y1 : -3,
+     y2 : -1,
+     for i:0 thru 5 do (
+       x1 : -3 + i,
+       x2 : x1 + 1,
+       val : poly( [ [x1,y1],[x2,y1],[x1,y2]], fill( cc[i+13] ) ),
+       qlist : append(qlist, [val ] )        
+     ),          
+     qlist : append(qlist,[ cut(all) ] ),                    
+     apply( 'qdraw, qlist )                                   
+  )$
+  

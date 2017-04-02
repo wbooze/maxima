@@ -1,0 +1,35 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 14.12.1 ] */
+
+/* [wxMaxima: input   start ] */
+load(draw)$
+draw(
+        delay     = 100,
+        file_name = "zzz",
+        terminal  = 'animated_gif,
+        gr2d(explicit(x^2,x,-1,1)),
+        gr2d(explicit(x^3,x,-1,1)),
+        gr2d(explicit(x^4,x,-1,1)))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist (gr2d (explicit (x^(i/10), x, 0, 1)), i, 1, 10)$
+append ([terminal   = animated_gif,
+             delay      = 40,
+             file_name  = "gifanim",
+             dimensions = [300,300]], %)$
+draw (%)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(gr3d(xrange=[-2,2],yrange=[-2,2],zrange=[0,70], nticks=100,
+parametric(cos(t),sin(t),(sin(k)+1.2)*t,t,0,8*%pi)), k, 0, 20, 0.5)$
+append([terminal  = 'animated_gif, 
+delay  = 20, 
+file_name = "aaaa", 
+dimensions=[500,500]], %)$
+draw(%)$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

@@ -1,0 +1,88 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 13.04.2 ] */
+
+/* [wxMaxima: input   start ] */
+1+1;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (defun split-if (fn lst)
+       (let ((acc nil))
+        (do ((src lst (cdr src)))
+              ((or (null src) (funcall fn (car src)))
+               (values (nreverse acc) src))
+           (push (car src) acc))))
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (split-if (lambda (x) (eq x 'false)) '(1 2 3 false 5 6))
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsplita(fn, lst):=block([ acc:[], m:[], src:lst],
+while (not(emptyp(src))) do (
+if(fn(first(src))) then return() else
+push(pop(src), acc)
+), push(rest(src), m), return([reverse(acc), first(m)]))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsplita(fn, lst):=block([ acc:[], m:[], src:lst],
+while (not(emptyp(src))) do (
+if(fn(first(src))) then return() else
+push(first(src), acc), pop(src)
+), push(rest(src), m), return([reverse(acc), first(m)]))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsplitb(fn, lst):=block([ acc:[], m:[], src:lst],
+while (not(emptyp(src))) do (
+if(fn(first(src))) then return() else
+push(pop(src), acc)
+), push(src, m), return([reverse(acc), first(m)]))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsplitc(fn, lst):=block([ acc:[], m:[], src:lst],
+while (not(emptyp(src))) do (
+if(fn(first(src))) then return() else
+push(first(src), acc),
+push(rest(src), m), pop(src)
+), push(first(src), acc), return([reverse(acc), first(m)]))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsplitd(fn, lst):=block([ acc:[], m:[], src:lst],
+while (not(emptyp(src))) do (
+if(fn(first(src))) then return() else
+push(first(src), acc),
+push(rest(rest(src)), m), pop(src)
+), push(first(src), acc), return([reverse(acc), first(m)]))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+list:[1, 2, 3, false, 4, 5, 6];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsplita(lambda([n], n=false), list);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsplitd(lambda([n], n=false), list);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsplitd(lambda([n], n=false), [1, 2, false, 3, 4, 5]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+block([n: 0], do (ldisp(n: n + 1), if mod(n, 10) = 0 then return('done)));
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

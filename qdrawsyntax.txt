@@ -1,0 +1,295 @@
+file qdrawsyntax.txt
+
+may june,dec. 2008, e. woollett
+
+-------------QDRAW SYNTAX------------------------------
+
+ All arguments to qdraw are optional and can be entered in any order.
+ 
+ You can have no more than one xr(..) argument.  Likewise,
+  no more than one yr(..), one cut(..), one lw(n) (as an arg of
+   qdraw), one nticks(n) and one ipgrid(n).
+ 
+ You can have an arbitrary number of the other args in any order.
+ ===================================================================
+ You need to load both draw.lisp and qdraw.mac to use the 
+ qdraw package. If you have set up your search paths as 
+ described in Ch. 1 of Maxima by Example, then you can use:
+ 
+   (load(draw),load(qdraw))$
+   
+ to do the loading.  
+ 
+ ============================================================
+ PLOTTING A LIST OF POINTS USING pts(...) inside qdraw(...):
+ 
+ ----------------------
+   qdraw( pts( pointlist ) )  is the simplest invocation.
+   
+     An example would be 
+     
+      qdraw( pts( [ [-1.2,-2.4],[0,0.9],[2.5,4.4] ] ) )$
+      
+        which would plot three points in the default color (black)
+        with the default point size (3), with no lines joining the
+        points, and take up the whole screen with the limits 
+        on the horizontal and vertical canvas set by the numbers in 
+        the list.
+        
+     An even simpler example would be to simply provide a list of
+       numbers (taken to be y axis values); in this case qdraw assumes
+       the corresponding x axis values are the integers (1,2,3,...),
+       as in the example
+       
+         qdraw( pts([-2.2,-0.9,1.5,4.6]))$
+            
+     The only required argument of pts(...) is the points list.
+     The remaining optional arguments can be entered in
+     any order. They allow you to control the point size ps(size),
+     the point color pc(color), whether or not the points are
+     joined ( pj(linewidth) causes the points to be joined with
+     lines of the specified width ), the point type pt(type),
+     and, finally the string used for the pts(..) plot legend is 
+     determined by pk(string).
+     
+     More details on these options follow:
+     
+     Point size:  Use ps(1) or ps(2), for example, to get smaller 
+       point sizes, useful for plotting a large set of points.
+       Use ps(4), ps(5), etc for larger than the default value 3.
+     
+     Joining Points with Lines:  Use pj(lw), where the linewidth
+       integer lw can have values 1, 2, 3, 4,...  The entry
+       pj(3) would provide a line thick enough to match the
+       default point size (3), lw = 1 is the thinnest line.
+       
+     Point Color:  Use pc(color), where color is a name of 
+     one of the possible colors.
+     
+       You can see the colors available in the online help
+       manual by typing color in the manual index, or draw
+       and then scanning for the section on color (or see
+       the end of this subsection).
+       
+       For example, using   
+       
+         qdraw(
+          pts(
+           [ [-1.2,-2.4],[0,0.9],[2.5,4.4] ], pc(blue),
+                pj(3) ) )$
+                
+                
+         will result in both blue points and joining blue lines.
+         If pc(blue) doesn't work for you, try putting
+         double quotes around blue, as in pc("blue").
+                  
+     Point Type:  Use pt(type), where type is either an
+       integer or an available name; see the Help Manual
+       index entry under point_type. In contrast to the
+       standard draw package default, the qdraw default
+       point type is a filled circle (integer 7). You can
+       switch to a filled square, for example, by adding
+       the option pt(5), as in 
+       
+         qdraw(
+          pts(
+           [ [-1.2,-2.4],[0,0.9],[2.5,4.4] ], pc(blue),
+                pj(3), pt(5) ) )$
+     
+       or
+         qdraw(
+          pts(
+           [ [-1.2,-2.4],[0,0.9],[2.5,4.4] ], pc(blue),
+                pj(3), pt(filled_square) ) )$
+                
+      ***   To make the actual points invisible (only the lines
+             showing), use point type -1, as is pt(-1).
+        
+        The full range of point types from the help
+        manual is:
+        
+        none (-1), dot (0), plus (1), multiply (2), 
+        asterisk (3), square (4), filled_square (5), 
+        circle (6), filled_circle (7), up_triangle (8), 
+        filled_up_triangle (9), down_triangle (10), 
+        filled_down_triangle (11), diamant (12) 
+        and filled_diamant (13). 
+
+     Point Legend String:  Use pk(string), a simple 
+        example is,  pk("data set 1"), as an additional
+        option to pts(...) (use double quotes, not two
+        single quotes, aroung string) .
+        
+      Thus,
+       qdraw(
+          pts(
+           [ [-1.2,-2.4],[0,0.9],[2.5,4.4] ], pc(blue),
+                pj(3),pk("data set 1") ) )$
+                
+       will write the string supplied at the top right
+       of the screen (the default). If you want to move
+       that legend to the bottom right of the screen,
+       use key(bottom) as a separate option to qdraw(..),
+         (ie., not as an option to pts(..) ).
+         
+       For example:
+       
+         qdraw(  key(bottom),
+          pts(
+           [ [-1.2,-2.4],[0,0.9],[2.5,4.4] ], pc(blue),
+                pj(3),pk("data set 1") ) )$
+                
+        will place the legend at the bottom right.
+        
+      Adding Space Around the Points:  Use the horizontal range 
+         control xr(..) and/or the vertical range control
+         yr(..) options to qdraw(...), as in
+         
+         qdraw(  key(bottom), xr(-2,5),
+                yr(-3,5),
+          pts(
+           [ [-1.2,-2.4],[0,0.9],[2.5,4.4] ], pc(blue),
+                pj(3),pk("data set 1") ) )$
+                
+      Combining Point Set with Curves:  If you want to
+       add one or more curves (based on explicit functions)
+       it is easiest to use ex(..) as an option to qdraw(..).
+       
+       (%i19) g1:x^2$
+       (%i20) g2:x^3$
+       (%i21) qdraw(  key(bottom), xr(-2,5),
+                yr(-3,5),ex([g1,g2],x,-1,1),
+          pts(
+           [ [-1.2,-2.4],[0,0.9],[2.5,4.4] ], pc(blue),
+                pj(3),pk("data set 1") ) )$
+                
+       Alternatively, you get more control over the
+         separate curves if you use ex1(...) for each
+         function or expression, as in
+         
+      (%i25) qdraw(  key(bottom), xr(-2,5),
+                yr(-3,5), ex1(g1,x,-2,2,lc(green),
+                     lw(4),lk("x^2") ),
+                ex1(g2,x,-1,1,lc(dark-cyan),lw(4),
+                    lk("x^3") ),
+          pts(
+           [ [-1.2,-2.4],[0,0.9],[2.5,4.4] ], pc(blue),
+                pj(3),pk("data set 1") ) )$
+         
+         
+       The syntax for ex(..) and ex1(..) is
+       ex(exprlist,x,x1,x2),
+       
+       ex1(expr,x,x1,x2,lc(c),lw(n),lk(string) ),  
+       
+        in which the args lc(c) (line color), lw(n)
+        (line width), and lk(string) (key legend 
+        for curves) are optional args for ex1(..).
+                
+      Complete Set of Available Color Names (from the help
+        manual - (Note that compound names are hyphenated):
+        
+         white, black, gray0, grey0, gray10, 
+         grey10, gray20, grey20, gray30, grey30, 
+         gray40, grey40, gray50, grey50, gray60, 
+         grey60, gray70, grey70, gray80, grey80, 
+         gray90, grey90, gray100, grey100, gray, 
+         grey, light-gray, light-grey, dark-gray, 
+         dark-grey, red, light-red, dark-red, 
+         yellow, light-yellow, dark-yellow, green, 
+         light-green, dark-green, spring-green, 
+         forest-green, sea-green, blue, light-blue, 
+         dark-blue, midnight-blue, navy, medium-blue, 
+         royalblue, skyblue, cyan, light-cyan, 
+         dark-cyan, magenta, light-magenta, dark-magenta, 
+         turquoise, light-turquoise, dark-turquoise, 
+         pink, light-pink, dark-pink, coral, 
+         light-coral, orange-red, salmon, light-salmon, 
+         dark-salmon, aquamarine, khaki, dark-khaki, 
+         goldenrod, light-goldenrod, dark-goldenrod, 
+         gold, beige, brown, orange, dark-orange, 
+         violet, dark-violet, plum and purple. 
+
+          
+                  
+                               
+============================================================= 
+ The complete set of possible arguments (in alphabetic order) with the
+    maximum number and type of arguments follow. In general, arguments
+    with names lc,lw,lk,fill,pc,ps,pt,pk,pj,ha,hb,hl,and ht are optional.
+
+    qdraw( arrowhead(x,y,theta-degrees,s,lc(c),lw(n) ),
+           circle(x,y,radius,lc(c),lw(n),fill(cc) ),
+           contour(expr,x,x1,x2,y,y1,y2,crange(n,min,max),options )
+              or contour(expr,x,x1,x2,y,y1,y2, cvals(v1,v2,...), options ),
+              contour options are lc(c),lw(n), add( add-options );
+                 add-options are grid,xaxis,yaxis,and xyaxes,
+           cut(cut-options);
+              cut-options are key,grid,xaxis,yaxis,xyaxes,edge,all,
+           ellipse(xc,yc,xsma,ysma,th0-deg,dth-deg,lw(n),lc(c),fill(cc) ),
+           errorbars(ptlist,dylist,lc(c),lw(n) ),
+           ex(exprlist,x,x1,x2),
+           ex1(expr,x,x1,x2,lc(c),lw(n),lk(string) ),
+           imp(eqnlist,x,xx1,xx2,y,yy1,yy2),
+           imp1(eqn,x,x1,x2,y,y1,y2,lc(c),lw(n),lk(string) ),
+           ipgrid(n),
+           key(bottom) or key(top),
+           label( [string1,x1,y1],[string2,x2,y2],...),
+           label_align(p-options); p-options are l, r, or c,
+           line(x1,y1,x2,y2,lc(c),lw(n),lk(string) ),
+           log(log-options); log options are x, y, or xy,
+           lw(n),
+           more( any legal draw2d arguments),
+           nticks(n),
+           para( xofu,yofu,u,u1,u2,lc(c),lw(n),lk(string) ),
+           polar( roftheta,theta,th1,th2,lc(c),lw(n),lk(string) );
+                       theta, th1, and th2 must be in radians,
+           poly([ [x1,y1],[x2,y2],.,[xN,yN] ], lc(c),lw(n),fill(cc) ),
+           pts( [ [x1,y1],[x2,y2],.,[xN,yN] ],pc(c),ps(s),pt(t),pk(string),pj(lw) ),
+              see above for some details on using pts(..) for plotting points
+           pic( type(t), fname(string), font(string,size)  );
+                      font(..) is optional,
+           rect( x1,y1,x2,y2, lc(c),lw(n),fill(cc) ),
+           vector( [x,y],[dx,dy],lw(n),lc(c),lk(string),
+                    ha(deg),hb(v),hl(v),ht(t) ),
+           xr(xa,xb), 
+           yr(ya,yb),            
+           );
+           
+  ...................................................
+  QUICK PLOT FEATURES:
+               
+  For quick plots, use ex(...) and imp(...). These
+  two functions ex(...) and imp(...) use default colors, line widths,
+  and simple legend key numbers. The function ex(...) can be used either
+  with a single expression, as in ex( u^3,u,-2,2), or with a list
+  of expressions as in ex([u,u^2,u^3],u,-2,2).
+  
+  You can use any other letter instead of 'u', such as 'x', etc.
+  
+  Like wise the function imp(...), used for the implicit plots of equations,
+  can be used for one equation, as in imp(v^3=u^2,u,-2,2,v,-2,2) or for a 
+  list of equations as in imp([v=u,v^2=u,v^3=u],u,-2,2,v,-2,2).
+  
+  You can use any other letters instead of 'u' and 'v', such as 'x' and 'y'.
+   
+  The top level qdraw argument lw(n) overrides the default line_width setting used
+     for ex(...) and imp(...).
+  
+  You can have multiple ex and imp arguments.
+  ....................................................
+  
+  You recover more control, although limited to either one expression
+  or one equation, if you use ex1(...), or imp1(...), using the options
+  indicated.
+ 
+===========================================================
+   the function qdensity(expr,[x,x1,x2,dx],[y,y1,y2,dy], palette(p-options), pic(..) );
+       palette(p) and pic(type,filename) are optional;
+       palette(blue), palette(gray), palette(color), or palette(n1,n2,n3), 
+   can be used to produce a density plot. qdensity is called by itself and
+   is not 'wrapped' by qdraw.
+================================================================
+
+
+     

@@ -1,0 +1,69 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 14.09.0 ] */
+
+/* [wxMaxima: title   start ]
+DTS Modell
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+params: [rv=0.004, At=0.0154, a12=0.3485, a32=0.3485, a10=0.6677, a30=0.6591, g=9.810665, Av=%pi*(0.004)^2, QP1=0, QP2=0];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Volumenfluss zwischen Tank und Reservoir
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Q10: a10*Av*sqrt(2*g*x1);
+Q30: a30*Av*sqrt(2*g*x3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Volumenfluss zwischen Tank i,j
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Q12: a12*Av*signum(x1-x2)*sqrt(2*g*abs(x1-x2));
+Q32: a32*Av*signum(x3-x2)*sqrt(2*g*abs(x3-x2));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f: [(QP1 - Q12 - Q10)/At, (Q12 + Q32)/At, (QP2 - Q32 - Q30)/At];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??signum;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+signum(-x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+transpose(matrix(f));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: title   start ]
+Simulation
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: input   start ] */
+eqn: ev(f,params), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+x: [x1, x2, x3]$
+x0:[0.1, 0.1, 0.1]$
+sol:rk(eqn,x,x0, [t, 0, 10, 0.01])$
+x1L : makelist([sol[i][1],sol[i][2]],i,1,length(sol))$
+x2L : makelist([sol[i][1],sol[i][3]],i,1,length(sol))$
+x3L : makelist([sol[i][1],sol[i][4]],i,1,length(sol))$
+wxplot2d([[discrete,x1L], [discrete,x2L], [discrete,x3L]]);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

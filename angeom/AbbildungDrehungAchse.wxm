@@ -1,0 +1,79 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 0.8.7 ] */
+
+/* [wxMaxima: input   start ] */
+load(angeom);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A:matrix([2,-1,2],[2,2,-1],[-1,2,2])/3;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+determinant(A); rank(A);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+A beschreibt eine Abbildung (Drehung)
+geben Sie die Fixgerade (Drehachse) und den Drehwinkel an...
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+gaussLinGLS(A-ident(3),[x,y,z]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Streiche 3 Zeile
+Stelle Zeile 1 und 2 um mit Spalte z=l 
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+G:addcol(submatrix(3,A,3)-ident(2),-l*submatrix(3,A,1,2));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gaussLinGLS(G,[x,y]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+die Drehachse g
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+g:ev([x,y,z],%,z=l);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+zur Anschauung A.P=Q und A.R=S
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+P:[1,-2,3]; Q:m2l(A.P);
+R:[-2,1,3]; S:m2l(A.R);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pqr_Labels()$
+O:[P,Q,R,S]$ 
+PLOTT_D([],[g],-10,10)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F:lotFusspunkt(g,P);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+g1:F+t*(P-F);
+g2:F+t*(Q-F);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+schnittwinkelGeraden(g1,g2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_L([],[g,g1,g2],-10,10)$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

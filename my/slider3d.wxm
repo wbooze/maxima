@@ -1,0 +1,66 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load("draw");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+von:-5$ bis:5$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+with_slider_draw3d(
+   /* first two arguments are the parameter and parameter values */
+   ang, makelist(i,i,-1,5), 
+   /* the rest of arguments describe a draw3d scene */
+    pic_width = 600, 
+    pic_height = 600, 
+    xrange     = [von-1,bis+1],  
+    yrange     = [von-1,bis+1], 
+    zrange     = [von-1,bis+1],
+   nticks     = 80,
+   color      = red,
+   line_width = 2,
+   parametric(l,l/2,-1-2*l,l,von,bis),
+     
+   color = light-blue,
+   line_width = 0.5,
+   implicit(x-y+z+2,x,von,bis,y,von,bis,z,von,bis),
+   color      = black,
+   point_size = 2,
+   points_joined = true,
+   line_width = 1,
+   points([[0,0,0],[0,0,0]]),
+   vector([von,0,0],[bis-von,0,0]),
+   vector([0,von,0],[0,bis-von,0]),
+   vector([0,0,von],[0,0,bis-von]),
+grid = true,
+zlabel = "z",
+ylabel = "y",
+xlabel = "x",
+surface_hide =true,
+rot_vertical   = 100-10*ang,
+rot_horizontal = 120-10*ang/*,
+enhanced3d   = true*/
+)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+NFE1:x+y+z-3;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gt:[1,2,3]+t*[1,0,1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+load("angeom");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_S(NFE1,"","",gt,"","",-10,20);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

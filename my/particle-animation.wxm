@@ -1,0 +1,69 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.04.0 ] */
+
+/* [wxMaxima: title   start ]
+Particle kinematics
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: comment start ]
+Let us suppose that we have the data corresponding to the motion of
+a particle. Usually, the first coordinate is the time and the second
+the position (on a line), or it could be that we have a set (x,y) of
+positions in the plane that the particle is covering during its motion.
+In any case, we will have an ordered list (by the first coordinate
+--the time-- or because these are the successive positions in the plane).
+For definiteness, let us create a toy list, representing the motion
+on a line following the law y(x)=2x-3:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+times:makelist(i,i,1,10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+positions:makelist(2*j-3,j,1,10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+motion:makelist([times[k],positions[k]],k,1,length(times));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+What we want is an animation that, at each step, shows only one element
+of the list "motion": in the first slide, only the point (1,-1) should
+appear, in the second slide only the point (2,1), and so on.
+Note that in the following command we write "[motion[l]]", and not simply
+"motion[l]"; that is because the "discrete" command's argument must be a list:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+with_slider(l,makelist(m,m,1,length(times)),
+[discrete,[motion[l]]],[style,points],
+[x,0,11],[y,-2,18]
+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Of course, we must set the extreme values in the horizontal and vertical axis,
+otherwise Maxima will try to adjust the scales in such a way that the point to
+be represented lies in the middle of the graphics. As the minimum and maximum
+values of the first coordinate in our list are 1 and 10, respectively, and those
+of the second coordinate are given by the formula 2x-3, we have the intervals
+[1,10] and [-1,17]. But in order to get a clearer graphics, it is better to choose
+[0,11] and [-2,18].
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: comment start ]
+The following modification of the above command creates an animation showing
+the particle track:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+with_slider(l,makelist(m,m,1,length(times)),
+[discrete,rest(motion,l-length(motion))],[style,points],
+[x,0,11],[y,-2,18]
+);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

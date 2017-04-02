@@ -1,0 +1,194 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.04.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,g,x,m,n,k,falling_fact, rising_fact)$
+falling_fact(k,n):= makelist(block([x:n, m:k, powerdisp:false], return('x*product(('x - m), m, 1, x-1))), n, k, n)$
+falling_fact(1,10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,g,x,m,n,k, rising_fact, falling_fact)$
+falling_fact(k,n):= makelist(block([x:n, m:k], return('x*product(('x - m), m, 1, x-1))), n, k, n)$
+falling_fact(1,10), expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,g,x,m,n,k, rising_fact, falling_fact)$
+falling_fact(k,n):= makelist(block([x:n, m:k], return(x*product((x - m), m, 1, x-1))), n, k, n)$
+falling_fact(1,10), expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,g,x,m,n,k, rising_fact, falling_fact)$
+rising_fact(k,n):= makelist(block([x:n, m:k], return(x*product((x + m), m, 1, x-1))), n, k, n)$
+rising_fact(1,10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,g,x,m,n,k, rising_fact, falling_fact)$
+falling_fact(k,n):= makelist(block([x:n, m:k], return(x*product((x - m), m, 1, x-1))), n, k, n)$
+falling_fact(1,10), expand;
+makelist(falling_fact(n, n), n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,g,x,m,n,k, rising_fact, falling_fact)$
+falling_fact(k,n):= makelist(block([x:n, m:k], return(x*product((x - m), m, 1, x-1))), n, k, n)$
+falling_fact(1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,g,x,m,n,k, rising_fact, falling_fact)$
+falling_fact[0,0]:1$
+falling_fact[x,m]:= x*product((x - m), m, 1, x-1)$
+makelist(falling_fact[n,n], n, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,g,x,m,n,k, rising_fact, falling_fact)$
+rising_fact[0,0]:1$
+rising_fact[x,m]:= x*product((x + m), m, 1, m-1)$
+makelist(rising_fact[n,n], n, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,g,x,m,n,k, rising_fact, falling_fact)$
+
+rising_fact[0,0]:1$
+
+rising_fact[k,n]:= block([x:k, m:n],
+                        if ((x>=0)) 
+                            then 
+                                (x*product((x+m), m, (if (m>=0) then 1 else -1), (if (m>=0) then m-1 else -(m-1))))
+                        elseif ((x<0)) 
+                            then
+                                (x*-product((x+m), m, (if (m>=0) then 1 else -1), (if (m>=0) then m-1 else -(m-1))))
+                        else 1
+                        )$
+
+falling_fact[0,0]:1$
+
+falling_fact[k,n]:= block([x:k, m:n],
+                         if ((x>=0)) 
+                            then 
+                                (x*product((x-m), m, (if (m>=0) then 1 else -1), (if (m>=0) then m-1 else -(m-1)))) 
+                         elseif ((x<0)) 
+                            then 
+                                (x*-product((x-m), m, (if (m>=0) then 1 else -1), (if (m>=0) then m-1 else -(m-1))))
+                         else 1
+                         )$
+
+'falling;
+makelist(falling_fact[n, n], n, 0, 10);
+'rising;
+makelist(rising_fact[n,n], n, 0, 10);
+
+'falling;
+makelist(falling_fact[n, n], n, 0, 10);
+'falling;
+makelist((-1)^(if(l=0) then -1 else l)*(-rising_fact[-l, l]), l, 0, 10);
+makelist((falling_fact[l,l]), l, 1, 10);
+makelist(factorial(l), l, 1, 10);
+makelist(rising_fact[1^l,l], l, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pochhammer(x, 3); pochhammer(-x, 3); pochhammer(x, -3); pochhammer(-x, -3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+diff(pochhammer(x, 1), x); diff(pochhammer(x, 2), x); diff(pochhammer(x, 3), x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+diff(pochhammer(-x, 1), x); diff(pochhammer(-x, 2), x); diff(pochhammer(-x, 3), x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+diff(pochhammer(x, -1), x); diff(pochhammer(x, -2), x); diff(pochhammer(x, -3), x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+diff(pochhammer(-x, -1), x); diff(pochhammer(-x, -2), x); diff(pochhammer(-x, -3), x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(subst([x=m], pochhammer(x, m)), m, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(subst([x=m], pochhammer(-x, m)), m, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(subst([x=m], (-1)^x*pochhammer(-x, m)), m, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(subst([x=m], pochhammer(-x, -m)), m, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(subst([x=m], (-1)^x*pochhammer(-x, -m)), m, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(subst([x=m], (-1)^(-x)*pochhammer(-x, m)), m, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(subst([x=m], (-1)^x*pochhammer(x, m)), m, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(subst([x=m], (-1)^(-x)*pochhammer(x, m)), m, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(subst([x=m], (-1)^(-x)*pochhammer(-x, m)), m, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(subst([x=m], (-1)^(-x)*pochhammer(-x, -m)), m, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+falling_fact(5, 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(subst([x=m], (-1)^x*pochhammer(-x, m)), m, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist((falling_fact[l, l]), l, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(subst([x=m], pochhammer(x, m)), m, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist((rising_fact[l, l]), l, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(pochhammer(m,m), m, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist((falling_fact[l, l]), l, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(((-1)^(m))*pochhammer(-m,m), m, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(factorial(n), n, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

@@ -1,0 +1,156 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: title   start ]
+Klausuraufgabe 
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: comment start ]
+hw::lemitec.de 2504.08 Kulmbach 
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+load(angeom);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Zeige, dass das Dreieck A,B,C gleichschenkelig und rechtwinklig ist mit Baiss AB 
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+A:[1,0,-4]; B:[-1,2,4]; C:[-3,-2,0];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+AB^2=AC^2+BC^2 
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+AB:B-A; BC:C-B; CA:A-C;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+AB.AB=CA.CA+BC.BC;
+CA.CA=BC.BC;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[A,B,C]; 
+PlottVektor1:[A,AB]; PlottVektor2:[B,BC]; PlottVektor3:[C,CA]; 
+wx_Vrot:84$ wx_Hrot:100$ wx_Breite:440$
+PLOTT_wx(z,"","","","","", -5,5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Bestimme den Mittelpunkt M der Basis AB 
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+M:A+1/2*AB;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Bestimme den Punkt D so, dass ADBC ein Quadrat ist 
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+D:A-BC;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[A,B,C,D];
+
+PlottVektor1:[A,C-A]; PlottVektor2:[C,B-C]; 
+
+PlottVektor3:[B,D-B]; PlottVektor:[A,D-A];
+
+PLOTT_wx(z,"","",t*[1,0,0],r*[0,1,0],"", -5,5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Geben Sie eine Ebene Euv an, die das Quadrat enthält 
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Euv:A+u*(B-A)+v*(C-A)$ show(Euv);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Geben Sie eine Gleichung der Spurgeraden gSxy, die den Schnitt von Evu und 
+der xy-Ebene beschreibt 
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Euv[3]=0;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gSxy:ev(solve(Euv[3],v),u=t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gSxy:ratsimp(ev(Euv,gSxy[1],u=t))$ show(gSxy);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Begründen Sie, dass gSxy die Verlängerung einer Diagonale des
+Quadrates ADBC ist 
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[A,B,C,D];
+PlottVektor1:[A,C-A]; PlottVektor2:[C,B-C]; 
+PlottVektor3:[B,D-B]; PlottVektor:[A,D-A];
+PLOTT_wx(normalForm(Euv),"","",gSxy,"","", -5,5)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Die gegebene Gerade gt enthält A und schneidet die Strecke BC im Punkt P. 
+Berechnen Sie die Fläche des Dreiecks APC 
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+gt:[1,0,-4]+t*[-7/2,-1,5]$ show(gt);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gu:C+u*(B-C)$ show(gu);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsg:solve(gt-gu,[t,u]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+P:ev(gt,lsg[1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[A,B,C,D,P];
+PlottVektor1:[A,C-A]; PlottVektor2:[C,B-C]; 
+PlottVektor3:[B,D-B]; PlottVektor:[A,D-A];
+PLOTT_wx(normalForm(Euv),"","",gt,gu,"", -5,5)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Berechne Länge der Seiten APC 
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+AP:P-A; PC:C-P; CA:A-C; 
+AP:(AP.AP)/sqrt(AP.AP), numer;
+PC:(PC.PC)/sqrt(PC.PC);
+CA:(CA.CA)/sqrt(CA.CA);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Fläche als Betrag des Vektorprodukts: 
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Fapc:(P-A)><(C-P); 
+Fapc:(Fapc.Fapc)/sqrt(Fapc.Fapc)/2, numer;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

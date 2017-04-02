@@ -1,0 +1,216 @@
+  file mbe2code.txt  has Maxima code
+   for Maxima by Example, Chapter 2,
+   Two Dimensional Plots and Least Squares Fits.
+
+    Edwin L Woollett, July, 2009
+    woollett@charter.net
+    http://www.csulb.edu/~woollett
+    
+2.1 Introduction to plot2d
+
+2.1.1 First Steps with plot2d
+
+(%i1) plot2d ( sin(u), [u, 0, %pi/2] )$
+(%i2) plot2d ( sin(u),[u,0,%pi/2],[x, -0.2, 1.8] )$
+(%i3) plot2d(sin(u),[x,-0.2,1.8], [u,0,%pi/2] )$
+(%i4) plot2d ( sin(x), [x,0,%pi/2], [x,-0.2,1.8] )$
+(%i5) plot2d ( sin(y), [y,0,%pi/2], [x,-0.2,1.8] )$
+(%i6) plot2d ( sin(u), [u,0,%pi/2], [x,-0.2,1.8], [y,-0.2, 1.2] )$
+(%i7) plot2d ( sin(u), [u,0,%pi/2], [y,-0.2, 1.2], [x,-0.2,1.8] )$
+(%i8) plot2d ( sin(x), [x,0,%pi/2], [x,-0.2,1.8], [y,-0.2, 1.2] )$
+(%i9) plot2d ( sin(y), [y,0,%pi/2], [x,-0.2,1.8], [y,-0.2, 1.2] )$
+
+2.1.2 Parametric Plots
+
+(%i1) plot2d ( [parametric, t, sin(t), [t, 0, %pi] ] )$
+(%i2) plot2d ([parametric, cos(t), sin(t), [t,-%pi,%pi]])$
+(%i3) plot2d ([parametric, cos(t), sin(t), [t, -%pi, %pi] ],
+                         [x,-4/3,4/3])$
+(%i4) plot2d ([parametric, cos(x), sin(x), [x,-%pi,%pi]],
+               [x,-4/3,4/3])$
+(%i5) plot2d ([parametric, cos(y), sin(y), [y,-%pi,%pi]],
+               [x,-4/3,4/3])$
+(%i6) plot2d ([parametric, cos(t), sin(t), [t,-%pi,%pi]],
+             [x,-1.2,1.2], [y,-1.2,1.2],
+            [gnuplot_preamble,"set size ratio 1;"])$
+(%i7) plot2d (
+              [ u^3,
+                [parametric, cos(t), sin(t), [t,-%pi,%pi]]],
+                [u,-0.8,0.8], [x,-4/3,4/3] )$
+(%i8) plot2d (
+              [ [parametric, cos(t), sin(t), [t,-%pi,%pi]],u^3],
+                [u,-1,1], [x,-1.2,1.2] , [y,-1.2,1.2], [nticks,200],
+                [style, [lines,8]],  [xlabel," "], [ylabel," "],
+                [box,false], [axes, false],              
+                [legend,false],[gnuplot_preamble,"set size ratio 1;"])$
+
+                
+2.1.3 Line Width and Color Controls
+
+(%i1) plot2d(
+         [ [discrete,[[-4,-5],[-4,5]]], [discrete,[[-3,-5],[-3,5]]],
+           [discrete,[[-2,-5],[-2,5]]],[discrete,[[-1,-5],[-1,5]]],
+           [discrete,[[0,-5],[0,5]]],[discrete,[[1,-5],[1,5]]],
+           [discrete,[[2,-5],[2,5]]],[discrete,[[3,-5],[3,5]]] ],
+		   
+           [style,  [lines,10,0],[lines,10,1],[lines,10,2],
+           [lines,10,3],[lines,10,4],[lines,10,5],[lines,10,6],
+           [lines,10,7]],
+		   
+           [x,-5,5],   [y,-7,7],
+           [legend,"0","1","2","3","4","5","6","7"],
+           [xlabel," "],   [ylabel," "],
+           [box,false],[axes,false],
+           [gnuplot_preamble, "set key bottom"] )$
+           
+(%i2) plot2d( [u^2,u^3],[u,0,2], [x, -.2, 2.5],
+          [style, [lines,5,7],[lines,5,2]],
+           [y,-1,4] )$
+(%i3)  plot2d( [u^2, u^3],[u,0,2], [x, -.2, 2.5],
+          [style, [lines,10,4],[lines,10,2]],
+           [y,-1,4],[psfile, "ch2p11.eps"] )$
+-------------------------------------------------
+(%i1) y : x^2$
+(%i2) plot2d ( u^3, [u,-1,1], [x,-2,2], [y,-10,10])$
+(%i3) plot2d ( u^3, [u,-1,1], [x,-2,2], ['y,-10,10])$
+(%i4) 'y;
+(%i5) y;
+(%i6) ev(y);
+(%i7) plot2d ( u^3, [u,-1,1], ['x,-2,2], ['y,-10,10])$           
+
+
+2.1.4 Discrete Data Plots: Point Size, Color, and Type Control
+
+(%i1) obj_list : [ [parametric, 2*cos(t),t^2,[t,0,2*%pi]],
+                     [discrete,[[2,0]]],[discrete,[[0,(%pi/2)^2]]],
+              [discrete,[[-2,%pi^2]]],[discrete,[[0,(3*%pi/2)^2]]] ]$
+(%i2) style_list : [style, [lines,4,7],[points,5,1,1],[points,5,2,1],
+                 [points,5,6,1],[points,5,3,1]]$
+(%i3) legend_list : [legend, " ","t = 0","t = pi/2","t = pi",
+                " t = 3*pi/2"]$
+(%i4) plot2d( obj_list, [x,-3,4], [y,-1,40],style_list,
+                  [xlabel,"X = 2 cos( t ), Y = t ^2 "],
+                   [ylabel, " "] ,legend_list )$
+(%i5) data_list : [discrete,
+         [ [1.1,-0.9],[1.45,-1],[1.56,0.3],[1.88,2],
+              [1.98,3.67],[2.32,2.6],[2.58,1.14],
+           [2.74,-1.5],[3,-0.8],[3.3,1.1],
+           [3.65,0.8],[3.72,-2.9] ] ]$
+(%i6) plot2d( data_list, [style,[points]])$
+(%i7) plot2d( [sin(u)*cos(3*u)*u^2, data_list],
+               [u,1,4], [x,0,5],[y,-10,8],
+          [style,[lines,4,1],[points,4,2,1]])$
+
+
+2.1.5 More gnuplot_preamble Options
+
+(%i1) plot2d([ u*sin(u),cos(u)],[u,-4,4] ,[x,-8,8],
+             [style,[lines,5]],
+         [gnuplot_preamble,"set grid; set key bottom center;
+              set title 'Two Functions';"])$
+
+
+2.1.5 Using qplot for Quick Plots of One or More Functions
+
+(%i1) load(mbe1util);
+(%i2) qplot(sin(u),[u,-%pi,%pi])$
+(%i3) qplot(sin(u),[u,-%pi,%pi],[x,-4,4])$
+(%i4) qplot(sin(u),[u,-%pi,%pi],[x,-4,4],[y,-1.2,1.2])$
+(%i5) qplot([sin(u),cos(u)],[u,-%pi,%pi])$
+(%i6) qplot([sin(u),cos(u)],[u,-%pi,%pi],[x,-4,4])$
+(%i7) qplot([sin(u),cos(u)],[u,-%pi,%pi],[x,-4,4],[y,-1.2,1.2])$
+(%i8) qplot ([parametric, cos(t), sin(t), [t,-%pi,%pi]],
+              [x,-2.1,2.1],[y,-1.5,1.5])$
+(%i9) qplot ([ u^3,
+               [parametric, cos(t), sin(t), [t,-%pi,%pi]]],
+               [u,-1,1],[x,-2.1,2.1],[y,-1.5,1.5])$
+(%i10) qplot([discrete,[[0,-2],[0,2]]],[x,-2,2],[y,-4,4])$
+(%i11) qplot( [ [discrete,[[-1,-2],[-1,2]]],
+                  [discrete,[[1,-2],[1,2]]]],[x,-2,2],[y,-4,4])$
+
+
+
+2.2 Least Squares Fit to Experimental Data
+
+2.2.1 Maxima and Least Squares Fits: lsquares_estimates
+
+(%i1) dataL : [[1, 1], [2, 7/4], [3, 11/4], [4, 13/4]];
+(%i2) dataM : apply ('matrix, dataL);
+(%i3) load (lsquares)$
+(%i4) fpprintprec:8$
+(%i5) lsquares_estimates (dataM, [x,y], y=a*x^b+c,
+               [a,b,c], initial=[3,3,3], iprint=[-1,0] );
+(%i6) fit : a*x^b + c , % ;
+(%i7) plot2d ([fit,[discrete,dataL]],[x,0,5],
+        [style,[lines,5],[points,4,2,1]],
+         [legend,"fit", "data"],
+         [gnuplot_preamble,"set key bottom;"])$
+
+
+2.2.2 Syntax of lsquares_estimates
+
+(%i1) expr : 2*%pi + 3*exp(-4);
+(%i2) listconstvars:true$
+(%i3) listofvars(expr);
+(%i4) map('numberp,%);
+(%i5) fullmap('numberp,expr);
+(%i6) float(expr);
+(%i7) numberp(%);
+
+
+2.2.3 Coffee Cooling Model
+
+(%i1) de : 'diff(T,t) + r*(T - Ts);
+(%i2) gsoln : ode2(de,T,t);
+(%i3) de, gsoln, diff, ratsimp;
+(%i4) ic1 (gsoln, t = 0, T = T0);
+(%i5) expand (%);
+(%i6) Tcup : collectterms ( rhs(%), exp(-r*t) );
+(%i7) Tcup, t = 0;
+
+
+2.2.4 Experiment Data: file_search, printfile, read_nested_list, and makelist
+
+(%i1) file_search("coffee.dat");
+(%i2) printfile("coffee.dat");
+(%i3) fpprintprec:6$
+(%i4) cdata : read_nested_list("coffee.dat");
+(%i5) black_data : makelist( [first(cdata[i]),second(cdata[i])],
+                       i,1,length(cdata));
+(%i6) white_data : makelist( [first(cdata[i]),third(cdata[i])],
+                       i,1,length(cdata));
+
+
+2.2.5 Least Squares Fit of Coffee Cooling Data
+
+(%i7) display2d:false$
+(%i8) black_matrix : apply ( 'matrix, black_data);
+(%i9) white_matrix : apply ( 'matrix, white_data);
+(%i10) display2d:true$
+(%i11) load(lsquares);
+(%i12) black_eqn : T = 17 + 65.3*exp(-r*t);
+(%i13) lsquares_estimates ( black_matrix, [t,T], black_eqn, [r],
+                               iprint = [-1,0] );
+(%i14) black_fit : rhs ( black_eqn ), %;
+(%i15) white_eqn : T = 17 + 51.8*exp(-r*t);
+(%i16) lsquares_estimates ( white_matrix, [t,T], white_eqn, [r],
+                              iprint = [-1,0] );
+(%i17) white_fit : rhs ( white_eqn ), %;
+(%i18) plot2d( [ black_fit ,[discrete,black_data] ],
+           [t,0,50], [style, [lines,5], [points,2,2,6]],
+           [ylabel," "] ,
+           [xlabel," Black Coffee T(deg C) vs. t(min) with r = 0.026/min"],
+           [legend,"black fit","black data"] )$
+(%i19) plot2d( [ white_fit ,[discrete, white_data] ],
+           [t,0,50], [style, [lines,5], [points,2,2,6]],
+           [ylabel," "] ,
+           [xlabel," White Coffee T(deg C) vs. t(min) with r = 0.024/min"],
+           [legend,"white fit","white data"] )$
+(%i20) T : 17 + (T0 -17)*exp(-r*t); 
+(%i21) T1 : T, [T0 = 85, r = 0.0237];
+(%i22) t1 : find_root(T1 - 75,t,2,10);
+(%i23) T2 : T, [T0 = 90, r = 0.02592];
+(%i24) t2 : find_root(T2 - 80,t,2,10);
+
+
+

@@ -1,0 +1,259 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 14.09.0 ] */
+
+/* [wxMaxima: input   start ] */
+load(intervalArithmetic);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+inverse(L)::=
+block(simp:false, buildq([L], map(lambda([x], 1/x) , L)))$
+inverse([1, 0]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([list]):= block([temp1, a, b, l1, l2, ans], simp:false,
+load(intervalArithmetic), 
+intersperse(things, list):=
+block([thing:things], if(atom(things)) then 
+unique(flatten(map(lambda([x], if thing>x then [x, thing] else if thing<x then [thing, x]), list))) 
+else 
+block([result:[]], for thing in things do 
+(result:append(result, map(lambda([x], if thing>=x then [x, thing] else if thing<=x then [thing, x]), list))),
+return(unique(result)))), 
+
+lcontract(L):=block([l:L], 
+if(l[1]=l[2]) then return([l[1]])), 
+
+if((list[2][1]<=0 and 0 <= list[2][2]) and (list[1][1]<=0 and 0 <= list[1][2])) then 
+return([minf, inf]) 
+else 
+if((list[1][1]<=0 and 0 <= list[1][2]) and (list[2][1]<=0 and 0 <= list[2][2])) then 
+return([minf, inf]) 
+else 
+if((list[2][1]>=0 and 0 >= list[2][2]) and (list[1][1]<=0 and 0 <= list[1][2])) then 
+return([minf, inf]) 
+else 
+if((list[2][1]<=0 and 0 <= list[2][2]) and (list[1][1]>=0 and 0 >= list[1][2])) then 
+return([minf, inf]) 
+else 
+if((list[2][1]>=0 and 0 >= list[2][2]) and (list[1][1]>=0 and 0 >= list[1][2])) then 
+return([minf, inf]) 
+else 
+if((list[2][1]<=0 and 0 <= list[2][2]) or (list[1][1]<=0 and 0 <= list[1][2])) then 
+block(
+print("one of the intervals contains a zero!"), 
+if(list[1][1]<=0 and 0 <= list[1][2]) then 
+block(
+temp1:intersperse([0, 0], list[1]), 
+a:first(temp1), b:second(temp1), 
+l1:ratsimp(sort(subst(1/0=minf, map(lambda([x], 1/x) , a)))), 
+l2:sort(ratsimp(subst(1/0=inf, map(lambda([x], 1/x) , b)))), 
+ans:(delete(true, 
+subst([list[2][1]*minf=minf, list[2][2]*inf=inf], 
+[intervalProduct(l1, list[2]), simp:true, 
+intervalProduct(l2, list[2]), simp:true]))), return(ans)) 
+else 
+if(list[2][1]<=0 and 0 <= list[2][2]) then 
+block(
+temp1:intersperse([0, 0], list[2]), 
+a:first(temp1), b:second(temp1), 
+l1:ratsimp(sort(subst(1/0=minf, map(lambda([x], 1/x) , a)))), 
+l2:sort(ratsimp(subst(1/0=inf, map(lambda([x], 1/x) , b)))), 
+ans:(delete(true, 
+subst([list[1][1]*minf=minf, list[1][2]*inf=inf], 
+[intervalProduct(l1, list[1]), simp:true, 
+intervalProduct(l2, list[1]), simp:true]))), return(ans))) 
+else 
+return(intervalProduct(([1/(list[2][2]), 1/(list[2][1])]), list[1])))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([1, 2], [-2, -1]), simp;
+intervalDivide([-2, -1], [1, 2]), simp;
+intervalDivide([-2, 1], [-1, 2]), simp;
+intervalDivide([-1, 2], [-2, 1]), simp;
+intervalDivide([-2, -1], [-2, 0]), simp;
+intervalDivide([-2, -1], [-2, 1]), simp;
+intervalDivide([-2, -1], [0, 1]) ,simp;
+intervalDivide([2, 3], [-1, 0]), simp;
+intervalDivide([2, 3], [-1, 1]), simp;
+intervalDivide([-1,1], [0,1]), simp;
+intervalDivide([1, 2], [0, 0]), simp;
+intervalDivide( [-2, -1], [0, 0]), simp;
+intervalDivide([-1, -2], [0, 0]), simp;
+intervalDivide([0, 0], [-1, 2]), simp;
+intervalDivide([0, 0], [-2, -1]), simp;
+intervalDivide([1, 2], 0), simp;
+intervalDivide(0, [1, 2]), simp;
+intervalDivide(0, [-1, 1]), simp;
+intervalDivide([-1, 1], 0), simp;
+intervalDivide([-2, -1], 0), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([2, 3], [-2, 1]), simp;
+intervalDivide([-2, 1], [2, 3]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([-1, 1], [2, 2]), simp:true;
+intervalDivide([-1, 0], [2, 2]), simp:true;
+intervalDivide([0, 1], [2, 2]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([1, 2], [0, 0]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([list]):= block([temp1, a, b, l1, l2, ans], simp:false,
+load(intervalArithmetic), 
+intersperse(things, list):=
+block([thing:things], if(atom(things)) then 
+unique(flatten(map(lambda([x], if thing>x then [x, thing] else if thing<x then [thing, x]), list))) 
+else 
+block([result:[]], for thing in things do 
+(result:append(result, map(lambda([x], if thing>=x then [x, thing] else if thing<=x then [thing, x]), list))),
+return(unique(result)))), 
+
+lcontract(L):=block([l:L, ans], 
+if(l[1]=l[2]) then ans:([l[1]]) else ans:(L), return(ans)), 
+
+if((list[2][1]<=0 and 0 <= list[2][2]) and (list[1][1]<=0 and 0 <= list[1][2])) then 
+return([minf, inf]) 
+else 
+if((list[1][1]<=0 and 0 <= list[1][2]) and (list[2][1]<=0 and 0 <= list[2][2])) then 
+return([minf, inf]) 
+else 
+if((list[2][1]>=0 and 0 >= list[2][2]) and (list[1][1]<=0 and 0 <= list[1][2])) then 
+return([minf, inf]) 
+else 
+if((list[2][1]<=0 and 0 <= list[2][2]) and (list[1][1]>=0 and 0 >= list[1][2])) then 
+return([minf, inf]) 
+else 
+if((list[2][1]>=0 and 0 >= list[2][2]) and (list[1][1]>=0 and 0 >= list[1][2])) then 
+return([minf, inf]) 
+else 
+if((list[2][1]<=0 and 0 <= list[2][2]) or (list[1][1]<=0 and 0 <= list[1][2])) then 
+block(
+print("one of the intervals contains a zero!"), 
+if(list[1][1]<=0 and 0 <= list[1][2]) then 
+block(
+temp1:intersperse([0, 0], list[1]), 
+a:first(temp1), b:second(temp1), 
+l1:ratsimp(sort(subst(1/0=minf, map(lambda([x], 1/x) , a)))), 
+l2:sort(ratsimp(subst(1/0=inf, map(lambda([x], 1/x) , b)))), 
+ans:(map(lcontract, delete(true, 
+subst([list[2][1]*minf=minf, list[2][2]*inf=inf], 
+[intervalProduct(l1, list[2]), simp:true, 
+intervalProduct(l2, list[2]), simp:true])))), return(ans)) 
+else 
+if(list[2][1]<=0 and 0 <= list[2][2]) then 
+block(
+temp1:intersperse([0, 0], list[2]), 
+a:first(temp1), b:second(temp1), 
+l1:ratsimp(sort(subst(1/0=minf, map(lambda([x], 1/x) , a)))), 
+l2:sort(ratsimp(subst(1/0=inf, map(lambda([x], 1/x) , b)))), 
+ans:(map(lcontract, delete(true, 
+subst([list[1][1]*minf=minf, list[1][2]*inf=inf], 
+[intervalProduct(l1, list[1]), simp:true, 
+intervalProduct(l2, list[1]), simp:true])))), return(ans))) 
+else 
+return(intervalProduct(([1/(list[2][2]), 1/(list[2][1])]), list[1])))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([1, 2], [-2, -1]), simp;
+intervalDivide([-2, -1], [1, 2]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([-2, 1], [-1, 2]), simp;
+intervalDivide([-1, 2], [-2, 1]), simp;
+intervalDivide([-2, -1], [-2, 0]), simp;
+intervalDivide([-2, -1], [-2, 1]), simp;
+intervalDivide([-2, -1], [0, 1]) ,simp;
+intervalDivide([2, 3], [-1, 0]), simp;
+intervalDivide([2, 3], [-1, 1]), simp;
+intervalDivide([-1,1], [0,1]), simp;
+intervalDivide([1, 2], [0, 0]), simp;
+intervalDivide( [-2, -1], [0, 0]), simp;
+intervalDivide([-1, -2], [0, 0]), simp;
+intervalDivide([0, 0], [-1, 2]), simp;
+intervalDivide([0, 0], [-2, -1]), simp;
+intervalDivide([1, 2], 0), simp;
+intervalDivide(0, [1, 2]), simp;
+intervalDivide(0, [-1, 1]), simp;
+intervalDivide([-1, 1], 0), simp;
+intervalDivide([-2, -1], 0), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([-1, 0], [2, 2]), simp:true;
+intervalDivide([0, 1], [2, 2]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([-1, 1], [1, 1]), simp:true;
+intervalDivide([-2, 1], [2, 3]), simp:true;
+intervalDivide([2, 3], [-2, 1]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([-2, 2], [1, 1]), simp:true;
+intervalDivide([-2, 2], [2, 2]), simp:true;
+intervalDivide([-2, 2], [3, 3]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([2, 3], [-3, 4]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([-2, 2], [-2, 2]), simp:true;
+intervalDivide([-2, 2], [-1, 1]), simp:true;
+intervalDivide([-2, 2], [2, -2]), simp:true;
+intervalDivide([2, -2], [-2, 2]), simp:true;
+intervalDivide([2, -2], [2, -2]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[-2, -1] < [1, 1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[minf, minf];
+lcontract(L):=block([l:L, ans], 
+if(l[1]=l[2]) then ans:([l[1]]) else ans:(L), return(ans));
+lcontract([minf, minf]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalCompare([list]):=block([a:abs(list[1][2]-list[1][1]), b:abs(list[2][2]-list[2][1])], 
+if(a<b) then (list[1]<list[2]) else 
+if(a=b) then (list[1]=list[2]) else
+if(a>b) then (list[1]>list[2]) else
+if(a<=b) then (list[1]<=list[2]) else
+if(a>=b) then (list[1]>=list[2])
+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalCompare([-2, -1],  [0, 1]), simp;
+intervalCompare([-2, -1.0], [0, 1]), simp;
+intervalCompare([-2.0, -1], [0, 1]), simp;
+intervalCompare([-2, -1], [0.0, 1]), simp;
+intervalCompare([-2, -1], [0, 1.0]), simp;
+intervalCompare([-3, -1], [0, 1]), simp;
+intervalCompare([-3.0, -1], [0, 1]), simp;
+intervalCompare([-3, -1.0], [0, 1]), simp;
+intervalCompare([-4, -2], [1.0, 3]), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+abs(3), simp; abs(-2), simp;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

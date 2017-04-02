@@ -1,0 +1,83 @@
+/* pair1-test.mac
+
+   pair annihilation to two photons
+   */
+   
+   
+   
+  ( invar(D(p1,p1) = m^2,D(p1,k1) = (m^2-t)/2,D(p1,k2) = (m^2-u)/2,
+             D(p1,p2) = (-(u+t))/2,D(p2,p2) = m^2,D(p2,k1) = (m^2-u)/2,
+             D(p2,k2) = (m^2-t)/2,D(k1,k1) = 0,D(k1,k2) = m^2-(u+t)/2,
+             D(k2,k2) = 0),
+        m1sq:tr(p2-m,mu,m-k1+p1,nu,m+p1,nu,m-k1+p1,mu));
+  8*t*u-8*m^2*u-24*m^2*t-8*m^4;
+  
+  m2sq:tr(p2-m,mu,m-k2+p1,nu,m+p1,nu,m-k2+p1,mu);
+  8*t*u-24*m^2*u-8*m^2*t-8*m^4;
+  
+  m1m2sq:tr(p2-m,mu,m-k1+p1,nu,m+p1,mu,m-k2+p1,nu);
+  -8*m^2*u-8*m^2*t-16*m^4;
+  
+  m2m1sq:tr(p2-m,mu,m-k2+p1,nu,m+p1,mu,m-k1+p1,nu);
+  -8*m^2*u-8*m^2*t-16*m^4;
+  
+  m1m2sq-m2m1sq;
+  0;
+  
+  Mssq:ratsimp(2*m1m2sq/((t-m^2)*(u-m^2))+m2sq/(u-m^2)^2+m1sq/(t-m^2)^2);
+  ((8*t-8*m^2)*u^3+(24*m^4-56*m^2*t)*u^2+(8*t^3-56*m^2*t^2+112*m^4*t)*u
+                       -8*m^2*t^3+24*m^4*t^2-48*m^8)
+        /((t^2-2*m^2*t+m^4)*u^2+(-2*m^2*t^2+4*m^4*t-2*m^6)*u+m^4*t^2-2*m^6*t
+                               +m^8);
+                               
+  Mssq_dot:expand(subst([t = m^2-2*D(k1,p1),u = m^2-2*D(k2,p1)],Mssq));
+  -16*m^4/(D(k1,p1)*D(k2,p1))-8*m^4/D(k2,p1)^2-8*m^4/D(k1,p1)^2
+                                  +16*m^2/D(k2,p1)+16*m^2/D(k1,p1)
+                                  +8*D(k2,p1)/D(k1,p1)+8*D(k1,p1)/D(k2,p1);
+                                  
+  (assume(m > 0,E > 0,th >= 0,th <= %pi),
+        comp_def(p1(E,0,0,v*E),p2(E,0,0,-v*E),k1(E,E*sin(th),0,E*cos(th)),
+                k2(E,-E*sin(th),0,-E*cos(th))),
+        Mssq_th:D_sub(Mssq_dot,[D(k1,p1),D(k2,p1)]));
+  -16*m^4/((E^2-cos(th)*v*E^2)*(cos(th)*v*E^2+E^2))
+        +8*(E^2-cos(th)*v*E^2)/(cos(th)*v*E^2+E^2)+16*m^2/(cos(th)*v*E^2+E^2)
+        -8*m^4/(cos(th)*v*E^2+E^2)^2+16*m^2/(E^2-cos(th)*v*E^2)
+        -8*m^4/(E^2-cos(th)*v*E^2)^2+8*(cos(th)*v*E^2+E^2)/(E^2-cos(th)*v*E^2);
+        
+  
+        
+   (Mssq_th:trigsimp(subst(E^2 = m^2/(1-v^2),Mssq_th)),
+        expand(%%));
+   -16*sin(th)^4*v^4/(cos(th)^4*v^4-2*cos(th)^2*v^2+1)
+       -16*v^4/(cos(th)^4*v^4-2*cos(th)^2*v^2+1)
+       +32*sin(th)^2*v^2/(cos(th)^4*v^4-2*cos(th)^2*v^2+1)
+       +16/(cos(th)^4*v^4-2*cos(th)^2*v^2+1);
+        
+   mt1d:denom(Mssq_th);
+   cos(th)^4*v^4-2*cos(th)^2*v^2+1;
+   
+   mt1d:ratsubst(x,v^2*cos(th)^2,mt1d);
+   x^2-2*x+1;
+   
+   mt1d:factor(mt1d);
+   (x-1)^2;
+   
+   mt1d:subst(x = v^2*cos(th)^2,mt1d);
+   (cos(th)^2*v^2-1)^2;
+   
+   (mt1n:num(Mssq_th),expand(%%));
+   -16*sin(th)^4*v^4-16*v^4+32*sin(th)^2*v^2+16;
+   
+   mt1n16:factor(mt1n)/16;
+   -sin(th)^4*v^4-v^4+2*sin(th)^2*v^2+1;
+   
+   mt1n16:expand(ts(mt1n16,th));
+   -cos(th)^4*v^4+2*cos(th)^2*v^4-2*v^4-2*cos(th)^2*v^2+2*v^2+1;
+   
+   Mssq_unpol:16*mt1n16/mt1d;
+   16*(-cos(th)^4*v^4+2*cos(th)^2*v^4-2*v^4-2*cos(th)^2*v^2+2*v^2+1)
+        /(cos(th)^2*v^2-1)^2;
+        
+  
+   
+   

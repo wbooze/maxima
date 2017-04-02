@@ -1,0 +1,36 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 13.04.2 ] */
+
+/* [wxMaxima: input   start ] */
+kill(y, x1, x2, x)$
+declare(e, constant)$
+h[i]:=x[i]+e*y[i]+e^2*y[i]^2+e^3*y[i]^3+e^4*y[i]^4;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+h[1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+x1:x^4-2*x^2-8;
+x2:x^4-e*x^3-x^2-8;
+declare(e, constant)$
+kill(f, g, h)$
+f(x):=ev(x1);
+g(x):=ev(x2);
+h(x):=-e*x^3;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f(x)$
+g(x)$
+a:taylor(h(g(x)), x, 0, 4)$
+b:taylor(g(x), x, 0, 4)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f(2); g(2); solve(g(2), e);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

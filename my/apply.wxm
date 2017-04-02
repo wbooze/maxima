@@ -1,0 +1,94 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 14.09.0 ] */
+
+/* [wxMaxima: input   start ] */
+self(n, m):=
+block([result:m], for i:1 thru n do
+result:(subst(x=m, result)), return(result));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f, g)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f(x):=x/(x+1);
+g(x):=x+1/2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+self(0, g(x)); self(1, g(x)); self(2, g(x));
+self(0, f(x)); self(1, f(x)), factor; self(2, f(x)), factor;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??maybe;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(self(n, g(x)), n, 0, 10), ratexpand;
+makelist(self(n, f(x)), n, 0, 2), expand;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+h(x):=sqrt(x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sqrtdispflag:false$
+self(1, h(x)); self(2, h(x)); self(3, h(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+k(x):=x^2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+self(1, k(x)); self(2, k(x)); self(3, k(x)); self(4, k(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+h(x):=2*x/(2+x);
+h(h(x)), factor;
+h(h(x-1)), factor;
+h(h(x+1)), factor;
+subst(x=x+1, h(h(x-1))), factor;
+subst(x=x-1, h(h(x+1))), factor;
+subst(x=x-1, h(x+1)), factor;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(x=x-1, h(h(h(x^-1))^-1)), factor;
+'h(x)=h(x), factor;
+subst(x=x-2, h(x+2)), factor;
+subst(x=x-1, h(x+1)), factor;
+subst(x=x+1, h(x-1)), factor;
+subst(x=x+2, h(x-2)), factor;
+"reversing the application";
+'h(x)=subst(x=-h(-x), h(h(x))), factor;
+'h('h(x))=h(h(x)), factor;
+'h('h('h(x)))=h(h(h(x))), factor;
+'once=subst(x=-h(-x), h(h(h(x)))), factor;
+'twice=subst(x=-h(h(-x)), h(h(h(x)))), factor;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+prior(n, m, res):=
+block([result:res, foo:m], 
+for i:1 thru n do 
+result:subst(x=foo, result), return(result));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+h(x), factor; h(h(x)), factor; h(h(h(x))), factor;
+'prior_0=prior(0, -h(-x), h(h(h(x)))), factor;
+prior(1, -h(-x), h(h(h(x)))), factor;
+prior(2, -h(-x), h(h(h(x)))), factor;
+'self_0=self(0, h(x)), factor;
+self(1, h(x)), factor;
+self(2, h(x)), factor;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

@@ -1,0 +1,61 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load("angeom");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+NF1:x+3*z+5;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+E1:paramForm(NF1,r,s)$ show(E1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+HNF1:NF1/betragLaenge(normalVektorNF(NF1));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F(HNF1,[1,2,3]), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+g1:[1,2,3]+t*normalVektorNF(NF1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+spurPunkte(g1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+schnittNFEbeneGerade(NF1,g1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[[1,2,3],[0,2,0],[-1/2,2,-3/2]]$ PLOTT_S(NF1,NF2,"",g1,g2,"",-5,12);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F(NF1,[4,1,-3]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+E2:[4,1,-3]+r*([-2,1,-1]-[4,1,-3])+s*([1,-2,-2]-[4,1,-3])$ show(E2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+E3:[4,1,-3]+r*[-2,1,-1]+s*[1,-2,-2]$ show(E3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+NF2:normalForm(E3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+g2:schnitt2Ebenen(NF1,NF2,t)$ show(g2);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

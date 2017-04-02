@@ -1,0 +1,89 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load("angeom.mac")$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: title   start ]
+Ebene und paralle Gerade
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: comment start ]
+Gegeben sind die Punkte A, B
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+A:[2,1,3];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+B:[2,5,3];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+und eine Gerade g1
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+g1:[5,3,5]+t*[1,0,0]$ show(g1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Die Ebene E1 enthält die Punkte A,B und verläuft parallel zu g1.
+Bestimmen Sie die Gleichung von E1:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+E1:A+r*(B-A)+s*[1,0,0]$ show(E1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+1. Abstand der Geraden zur Ebene! 
+Bestimme NormalForm der Ebene E1:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+NFE1:normalForm(E1)$ NFE1;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+SpurPunkte zum Bestimmen der Plott-Scene
+Aufnehmen der Punkte in die PLOTT-Scene
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+O:append([[0,0,0]],[A],[B],spurPunkteGerade(g1),spurPunkteEbene(NFE1));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_S(NFE1,"","",g1,"","",-6,6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Bestimmen des Normalenvektors der Ebene
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+n:(ERV1(E1)-EOV(E1))><(ERV2(E1)-EOV(E1));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Hesse'sche Normalform bestimmen
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+HNFE1:NFE1/-sqrt(n.n)$ HNFE1;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Einen Punkt der Geraden (Ortsvektor) in HNF einsetzen
+ergibt den Abstand:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Abstand:ev(HNFE1,map("=",[x,y,z],F(g1,[0])));
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

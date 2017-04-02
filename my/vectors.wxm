@@ -1,0 +1,47 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 13.04.2 ] */
+
+/* [wxMaxima: section start ]
+Problem
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: comment start ]
+Given two Vectors A and B of which we know only that their sum A+B is 9 fold of
+their difference A-B, what is the angle between A and B
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+a:[9, 0.5]$ b:[9,-0.5]$
+mag_a: sqrt(a.a)$
+mag_b: sqrt(b.b)$
+'mag_a=mag_a;
+'mag_b=mag_b;
+
+'(a+b)=a+b; 
+'(a-b)=a-b;
+
+sqrtdispflag:true$
+theta: acos((a.b)/(mag_a*mag_b))$
+theta, numer$
+angle:(theta*180/%pi), numer$
+'angle=angle;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+first attempt without vector math
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+2*tan(1/18)*180/%pi, numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+second attempt without vector math
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+2*atan(1/18)*180/%pi, numer;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

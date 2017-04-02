@@ -1,0 +1,55 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load("angeom");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+NF:2*x+5*y-z-2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+solve(F(NF,[x,0,0]),x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+solve(F(NF,[0,y,0]),y);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+solve(F(NF,[0,0,z]),z);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+assoc(x,%o3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+delete([0,0,false],delete([0,false,0],delete([false,0,0],
+[
+[assoc(x,solve(F(NF,[x,0,0]),x)),0,0],
+[0,assoc(y,solve(F(NF,[0,y,0]),y)),0],
+[0,0,assoc(z,solve(F(NF,[0,0,z]),z))]
+])));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+spurPunkteEbene(NF):=block(
+print("Schnittpunkte mit den Koordinatenachsen:"),
+delete([0,0,false],
+delete([0,false,0],
+delete([false,0,0],[
+[assoc(x,solve(F(NF,[x,0,0]),x)),0,0],
+[0,assoc(y,solve(F(NF,[0,y,0]),y)),0],
+[0,0,assoc(z,solve(F(NF,[0,0,z]),z))]
+])))
+)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+spurPunkteEbene(NF);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

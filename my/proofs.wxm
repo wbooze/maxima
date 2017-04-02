@@ -1,0 +1,48 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 14.09.0 ] */
+
+/* [wxMaxima: input   start ] */
+union({2}, {2});
+union( {2}, {3});
+union({3},  {2});
+union({}, {});
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intersection({2}, {2});
+intersection({2}, {3});
+intersection({3}, {2});
+intersection({}, {});
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subsetp({2}, {2});
+subsetp({2}, {2});
+subsetp({2}, {3});
+subsetp({3}, {2});
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix([false and false,
+false and true,
+true and false,
+true and true]);
+
+matrix([false or false,
+false or true,
+true or false,
+true or true]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+true and false; intersection({2, 3}, {}); union({2, 3}, {});
+printf(true, "for {2, 3}=true and {}=false")$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+is((false and false)=false);
+is((false or false)=false);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

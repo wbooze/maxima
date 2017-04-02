@@ -1,0 +1,73 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 12.09.0 ] */
+
+/* [wxMaxima: input   start ] */
+wxplot2d(sin(x), [x, 0, 2*%pi]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+at(sin(x), x=%pi), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+at(sin(x), x=%pi-0.5) - at(sin(x), x=%pi+0.5) < abs(%pi-0.5-((%pi+0.5))), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+at(sin(x), x=%pi-0.5), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+at(sin(x), x=%pi+0.5), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+at(sin(x), x=%pi+2), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+at(sin(x), x=%pi+2-0.5), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+abs(at(sin(x), x=%pi+2-0.5)-at(sin(x), x=%pi+2+0.5)) < abs(%pi+2-0.5 - ((%pi+2+0.5))), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+abs(at(sin(x), x=%pi-2-0.5)-at(sin(x), x=%pi-2+0.5)) < abs(%pi-2-0.5 - ((%pi-2+0.5))), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+abs(at(sin(x), x=%pi+2+0.5)-at(sin(x), x=%pi+2-0.5)) < abs(%pi+2+0.5 - ((%pi+2-0.5))), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+abs(at(sin(x), x=%pi-2+0.5)-at(sin(x), x=%pi-2-0.5)) < abs(%pi-2+0.5 - ((%pi-2-0.5))), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+is(abs(at(sin(x), x=%pi-2+0.5)-at(sin(x), x=%pi-2-0.5)) < abs(%pi-2+0.5 - ((%pi-2-0.5))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+is(abs(at(sin(x), x=%pi-30+0.5)-at(sin(x), x=%pi-30-0.5)) < abs(%pi-30+0.5 - ((%pi-30-0.5))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+abs(at(sin(x), x=%pi-6000+200)-at(sin(x), x=%pi-6000-200)) < abs(%pi-6000+200 - ((%pi-6000-200))), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+abs(at(sin(x), x=-%pi-6000+200)-at(sin(x), x=-%pi-6000-200)) < abs(-%pi-6000+200 - ((-%pi-6000-200))), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+abs(at(sin(x), x=-%pi+6000+200)-at(sin(x), x=-%pi+6000-200)) < abs(-%pi+6000+200 - ((-%pi+6000-200))), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+abs(at(sin(x), x=-%pi+6000-200)-at(sin(x), x=-%pi+6000+200)) < abs(-%pi+6000-200 - ((-%pi+6000+200))), numer;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

@@ -1,0 +1,142 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 14.09.0 ] */
+
+/* [wxMaxima: title   start ]
+DTS Modell
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+load("linearalgebra");
+load("dynamics");
+load("eigen");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Lie([l]):=
+block([f,h,x,k,Lfh],
+    f:l[1],
+    h:l[2],
+    x:l[3],
+    if length(l)=3 then k:1 else k:l[4],
+    if k=0 then return(h)
+    else
+        Lfh:jacobian([h],x).f,
+        return(Lie(f,Lfh,x,k-1))
+)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+LieB([l]):=
+block([f,g,x,k,Df,Dg,ad],
+    f:l[1],
+    g:l[2],
+    x:l[3],
+    if length(l)=3 then k:1 else k:l[4],
+    if k=0 then return(g)
+    else
+        Df:jacobian(f,x),
+        Dg:jacobian(g,x),
+        ad:list_matrix_entries(Dg.f-Df.g),
+        return(LieB(f,ad,x,k-1))
+)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+params: [rv=0.004, At=0.0154, a12=0.3485, a32=0.3485, a10=0.6677, a30=0.6591, g=9.810665, Av=%pi*(0.004)^2, QP1=0.1, QP2=0];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Volumenfluss zwischen Tank und Reservoir
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Q10: a10*Av*sqrt(2*g*x1);
+Q30: a30*Av*sqrt(2*g*x3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Volumenfluss zwischen Tank i,j
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Q12: a12*Av*signum(x1-x2)*sqrt(2*g*abs(x1-x2));
+Q32: a32*Av*signum(x3-x2)*sqrt(2*g*abs(x3-x2));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f: [(QP1 - Q12 - Q10)/At, (Q12 + Q32)/At, (QP2 - Q32 - Q30)/At];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+transpose(matrix(f));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: title   start ]
+Simulation
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: input   start ] */
+eqn: transpose(matrix(ev(f,params)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: title   start ]
+Controller
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: input   start ] */
+f: [(- Q12 - Q10)/At, (Q12 + Q32)/At, (- Q32 - Q30)/At];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+x: [x1,x2,x3];
+g1: [1, 0, 0];
+g2: [0, 0, 1];
+h1: x1;
+h2: x3;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+B: matrix([Lie(g1,Lie(f,h1,x,0),x), Lie(g2,Lie(f,h1,x,0),x)],
+          [Lie(g1,Lie(f,h2,x,0),x), Lie(g2,Lie(f,h2,x,0),x)]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+y_s: [2.0, 1.0];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p: 4;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+fu_ctrl: matrix([-Lie(f,h1,x,1) + diff(y_s[1],t) - p*(Lie(f,h1,x,0) - y_s[1])],
+             [-Lie(f,h2,x,1) + diff(y_s[2],t) - p*(Lie(f,h2,x,0) - y_s[2])]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+u_s: invert(B) . fu_ctrl;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: title   start ]
+Simulation
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: input   start ] */
+eqn_s: ev(transpose(matrix(f)) + transpose(matrix(g1)) . u_s[1] + transpose(matrix(g2)) . u_s[2], params);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+x0:[0.1, 0.1, 0.1]$
+sol:rk(list_matrix_entries(eqn_s), x, x0, [t, 0, 10, 0.01])$
+x1L : makelist([sol[i][1],sol[i][2]],i,1,length(sol))$
+x2L : makelist([sol[i][1],sol[i][3]],i,1,length(sol))$
+x3L : makelist([sol[i][1],sol[i][4]],i,1,length(sol))$
+wxplot2d([[discrete,x1L], [discrete,x2L], [discrete,x3L]]);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

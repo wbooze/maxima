@@ -1,0 +1,88 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.04.0 ] */
+
+/* [wxMaxima: input   start ] */
+depends([A, f], l);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A:l^2; f(l):=l^2+1;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+is(A=f(l));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+is(A<f(l));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+dependencies;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+depends(k, g); depends(g, k);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+dependencies;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+mclean();
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+depends(k, g, g, e, e, f, f, h, h, k);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+diff(k*g, g); diff(k*g, e); diff(k*g, f); diff(k*g, h); diff(k*g, k);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+mclean();
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+diff(k*g, k); diff(k*g, g); diff(k*g, m);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+depends(k, g, g, k);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+diff(k*g, k); diff(k*g, g);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+mclean()$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+depends(k, g, g, k, k, m, m, g, g, h);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+diff(k*g, k); diff(k*g, g); diff(k*g, m); diff(k*g, h);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+mclean();
+depends(k, g, g, k, k, m, m, g);
+exp: k^2*g^2;
+diff(exp, k); diff(exp, g); diff(exp, m);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+mclean();
+depends(k, g, g, e, e, f, f, h, h, k);
+exp: k^2*g^2;
+diff(exp, g); diff(exp, e); diff(exp, f); diff(exp, h); diff(exp, k);
+/* [wxMaxima: input   end   ] */
+
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

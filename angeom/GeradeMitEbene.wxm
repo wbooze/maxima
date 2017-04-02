@@ -1,0 +1,85 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load("angeom.mac")$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: title   start ]
+Untersuchung Gerade - Ebene
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: comment start ]
+Eingabe der Ebenengleichung E1 in Parameterform
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+E1:[1,5,-1]+r*[1,1,2]+s*[2,1,-1]$ show(E1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Bestimmung der Normalform NFE1 der Ebene E1
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+NFE1:normalForm(E1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Festlegen der Geradengleichung
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+g1:[1,2,4]+t*[1,4,0]$ show(g1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Bestimmung des Schnittpunktes
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+P:schnittEbeneGerade(E1,g1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Schnittwinkel zwischen Gerade und Ebene
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+schnittwinkelEbeneGerade(E1,g1), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Bestimmung der Spurpunkte der Geraden
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+spurg1:spurPunkteGerade(g1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+und die Spurpunkte der Ebene
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+spurE1:spurPunkteEbene(NFE1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Aufnehmen des Schnittpunktes in die Plott-Scene
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+O:append([[0,0,0]],[P],spurg1,spurE1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Erstellen der 2D Scene E1 X g1
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_S(NFE1,"","",g1,"","",-5,10);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

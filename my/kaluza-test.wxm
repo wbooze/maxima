@@ -1,0 +1,91 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.04.0 ] */
+
+/* [wxMaxima: input   start ] */
+predval(prd):=block([retval,saved_prederror:prederror],
+    prederror:false,
+    retval:ev(prd,pred)=true or ev(prd,pred)=false,
+    prederror:saved_prederror,
+    retval
+)$
+difflist(exp,lst):=if length(lst)=0 then exp
+                   else difflist(idiff(exp,lst[1]),rest(lst));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+if get('ctensor,'version)=false then load(ctensor);
+if get('itensor,'version)=false then load(itensor);
+remsym(g,2,0);
+remsym(g,0,2);
+remsym(gg,2,0);
+remsym(gg,0,2);
+remcomps(gg);
+imetric(gg);
+icurvature([a,b,c],[e])*gg([d,e],[])$
+contract(rename(expand(%)))$
+%,ichr2$
+contract(rename(expand(%)))$
+canform(%)$
+contract(rename(expand(%)))$
+components(gg([a,b],[]),kdels([a,b],[u,v])*g([u,v],[])/2);
+components(gg([],[a,b]),kdels([u,v],[a,b])*g([],[u,v])/2);
+%th(4),gg$
+contract(rename(expand(%)))$
+contract(canform(%))$
+imetric(g);
+contract(rename(expand(%th(2))))$
+remcomps(R);
+components(R([a,b,c,d],[]),%th(2));
+g([],[a,b])*R([a,b,c,d])*g([],[c,d])$
+contract(rename(canform(%)))$
+contract(rename(canform(%)))$
+components(R([],[]),%);
+decsym(g,2,0,[sym(all)],[]);
+decsym(g,0,2,[],[sym(all)]);
+ishow(1/(16*%pi*G)*((2*L+'R([],[])))*sqrt(-determinant(g)))$
+L0:%,R$
+canform(contract(canform(rename(contract(expand(diff(L0,g([],[m,n]))-
+    idiff(diff(L0,g([],[m,n],k)),k)+idiff(rename(idiff(contract(
+    diff(L0,g([],[m,n],k,l))),k),1000),l)))))))$
+ishow(e([m,n],[])=canform(%*16*%pi/sqrt(-determinant(g))))$
+EQ:ic_convert(%)$
+ct_coords:[t,r,u,v];
+lg:ident(4);
+lg[2,2]:-a^2/(1-k*r^2);
+lg[3,3]:-a^2*r^2;
+lg[4,4]:-a^2*r^2*sin(u)^2;
+dependencies(a(t));
+cmetric();
+derivabbrev:true;
+christof(false);
+e:zeromatrix(4,4);
+ev(EQ);
+expand(radcan(ug.e));
+lg:ident(4);
+lg[1,1]:B;
+lg[2,2]:-A;
+lg[3,3]:-r^2;
+lg[4,4]:-r^2*sin(u)^2;
+kill(dependencies);
+dependencies(A(r),B(r));
+cmetric();
+christof(false);
+e:zeromatrix(4,4);
+ev(EQ);
+E:expand(radcan(ug.e));
+exp:findde(E,2);
+solve(ode2(exp[1],A,r),A);
+%,%c=-2*M;
+a:%[1],%c=-2*M;
+ode2(ev(exp[2],a),B,r);
+b:ev(%,%c=rhs(solve(rhs(%)*rhs(a)=1,%c)[1]));
+factor(ev(ev(exp[3],a,b),diff));
+lg:ev(lg,a,b),L=0$
+ug:invert(lg)$
+block([M:2],
+    plot3d([r*cos(th),r*sin(th),1-ug[1,1]],[r,5.,50.],[th,-%pi,%pi],
+    [grid,20,30],[z,-2,0]));
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

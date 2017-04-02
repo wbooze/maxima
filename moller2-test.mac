@@ -1,0 +1,144 @@
+/* moller2-test.mac
+  batch test file */
+  
+invar(D(p1,p1) = m^2,D(p1,p2) = s/2-m^2,D(p1,p3) = m^2-t/2,
+             D(p1,p4) = m^2-u/2,D(p2,p2) = m^2,D(p2,p3) = m^2-u/2,
+             D(p2,p4) = m^2-t/2,D(p3,p3) = m^2,D(p3,p4) = s/2-m^2,
+             D(p4,p4) = m^2);
+ done;
+ M1n:Con(tr(m+p3,mu,m+p1,nu)*tr(m+p4,mu,m+p2,nu),mu,nu);
+ 8*u^2-32*m^2*u+32*m^2*t+8*s^2-32*m^2*s+64*m^4;
+ M2n:Con(tr(m+p4,mu,m+p1,nu)*tr(m+p3,mu,m+p2,nu),mu,nu);
+ 32*m^2*u+8*t^2-32*m^2*t+8*s^2-32*m^2*s+64*m^4;
+ 
+ M12n:tr(m+p3,mu,m+p1,nu,m+p4,mu,m+p2,nu);
+ -16*m^2*u-16*m^2*t-8*s^2+48*m^2*s-32*m^4; 
+ 
+ M21n:tr(m+p4,mu,m+p1,nu,m+p3,mu,m+p2,nu);
+ -16*m^2*u-16*m^2*t-8*s^2+48*m^2*s-32*m^4;
+ 
+ MfiSQ:(-M21n)/(t*u)+(-M12n)/(t*u)+M2n/u^2+M1n/t^2;
+ (8*u^2-32*m^2*u+32*m^2*t+8*s^2-32*m^2*s+64*m^4)/t^2
+       +(32*m^2*u+8*t^2-32*m^2*t+8*s^2-32*m^2*s+64*m^4)/u^2
+       +2*(16*m^2*u+16*m^2*t+8*s^2-48*m^2*s+32*m^4)/(t*u);
+       
+ (assume(E > 0,p > 0,th >= 0,th <= %pi),
+       comp_def(p1(E,0,0,p),p2(E,0,0,-p),p3(E,p*sin(th),0,p*cos(th)),
+                p4(E,-p*sin(th),0,-p*cos(th))),
+         s_th:VP(p2+p1,p2+p1));
+ 4*E^2;
+ 
+ t_th:factor(VP(p1-p3,p1-p3));
+ 2*p^2*(cos(th)-1);
+ 
+ u_th:factor(VP(p1-p4,p1-p4));
+ -2*p^2*(cos(th)+1);
+ 
+ MfiSQ_th:factor(trigsimp(sub_stu(MfiSQ)));
+ 16*(8*E^4+2*m^2*cos(th)^2*E^2-10*m^2*E^2+p^4*cos(th)^4+6*p^4*cos(th)^2
+               +10*m^2*p^2*cos(th)^2+m^4*cos(th)^2+p^4-2*m^2*p^2+3*m^4)
+       /(p^4*sin(th)^4);
+       
+ (MfiSQ_cmp:16*(p^2+E^2)^2*((p^2/(p^2+E^2))^2*(4/sin(th)^2+1)
+                                -3/sin(th)^2+4/sin(th)^4)
+                 /p^4,
+         trigsimp(expand(MfiSQ_th-MfiSQ_cmp)),
+         ratsubst(p^2+m^2,E^2,%%));
+ 0;
+ 
+ (E_pm(expr):=expand(ratsubst(m^2+p^2,E^2,expr)),
+        p_Em(expr):=expand(ratsubst(E^2-m^2,p^2,expr)),
+        Ep_m(expr):=expand(ratsubst(m,sqrt(E-p)*sqrt(p+E),expr)),
+        Ep_Mm(expr):=(expand(ratsubst(M^2/4-m^2,p^2,expr)),
+             expand(ratsubst(M/2,E,%%))),
+         t_th2:to_ao2(t_th,th));
+ -4*p^2*sin(th/2)^2;
+ 
+ u_th2:to_ao2(u_th,th);
+ -4*p^2*cos(th/2)^2;
+ 
+ /* case helicities (1,1,1,1) */
+ 
+ (up1:UU(E,p,0,0,1),up3b:sbar(UU(E,p,th,0,1)),up2:UU(E,p,%pi,0,1),
+           up4b:sbar(UU(E,p,%pi-th,%pi,1)),     
+     a13:up3b . Gam[mu] . up1,
+     is (equal (a13,matrix([cos(th/2)*sqrt(E+p),sin(th/2)*sqrt(E+p),cos(th/2)*sqrt(E-p),
+              sin(th/2)*sqrt(E-p)])
+        . Gam[mu] . matrix([sqrt(E-p)],[0],[sqrt(E+p)],[0]))));
+ true;
+ 
+ (a24:up4b . Gam[mu] . up2,
+   is (equal (a24,matrix([cos((%pi-th)/2)*sqrt(E+p),-sin((%pi-th)/2)*sqrt(E+p),
+              cos((%pi-th)/2)*sqrt(E-p),-sin((%pi-th)/2)*sqrt(E-p)])
+        . Gam[mu] . matrix([0],[sqrt(E-p)],[0],[sqrt(E+p)]))));
+  true;
+  
+  Mt: mcon (a13*a24,mu);
+ -4*cos(th/2)^2*E^2-8*p^2*sin(th/2)^2-4*p^2*cos(th/2)^2;
+ 
+  M1 : expand (Mt/t_th2);
+ cos(th/2)^2*E^2/(p^2*sin(th/2)^2)+cos(th/2)^2/sin(th/2)^2+2;
+ 
+   (a14:up4b . Gam[mu] . up1,
+     is (equal (a14,matrix([cos((%pi-th)/2)*sqrt(E+p),-sin((%pi-th)/2)*sqrt(E+p),
+               cos((%pi-th)/2)*sqrt(E-p),-sin((%pi-th)/2)*sqrt(E-p)])
+         . Gam[mu] . matrix([sqrt(E-p)],[0],[sqrt(E+p)],[0]))));
+  true;
+  
+   (a23:up3b . Gam[mu] . up2,
+     is (equal (a23,matrix([cos(th/2)*sqrt(E+p),sin(th/2)*sqrt(E+p),cos(th/2)*sqrt(E-p),
+               sin(th/2)*sqrt(E-p)])
+         . Gam[mu] . matrix([0],[sqrt(E-p)],[0],[sqrt(E+p)]))));
+  true;
+  
+  Mu : mcon (a14*a23,mu);
+ 4*sin(th/2)^2*E^2+4*p^2*sin(th/2)^2+8*p^2*cos(th/2)^2;
+ 
+  M2 : expand (Mu/u_th2);
+ -sin(th/2)^2*E^2/(p^2*cos(th/2)^2)-sin(th/2)^2/cos(th/2)^2-2;
+ 
+   Mfi : M1 - M2;
+  sin(th/2)^2*E^2/(p^2*cos(th/2)^2)+cos(th/2)^2*E^2/(p^2*sin(th/2)^2)
+                                        +sin(th/2)^2/cos(th/2)^2
+                                        +cos(th/2)^2/sin(th/2)^2+4;
+                                        
+   E_pm (Mfi);
+   m^2*sin(th/2)^2/(p^2*cos(th/2)^2)+2*sin(th/2)^2/cos(th/2)^2
+                                        +m^2*cos(th/2)^2/(p^2*sin(th/2)^2)
+                                        +2*cos(th/2)^2/sin(th/2)^2+4;
+                                        
+   ( dA(s1,s2,s3,s4):=
+          ((up1:UU(E,p,0,0,s1),up3b:sbar(UU(E,p,th,0,s3)),up2:UU(E,p,%pi,0,s2),
+           up4b:sbar(UU(E,p,%pi-th,%pi,s4))),
+          Mt:(a13:up3b . Gam[mu] . up1,a24:up4b . Gam[mu] . up2,
+              mcon(a13*a24,mu)),Mt:Ep_m(Mt),M1:Mt/t_th2,
+          Mu:(a14:up4b . Gam[mu] . up1,a23:up3b . Gam[mu] . up2,
+              mcon(a14*a23,mu)),Mu:Ep_m(Mu),M2:Mu/u_th2,
+          expand (M1-M2),Mfi : E_pm (%%)),
+        dA(1,1,1,1));
+  m^2*sin(th/2)^2/(p^2*cos(th/2)^2)+2*sin(th/2)^2/cos(th/2)^2
+                                        +m^2*cos(th/2)^2/(p^2*sin(th/2)^2)
+                                        +2*cos(th/2)^2/sin(th/2)^2+4;
+                                        
+  block([sL,sv1,sv2,sv3,sv4],
+        sL:[1,-1],
+        mssq:0,             
+        for sv1 in sL do
+          for sv2 in sL do
+            for sv3 in sL do
+              for sv4 in sL do
+               (dA(sv1,sv2,sv3,sv4),
+                 E_pm(%%),mssq:Avsq(%%)+mssq),
+        mssq:E_pm(mssq),
+        mssq:expand(fr_ao2(mssq,th)));
+ -192*m^2/(p^2*sin(th)^2)-48*m^4/(p^4*sin(th)^2)-128/sin(th)^2
+                               +256*m^2/(p^2*sin(th)^4)+64*m^4/(p^4*sin(th)^4)
+                               +256/sin(th)^4+16;
+                               
+  trigsimp (mssq - (16*cos(th)^4/sin(th)^4+192*m^2*cos(th)^2/(p^2*sin(th)^4)
+                             +48*m^4*cos(th)^2/(p^4*sin(th)^4)
+                             +96*cos(th)^2/sin(th)^4+64*m^2/(p^2*sin(th)^4)
+                             +16*m^4/(p^4*sin(th)^4)+144/sin(th)^4));
+ 0;
+ 
+ 

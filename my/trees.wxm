@@ -1,0 +1,35 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 14.09.0 ] */
+
+/* [wxMaxima: input   start ] */
+load(Species)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+display2d:wxmaxima$
+tree_disp(tree) := tree_disp1(tree, 1)$
+tree_disp1(tree, d) := (
+if length(tree)>0 then printf(true,"~{~a~}\\-- ~a~%", makelist(" ", d), first(tree)), 
+if length(tree)>1 then map(lambda([t],tree_disp1(t,d+4)), second(tree)))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+tree_disp([[1, [2, 3]]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(tree)$
+spec: [T=Sum(x, Prod(T, T))];
+makelist(count_species(T, spec, i), i, 1, 10);
+tree1: nice_disp(select_from_species(T, spec, 5));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+spec: [TT=Prod(x, MSet(TT, max_card=3))]$
+makelist(count_species(TT, spec, i), i, 1, 10);
+tree2:nice_disp(select_from_species(TT, spec, 8));
+tree_disp(tree2);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

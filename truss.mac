@@ -1,0 +1,181 @@
+/* Copyright (C) 2009-2010  Stefano Ferri
+
+This is an example of input file, part of SymSAP, and shows
+how a structure can be defined.
+
+SymSAP is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 3
+of the License, or (at your option) any later version. */
+
+
+/*---------------------------------
+ GEOMETRY OF STRUCTURE
+-----------------------------------*/
+ 
+/* This is an example of truss, to show
+internal disconnections.
+
+
+    F     F
+    !     !
+    o-----o  
+   / \   / \ 
+  /   \ /   \
+ o-----o-----o
+/\           /\
+
+ |- l -|- l -|
+
+*/
+
+/* -- Node coordinates --
+Each row of matrix NodeCoord contains x and y coordinates
+of a node. Node numbering is function of row index: the i-th
+row corresponds to i-th node. */
+
+NodeCoord : matrix([0,0], [0,0],
+		[l/2,l*sqrt(3)/2], [l/2,l*sqrt(3)/2], [l/2,l*sqrt(3)/2],
+		[l,0], [l,0],[l,0],[l,0],
+		[3/2*l,l*sqrt(3)/2],[3/2*l,l*sqrt(3)/2],[3/2*l,l*sqrt(3)/2],
+		[2*l,0],[2*l,0]);
+
+
+/* -- Connectivity matrix --
+Each row of matrix Connect matrix defines a beam: the first
+column contains starting node, the second the ending one.
+Beam numbering is function of row index: the i-th row corresponds
+to i-th beam. */
+
+ConnectMatrix : matrix( [1,3], [2,6], [4,7], [5,10], [8,11], [9,13], [12,14] );
+
+
+/* -- Constraint conditions --
+Each row of matrix ConstrCond correspont to one boundary condition.
+Each row has the following scheme:
+-1st column: constrained node index
+-2nd column: assigned displacement component (1=u, 2=v, 3=phi)
+-3rd column: value of assigned displacement
+-4th column: direction of constraint reference frame */
+
+ConstrCond : matrix ( [1,1,0,0], [1,2,0,0], [14,1,0,0], [14,2,0,0] );
+
+ConcDist :  matrix ()$
+
+/* -- Elastic constraints --
+Each row of matrix ElasticConstrCond  corresponds to one elastic
+constraint condition. Each row has the following scheme:
+-1st column:  constrainted node index
+-2nd column: stiffness along the local x axis
+-3rd column: stiffness along the local y axis
+-4th column: rotational stiffness
+-5th column: constraint rotation */
+
+ElasticConstrCond : matrix();
+
+
+/* -- Internal disconnections --
+Each disconnection is defined by creating ovelapping nodes.
+To characterize a disconnections, three elements must be specified:
+overlapping nodes (at least two), disconnection type and, in some
+cases, constraint rotation.
+Each row of matrix Disconnections defines an internal disconnection,
+and it has the following structure:
+-1st column: disconnection type, equal to
+1 if pendulum
+2 if double double pendulum
+3 if hinge
+4 if double pendulum
+5 if elastic hinge
+6 if spring (elastic pendulum)
+-2nd column: list containing overlapping nodes
+-3rd column: constraint stiffness
+-4th column: constraint rotation */
+
+Disconnections : matrix([3, [1,2], [], %pi/2 ],
+                        [3, [3,4,5], [], %pi/2],
+                        [3, [6,7,8,9], [],%pi/2],
+                        [3, [10,11,12], [], %pi/2],
+                        [3, [13,14], [], %pi/2]) ;
+
+
+
+/*---------------------------------
+ MECHANICAL CHARACTERISTICS
+-----------------------------------*/
+
+/* -- Geometric properties --
+Each row of matrix BeamCar corresponds to the beam with the same
+row index in connectivity matrix.
+Each row has the following scheme:
+-1st column:  Young's modulus
+-2nd column: section area
+-3rd column: moment of inertia
+-4th column: section height
+-5th column: coefficient of thermal expansion */
+
+BeamCar : matrix( [E, A, I, h, a], [E, A, I, h, a], [E, A, I, h, a], [E, A, I, h, a],
+                  [E, A, I, h, a], [E, A, I, h, a], [E, A, I, h, a]);
+
+
+/* -- Deformability hypotheses --
+Each row of matrix Def corresponds to the beam with the same
+row index in connectivity matrix.
+Each row has the following scheme:
+-1st column: hypothesis about axial deformability
+-2nd column: hypothesis about flexional deformability
+Elements can only be equal to nor, negl or null. The meaning is:
+-nor: normal deformability, always taken into account (it is the most general hypothesis)
+-negl: the correspondant deformability is negligible with respect to the other one
+-null: the correspondant deformability is not present
+A row equal to [negl, negl] is not admitted */
+
+Def : matrix( [nor,nor], [nor,nor], [nor,nor], [nor,nor], [nor,nor], [nor,nor], [nor,nor] );
+
+
+/*-----------------------------
+APPLYED FORCES
+-----------------------------*/
+
+/* All forces must be specified in the local reference frame, while
+their angles must be specified in the global reference frame.
+Angles must be expressed in radians */
+
+
+/* -- Nodal loads --
+Each row of matrix NodalLoads defines a nodal load.
+Each row has the following scheme:
+-1st column: node index
+-2nd column: load type, equal to 1 if force, 2 if moment
+-3rd column: rotation angle (meaningless if type=2)
+-4th column: force modulus */
+
+NodalLoads : matrix( [4, 1, -%pi/2, F], [11, 1, -%pi/2, F] );
+
+
+/* -- Distributed Loads --
+Each row of matrix DistributedLoads defines a distributed load.
+Each row has the following scheme:
+-1st column: beam index
+-2nd column: distributed load type, equal to 1 if axial force,
+ 2 if shear force, 3 if moment
+-3rd column: rotation angle (meaningless if type=2)
+-4th column: force modulus */
+
+DistributedLoads : matrix();
+
+/* -- Thermal loads --
+Each row of matrix ThermalLoads defines a thermal load.
+Each row has the following scheme:
+-1st column: beam index
+-2nd column: thermal variation on upper fibre
+-3rd column: thermal variation on lower fibre */
+
+ThermalLoads : matrix();
+
+
+
+
+
+
+

@@ -1,0 +1,1048 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 14.09.0 ] */
+
+/* [wxMaxima: input   start ] */
+obase:10$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T[n]:=1/(n+1)*binomial(2*n, n);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+catalan: makelist(T[n], n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+B[k, n]:=binomial(k, n)$
+C[k, n]:=combination(k, n)$
+P[k, n]:=permutation(k, n)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pascal-row(m, l):= for k:0 thru m do (printf(true, "~&"),
+    for n:0 thru l do (if (B[k, n] = 0) then nil else printf(true, " ~5d ", B[k, n])))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pascal-col(m, l):= for k:m thru 0 step -1 do (printf(true, "~&"),
+    for n:l thru 0 step -1 do (if (B[n, k] = 0) then nil else printf(true, " ~5d ", B[n, k])))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pascal-diag(m, l):= for n:0 thru m do (printf(true, "~&"),
+    for k:0 thru l do (if (B[k, n] = 0) then nil else printf(true, " ~5d ", B[k, n])))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pascal-row(3, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pascal-col(3, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pascal-diag(3, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pascal-row(10, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pascal-col(10, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pascal-diag(5, 5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pascal-row[m, l]:= for k:0 thru m do (printf(true, "~&"),
+    for n:0 thru l do (if (B[k, n] = 0) then nil else printf(true, " ~5d ", B[k, n])))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pascal-col[m, l]:= for k:m thru 0 step -1 do (printf(true, "~&"),
+    for n:l thru 0 step -1 do (if (B[n, k] = 0) then nil else printf(true, " ~5d ", B[n, k])))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pascal-diag[m, l]:= for n:0 thru m do (printf(true, "~&"),
+    for k:0 thru l do (if (B[k, n] = 0) then nil else printf(true, " ~5d ", B[k, n])))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pascal-row[11, 11]; pascal-col[11, 11]; pascal-diag[11, 11];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pascal-row[11, 11]; pascal-col[11, 11]; pascal-diag[11, 11];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pascal-row(11, 11); pascal-col(11, 11); pascal-diag(11, 11);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A(z):=sum((A[n]*z^n), n, 0, inf);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A(3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A[n]:=1/(n+1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A(3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+taylor(A(z), z, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+W(z):=sum(2^n*z^n, n, 0, inf);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+taylor(W(z), z, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+P(z):=sum(n!*z^n, n, 0, inf);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+taylor(P(z), z, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+coeff(taylor(P(z), z, 0, 6), z, 5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(P(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+C(z):=sum(T[n]*z^n, n, 0, inf);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+coeff(taylor(C(z), z, 0, 6), z, 5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(C(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(C(z), z, 0, n), z), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(A(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(A, n, z)$
+A[n]:=(n/(1-n));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(z)$
+A(z):=sum((A[n]*z^n), n, 0, inf);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+taylor(A(z), z, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A[z]:=z/(1-z);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A(z):=sum((A[z]*z^n), n, 0, inf);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+taylor(A(z), z, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(A(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(A, f, I, K, F)$
+
+I(z):=(z/(1-z))$
+K(z):=(1/(1-(I(z))))$
+L(z):=(z+z^2)$
+F(z):=(1/(1-L(z)))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F(I(z))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(K(z), z, 0, n), z, n), n, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(K(I(z)), z, 0, n), z, n), n, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(I(K(z)), z, 0, n), z, n), n, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(K(z)*I(z), z, 0, n), z, n), n, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(K(z)+I(z), z, 0, n), z, n), n, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(K(z)-I(z), z, 0, n), z, n), n, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(I(z)-K(z), z, 0, n), z, n), n, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor((K(z)/I(z)), z, 0, n), z, n), n, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor((I(z)/F(z)), z, 0, n), z, n), n, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor((I(z)+(I(z))^2), z, 0, n), z, n), n, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+taylor(I(z), z, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+taylor(F(z), z, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+fib(k):=makelist(coeff(taylor(F(z), z, 0, n), z, n), n, 0, k)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+nthfib(k):=coeff(taylor(F(z), z, 0, k), z, k)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+fib(20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+nthfib(10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(N, Part, m)$
+N(z):=(1/(1-z^m))$
+Part(z):=product(N(z), m, 1, inf)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+taylor(Part(z), z, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(Part(z), z, 0, n), z, n), n, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+I(z):=(z/(1-z))$
+J(z):=(z/(1+z))$
+
+H(z):=(I(z)+(I(z))^2)$
+O(z):=(J(z)+(J(z))^2)$
+Q(z):=(O(z)+(O(z))^2)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(I(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(I(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(H(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(J(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(O(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(Q(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(N(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(N,M,T,m,z,Su)$
+N(z):=(1/(1-z^m))$
+Su(z):=sum(N(z)*z^m, m, 1, inf)$
+taylor(Su(z), z, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(Su(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(Q(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(N,M,T,m,z,Su)$
+M(z):=(1/(1+z^m))$
+Su(z):=sum(M(z)*z^m, m, 1, inf)$
+taylor(Su(z), z, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(Su(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(N,M,T,m,z,Su)$
+M(z):=(z/(1+z^m))$
+Su(z):=sum(M(z)*z^m, m, 1, inf)$
+taylor(Su(z), z, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(Su(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(N,M,T,m,z,Su)$
+M(z):=(2/(2-z^m))$
+Su(z):=product(M(z), m, 1, inf)$
+taylor(Su(z), z, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(Su(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(N,M,T,m,z,Su)$
+M(z):=(3/(3-z^m))$
+Su(z):=product(M(z), m, 1, inf)$
+taylor(Su(z), z, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(Su(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(N,M,T,m,z,Su)$
+M(z):=(2/(2+z^m))$
+Su(z):=product(M(z), m, 1, inf)$
+taylor(Su(z), z, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(Su(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(N,M,T,m,z,Su)$
+M(z):=(1/(1-z^m))$
+Su(z):=sum(M(z)*z^m, m, 1, inf)$
+taylor(Su(z), z, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(Su(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(N,M,T,m,z,Su)$
+M(z):=(2/(2-z^m))$
+Su(z):=sum(M(z)*z^m, m, 1, inf)$
+taylor(Su(z), z, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(Su(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(N,M,T,m,z,Su)$
+M(z):=(1/(1+z^m))$
+Su(z):=sum(M(z)*z^m, m, 1, inf)$
+taylor(Su(z), z, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(Su(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(N,M,T,m,z,Su)$
+M(z):=(1/(1+z^m))$
+Su(z):=product(M(z), m, 1, inf)$
+taylor(Su(z), z, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(Su(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(N,M,T,m,z,Su)$
+M(z):=(1/(1-2*z))$
+Su(z):=sum(M(z)*z^m, m, 0, inf)$
+taylor(Su(z), z, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(M(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(Su(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(N,M,T,m,z,Su)$
+M(z):=(1/(1-2*z^m))$
+Su(z):=sum(M(z)*z^m, m, 0, inf)$
+taylor(Su(z), z, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(M(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(Su(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(N,M,T,m,z,Su)$
+M(z):=(1/(1-2*z^m))$
+Su(z):=product(M(z), m, 0, inf)$
+taylor(Su(z), z, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(taylor(M(z), z, 0, n), z, n), n, 0, 20);
+makelist(coeff(taylor(Su(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(N,M,T,m,z,Su)$
+M(z):=(1/(1+2*z^m))$
+Su(z):=product(M(z), m, 0, inf)$
+taylor(Su(z), z, 0, 20);
+makelist(coeff(taylor(M(z), z, 0, n), z, n), n, 0, 20);
+makelist(coeff(taylor(Su(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(N,M,T,m,z,Su)$
+M(z):=(1/(1+2*z^m))$
+Su(z):=sum(M(z)*z^m, m, 0, inf)$
+taylor(Su(z), z, 0, 20);
+makelist(coeff(taylor(M(z), z, 0, n), z, n), n, 0, 20);
+makelist(coeff(taylor(Su(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(I,N,M,T,m,z,Su)$
+I(z):=(1/(1-z))$
+M(z):=(1/(z-I(z)))$
+Su(z):=sum(M(z)*z^m, m, 0, inf)$
+taylor(Su(z), z, 0, 20);
+makelist(coeff(taylor(M(z), z, 0, n), z, n), n, 0, 20);
+makelist(coeff(taylor(Su(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(I,N,M,T,m,z,Su)$
+I(z):=(z/(1-z^2))$
+M(z):=(1/(1-z*I(z)))$
+Su(z):=sum(M(z)*z^m, m, 0, inf)$
+taylor(Su(z), z, 0, 20);
+makelist(coeff(taylor(M(z), z, 0, n), z, n), n, 0, 20);
+makelist(coeff(taylor(Su(z), z, 0, n), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sum(z, n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sum(z, z, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sum(z^n, n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sum((z^n), z, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sum(logb((z^n), z), z, 2, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(sum(z, n, 1, 10), z, n), n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(sum(z^n, n, 1, 10), z, n), n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(sum(z^n, z, 1, 10), 1, z), z, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+I(z):=(z/(1-z))$
+R[k](z):=(I(z))^k$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+taylor(R[k](z), z, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+coeff(taylor(R[k](z), z, 0, 10), z, k);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+coeff(taylor(R[k](z), z, 0, 10), k, 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+coeff(taylor(R[k](z), z, 0, 10), k, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S(m,n):=makelist(coeff(taylor(R[k](z), z, 0, n), z, l), l, 0, m);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S(10, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(S,z,k)$
+S(z):=sum((z^k/(1-z^k)), k, 1, inf)$
+taylor(S(z), z, 0, 20);
+makelist(coeff(taylor(S(z), z, 0, 20), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(P,z,k)$
+P(z):=product(1/(1-z^k), k, 1, 10)$
+taylor(P(z), z, 0, 10);
+makelist(coeff(taylor(P(z), z, 0, 20), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(P,z,k)$
+P(z):=z^k*product(1/(1-z^k), k, 1, 10)$
+taylor(P(z), z, 0, 10);
+coeff(makelist(coeff(taylor(P(z), z, 0, 20), z, n), n, 0, 20), z^k);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(S,z,k)$
+S(z):=sum(((z^k)^2*product((1/(1-z^k)^2), k, 1, 10)), k, 0, inf)$
+taylor(S(z), z, 0, 20);
+makelist(coeff(taylor(S(z), z, 0, 20), z, n), n, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(S,z,k,n,s)$
+S(z,n):=sum((z^k/(1-z^k))*product((1/(1-z^(k))^2), k, 1, k-1), k, 1, n)$
+taylor(S(z,10), z, 0, 20);
+makelist(coeff(taylor(S(z,n), z, 0, 20), z, n), n, 1, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* Compositions all */
+kill(P,S,z,k,n,s)$
+P(z):= (1-z)/(1-2*z);
+taylor(P(z), z, 0, 20);
+makelist(coeff(taylor(P(z), z, 0, 20), z, n), n, 1, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* Compositions parts <=r */
+kill(length,P,S,z,k,n,s)$
+P(z,r):= ((1-z)/(1-2*z+z^(r+2)))$
+taylor(P(z, 10), z, 0, 20);
+makelist(coeff(taylor(P(z,r), z, 0, 20), z, r), r, 1, 10);
+length=length(makelist(coeff(taylor(P(z,r), z, 0, 20), z, r), r, 1, 10));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* Compositions k parts */
+kill(length,P,S,z,k,n,s)$
+P(z,n):= sum((z^k)/(1-z)^k, k, 1, n)$
+taylor(P(z, 10), z, 0, 20);
+makelist(coeff(taylor(P(z,20), z, 0, 20), z, n), n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* cycles */
+kill(D,P,S,z,k,n,s)$
+D(z,n):= sum(((totient(k)/k)*(log((1-(z^k/(1-z^k)))^-1))), k, 1, n)$
+taylor(D(z, 20), z, 0, 20);
+makelist(coeff(taylor(D(z,20), z, 0, 20), z, k), k, 1, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/*partitions all */
+kill(D,P,S,z,k,n,s)$
+S(z):=(1-z^m)^-1$
+P(z):=product(S(z), m, 1, inf)$
+taylor(P(z), z, 0, 20);
+makelist(coeff(taylor(P(z), z, 0, 20), z, k), k, 1, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/*partitions <=r */
+kill(D,P,S,z,k,n,s)$
+S(z):=(1-z^m)^-1$
+P(z,r):=product(S(z), m, 1, r)$
+taylor(P(z,10), z, 0, 20);
+makelist(coeff(taylor(P(z,r), z, 0, 20), z, r), r, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/*partitions from min(r) to max(r) */
+kill(D,P,S,z,k,n,s,m,l,r)$
+S(z):=(1-z^m)^-1$
+P(z,r):=product(S(z), m, 1, r)$
+taylor(P(z, r), z, 0, 20);
+makelist(coeff(taylor(P(z,r), z, 0, 20), z, r), r, 5, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/*partitions <=l and >=r (or from r to l) */
+kill(T,D,P,S,z,k,n,s,m)$
+S(z):=(1-z^m)^-1$
+P(z,r,l):=product(S(z), m, 1, l)$
+T(z,r,l):=taylor(P(z, r, l), z, 0, 2*l-r)$
+T(z, 5, 10);
+r:5$ l:10$ makelist(coeff(T(z,r,l), z, m), m, r, l);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* partitioning into distinct partitions */
+kill(T,D,P,S,z,k,n,s,m)$
+S(z):=(1+z^m)$
+P(z):=product(S(z), m, 1, inf)$
+T(z):=taylor(P(z), z, 0, 20)$
+T(z);
+makelist(coeff(T(z), z, k), k, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* partitioning into odd summands */
+kill(T,D,P,S,z,k,n,s,m)$
+S(z):=((1-z^(2*m+1))^(-1))$
+P(z):=product(S(z), m, 0, inf)$
+T(z):=taylor(P(z), z, 0, 20)$
+T(z);
+makelist(coeff(T(z), z, k), k, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* binary partition sequence */
+kill(T,D,P,S,z,k,n,s,m)$
+S(z):=((1-z^(2^m))^(-1))$
+P(z):=product(S(z), m, 0, inf)$
+T(z):=taylor(P(z), z, 0, 20)$
+T(z);
+makelist(coeff(T(z), z, k), k, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* computer scientists identity */
+kill(T,D,P,S,z,k,n,s,m)$
+S(z):=(1+z^(2^m))$
+P(z):=product(S(z), m, 0, inf)$
+T(z,n):=taylor(P(z), z, 0, n)$
+T(z,20);
+subst([z=0], makelist(sum('T(z,k), k, j, j), j, 0, 3));
+subst([z=0], makelist(sum(T(z,k), k, 0, k), k, 0, 3));
+subst([z=0], makelist(sum(T(z,k)-1, k, 0, k), k, 1, 4));
+subst([z=1], makelist(sum(T(z,k), k, 0, k), k, 0, 3));
+subst([z=1], makelist(sum(T(z,k)-1, k, 0, k), k, 1, 4));
+subst([z=2], makelist(sum(T(z,k), k, 0, k), k, 0, 3));
+subst([z=2], makelist(sum(T(z,k)-1, k, 0, k), k, 1, 4));
+subst([z=3], makelist(sum(T(z,k), k, 0, k), k, 0, 3));
+subst([z=3], makelist(sum(T(z,k)-1, k, 0, k), k, 1, 4));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(m, bin, gen, S, b, h, z, l, m, k, n, q, r, d)$
+b[m]:=[0,1][m]$
+base(n,d):= block([q:0, r:n, obase:d], (while(r>=d) do (q:q+1, r:r-d)), concat(q,r))$
+obase:10$ makelist(base(m, 2), m, 1, 10);
+makelist(base(m,2),m, 1, 10);
+b(s):=for m:1 thru 2^s do print(create_list([i,j], i, [0,1], j, 0, 1)[m])$
+h(s):=for m:1 thru 2^s do print(create_list([i,j,k], i, [0,1], j, [0,1], k, 0, 1)[m])$
+b(2)$ h(3)$
+S(z):=sum(b[m]*z^k, m, 1, 2)$
+obase:10$ makelist(S(2), k, 1, 10);
+obase:2$ makelist(S(2), k, 1, 10); obase:10$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+h(s, [l]):=
+for m:1 thru s 
+do print(
+    create_list(l, k, 1, m)[m][m])$
+h(4, [0,0], [0,1], [1,0], [1, 1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,n)$
+f[1]:1$ f[n]:=(2*f[n-1]);
+makelist(f[n], n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,n)$
+f[1]:1$ f[n]:=(2*f[n-1]);
+obase:2$ makelist(f[n], n, 1, 10); obase:10$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+h[1]:1$ h[n]:=(h[n-1]+2)$ /* n+2 */
+makelist(h[n], n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+h[1]:1$ h[n]:=(h[n-1]+2)$ /* n+2 */
+obase:2$ makelist(h[n], n, 1, 10); obase:10$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* nth */
+S(k,n):=if (n=k) then -k^2 else k^2$
+makelist(S(k,5), k, 0, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* from the first n onwards */
+S(k,n):=if (mod(n,k)=n) then -k^2 else k^2$
+makelist(S(k,3), k, 1, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* upto the first n */
+S(k,n):=if (mod(k,n+1)=k) then -k^2 else k^2$
+makelist(S(k,5), k, 1, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* every n'th */
+S(k,n):=if (mod(k,n)=0) then -k^2 else k^2$
+makelist(S(k,5), k, 1, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* next n from 1 on! */
+S(k,n):=if (mod(k,n+1)=1) then k^2 else -k^2$
+makelist(S(k,3), k, 1, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* not next n from 1 on! */
+S(k,n):=if (mod(k,n+1)=1) then -k^2 else k^2$
+makelist(S(k,4), k, 1, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(start,stop,stepping,[shift]) := block([
+                                            n, y:[],
+                                             shift: (if (not(emptyp(shift))) 
+                                                        then float(first(shift))
+                                                            else (0.0))
+                                            ],
+            (n:floor((float(stop-start)/float(stepping)))),
+            (if (start < stop)
+            then
+            (y:flatten(append([y], 
+                                        makelist(float(start+shift+(stepping*(i-start))), 
+                                        i, start, n+start))))
+            else
+            (y:flatten(append([y], 
+                                        makelist(-(float(stop-shift-(stepping*(i-stop)))), 
+                                        i, -(n+stop), stop)))))
+            (if (n>1.0)
+                then return(y)
+                else return([])))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(-n, n, -10, 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(0, 10, 2.5, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(0, 10, 2.5, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(10, 0, -1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(10, 0, -1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(0, 10, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(10, 0, -2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(10, 0, -0.5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(0, 10, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+first(-1.0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+part(-1.0, 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sign(-1.0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+is(neg = sign(-1.0));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+is("-" = part(-1.0, 0));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(10, 0, -2.5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(0, 10, 0.3, 4);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(1, 10, 0.3, 4);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(1, 10, 0.2, 5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(0, 10, 0.3, log(4));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(1, 10, 0.3, log(4));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(1, 10, 0.3, ln(4));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(1, 10, 0.3, lg(4));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(1, 10, 0.3, 1/2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(1, 10, 0.3, 0.5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+map(lambda([x], log(x)), seq(1, 100, 1));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+map(lambda([x], log(x)), makelist(n, n, 1, 100)), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(k, n)$
+'sum((2*k+1)*binomial(n, k), k, 0, n);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for n:0 thru 10 do (print(
+sum((2*k+1)*binomial(n, k), k, 0, n)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for k:0 thru 10 do (print(sum((2*k+1)*binomial(n, k), n, 0, k)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for k:0 thru 10 do (print(sum((2*k+1)*binomial(k, n), n, 0, k)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for n:0 thru 10 do (print(sum((2*k+1)*binomial(k, n), k, 0, n)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(n, k)$
+simpsum:true$
+cauchysum:true$
+sumexpand:true$
+sum((2*k+1)*binomial(n, k), n, 0, k);
+nusum((2*k+1)*binomial(n, k), n, 0, k);
+nusum((n+1)*2^n, n, 0, k);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(n, k)$
+simpsum:true$
+cauchysum:true$
+sumexpand:true$
+sum((2*k+1)*binomial(n, k), n, n, k);
+nusum((2*k+1)*binomial(n, k), n, n, k);
+nusum((n+1)*2^n, n, n, k);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(n, k)$
+simpsum:true$
+cauchysum:true$
+sumexpand:true$
+sum((2*k+1)*binomial(n, k), k, n, k);
+nusum((2*k+1)*binomial(n, k), k, n, k);
+nusum((n+1)*2^n, k, n, k);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(n, k)$
+simpsum:true$
+cauchysum:true$
+sumexpand:true$
+sum((2*k+1)*binomial(n, k), n, n, n);
+nusum((2*k+1)*binomial(n, k), n, n, n);
+nusum((n+1)*2^n, n, n, n);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(n, k)$
+simpsum:true$
+cauchysum:true$
+sumexpand:true$
+sum((2*k+1)*binomial(n, k), n, n, n);
+unsum(sum((2*k+1)*binomial(n, k), n, n, n), k);
+unsum(sum((2*k+1)*binomial(n, k), n, 0, k), k);
+unsum(sum((2*k+1)*binomial(n, k), n, 0, n), n);
+unsum(sum((2*k+1)*binomial(n, k), n, n, n), n);
+nusum((2*k+1)*binomial(n, k), n, n, n);
+nusum((n+1)*2^n, n, n, n);
+unsum((n+1)*2^n, n);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+prime(z):=block([k:z, y:1], 
+    (y:listify(setify(append(makelist(if(primep(k)) then k else 1, k, 1, k), [y])))),
+    return(y))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+primes_between(m,z):=block([k:z, y:1, l:m], 
+    (y:listify(setify(append(makelist(if(primep(k)) then k else 1, k, l, k), [y])))),
+    return(rest(y)))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+prime(10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+primes_between(10, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+primes_between(1000, 1100);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+length(primes_between(1000, 1100));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+howmany_primes_between(m,z):=block([k:z, y:1, l:m], 
+    (y:listify(setify(append(makelist(if(primep(k)) then k else 1, k, l, k), [y])))),
+    return(length(rest(y))))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+howmany_primes_between(1000, 1100);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

@@ -1,0 +1,635 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 13.04.2 ] */
+
+/* [wxMaxima: input   start ] */
+kill(pairs)$
+pairs(items):=block([result],
+result:
+if (emptyp(items)) then [] else
+if (listp(items)) then 
+    if(emptyp(rest(items))) then  [] else
+    cons(cons(first(items),  [second(items)]), 
+                    pairs(rest(rest(items))))
+)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pairs([1, 2, 3, 4, 5]);
+pairs([1, 2, 3, 4]);
+pairs([1, 2, 3]);
+pairs([1, 2]);
+pairs([1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+offpairs(items):=block([result],
+result:
+if (emptyp(items)) then [] else
+if (listp(items)) then 
+    if(emptyp(rest(items))) then [last(items)] else
+    cons(cons(first(items),  [second(items)]), 
+                    offpairs(rest(rest(items))))
+)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+offpairs([1, 2, 3, 4, 5]);
+offpairs([1, 2, 3, 4]);
+offpairs([1, 2, 3]);
+offpairs([1, 2]);
+offpairs([1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervals(items):=block([result],
+  result: if (emptyp(items)) then [] else
+          if(listp(items)) then
+           if(emptyp(rest(items))) then [] else
+               cons(cons(first(items),  [second(items)]),
+                       intervals(rest(items))))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervals([1, 2, 3, 4, 5]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervals(seq(1, 5));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervals(seq(0, 2*%pi, 1));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(seq)$
+seq(start,stop,[stepping]) := block(
+[ n, y:[], ratprint:false,
+stepping: (if (not(emptyp(stepping))) then 
+                    rat(first(stepping)) else rat(1.0)),
+shift: (if (length(stepping)>1) then
+                rat(second(stepping)) else rat(0.0)) ],
+
+            (n:(float(stop-start)/float(stepping))),
+            (if (start < stop)
+            then
+            (y:flatten(append([y], 
+                                        makelist(float(start+shift+(stepping*(i-start))), 
+                                        i, start, n+start))))
+            else
+            (y:flatten(append([y], 
+                                        makelist(-(float(stop-shift-(stepping*(i-stop)))), 
+                                        i, -(n+stop), stop)))))
+            (if (n>1.0)
+                then return(y)
+                else return([])))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsplit(fn, lst):=block([ acc:[], m:[], src:lst], load(basic),
+while (not(emptyp(src))) do (
+if(fn(first(src))) then return() else
+push(pop(src), acc)
+), push(src, m), return([reverse(acc), first(m)]))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsplit(lambda([n], listp(n)), intervals([0, 1, 2, 3]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+find_roots(expr, var, range, [stepping]):=
+block(
+[ ans:[], min:lmin(range), max:lmax(range), 
+steps: if(not(emptyp(stepping))) then
+              float(first(stepping)) else 1.0 ],
+
+intervals(items):=block([result],
+  result: if (emptyp(items)) then [] else
+          if(listp(items)) then
+           if(emptyp(rest(items))) then [] else
+               cons(cons(first(items),  [second(items)]),
+                       intervals(rest(items)))), 
+
+lsplit(fn, lst):=block([ acc:[], m:[], src:lst], load(basic),
+while (not(emptyp(src))) do (
+if(fn(first(src))) then return() else
+push(pop(src), acc)
+), push(rest(src), m), return([reverse(acc), first(m)])),
+
+seq(start,stop,[stepping]) := block(
+[ control:stop, stop:ceiling(stop),n, y:[],
+stepping: (if (not(emptyp(stepping))) then 
+                    float(first(stepping)) else 1.0),
+shift: (if (length(stepping)>1) then
+                float(second(stepping)) else (0.0)) ],
+
+            (n:(float(control-start)/float(stepping))),
+            (if (start < stop)
+            then
+            (y:flatten(append([y], 
+                                        makelist(float(start+shift+(stepping*(i-start))), 
+                                        i, start, n+start))))
+            else
+            (y:flatten(append([y], 
+                                        makelist(-(float(stop-shift-(stepping*(i-stop)))), 
+                                        i, -(n+stop), stop)))))
+            (if (n>1.0)
+                then return(y)
+                else return([]))),
+errormsg:false, 
+    for i in intervals(seq(min, max+1, steps)) do 
+        ans:(append(ans, errcatch(find_root(expr, var, first(i), second(i))))), 
+            errormsg:true, return(ans))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(all)$
+kill(find_roots)$
+find_rootspoles(expr, var, min, max, [stepping]):=
+block(
+[ ans:[], 
+ steps:(if (length(stepping)=1) then
+              float(first(stepping)) else 1.0),
+  shift:(if (length(stepping)>1) then
+                 float(second(stepping)) else 0.0)],
+
+intervals(items):=block([result],
+  result: if (emptyp(items)) then [] else
+          if(listp(items)) then
+           if(emptyp(rest(items))) then [] else
+               cons(cons(first(items),  [second(items)]),
+                       intervals(rest(items)))),
+
+seq(start,stop,[stepping]) := block(
+[ control:stop, stop:ceiling(stop), n, y:[],
+stepping: (if (not(emptyp(stepping))) then 
+                    float(first(stepping)) else 1.0),
+shift: (if (length(stepping)>1) then
+                float(second(stepping)) else (0.0)) ],
+
+            (n:(float(stop-start)/float(stepping))),
+            (if (start < stop)
+            then
+            (y:flatten(append([y], 
+                                        makelist(float(start+shift+(stepping*(i-start))), 
+                                        i, start, n+start))))
+            else
+            (y:flatten(append([y], 
+                                        makelist(-(float(stop-shift-(stepping*(i-stop)))), 
+                                        i, -(n+stop), stop)))))
+            (if (n>1.0)
+                then return(y)
+                else return([]))),
+
+lsplit(fn, lst):=block([ acc:[], m:[], src:lst], load(basic),
+while (not(emptyp(src))) do (
+if(fn(first(src))) then return() else
+push(pop(src), acc)
+), push(rest(src), m), return([reverse(acc), first(m)])),
+
+ratprint:false,
+find_root_error:false, 
+    for i in intervals(seq(min, max+min, steps)) do 
+        ans:(append(ans, delete(false, listify(
+                                        setify(
+                                          errcatch(
+                                            find_root(expr, var, 
+                                                            first(i), second(i)))))))), 
+            find_root_error:true, ratprint:true, return(ans))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+find_rootspoles(sin(x), x, 0, 2*%pi);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+find_rootspoles(cot(x), x, 0.1, %pi);
+find_rootspoles(cot(x), x, 0.1, 2*%pi);
+find_rootspoles(cot(x), x, 0.1, 3*%pi);
+find_rootspoles(cot(x), x, 0.1, 4*%pi);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+find_rootspoles(tan(x), x, 0.1, %pi);
+find_rootspoles(tan(x), x, 0.1, 2*%pi);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(floor(0.1), ceiling(2*%pi), 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot2d(cot(x), [x, 0, 2*%pi], [y, -100, 100]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(find_roots)$
+load(mnewton)$
+find_roots(expr, var, min, max, [stepping]):=
+block(
+[ ans:[], 
+ steps:(if (not(emptyp(stepping))) then
+              float(first(stepping)) else 1.0),
+  shift:(if (not(emptyp(stepping))) then
+              if (length(stepping)>1) then
+                 float(second(stepping)) else 0.0)],
+
+seq(start,stop,[stepping]) := block(
+[ control:stop, stop:ceiling(stop),n, y:[],
+stepping: (if (not(emptyp(stepping))) then 
+                    float(first(stepping)) else 1.0),
+shift: (if (length(stepping)>1) then
+                float(second(stepping)) else (0.0)) ],
+
+            (n:(float(stop-start)/float(stepping))),
+            (if (start < stop)
+            then
+            (y:flatten(append([y], 
+                                        makelist(float(start+shift+(stepping*(i-start))), 
+                                        i, start, n+start))))
+            else
+            (y:flatten(append([y], 
+                                        makelist(-(float(stop-shift-(stepping*(i-stop)))), 
+                                        i, -(n+stop), stop)))))
+            (if (n>1.0)
+                then return(y)
+                else return([]))),
+
+ratprint:false,
+errormsg:false,
+    for i in seq(min, max, steps) do 
+        ans:listify(setify(append(ans, 
+                errcatch(rhs(
+            first(first(mnewton([expr],[var], [i])))))))), 
+            errormsg:true, ratprint:true, return(ans))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+find_roots(sin(x), x, 0, 2*%pi);
+find_roots(cot(x), x, 0.1, %pi);
+find_roots(cot(x), x, 0.1, 2*%pi);
+find_roots(cot(x), x, 0.1, 3*%pi);
+find_roots(cot(x), x, 0.1, 4*%pi);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+load(newton)$
+find_root(sin(x), x, 4, 7);
+newton(sin(x), 4);
+newton(sin(x), 5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+listify(setify(makelist(newton(sin(x), n), n, 0.0, 7.0)));
+find_root_error:false$
+delete(false, makelist(find_root(sin(x), x, n, n+1), n, 0, 7));
+delete(false, makelist(find_root(cot(x), x, n, n+1), n, 0.1, 7));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+find_root(cot(x), x, 3, 4);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+load(newton1)$
+newton(sin(x), x, 5, 0.1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+solve(sin(x)=0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot2d(cot(x), [x, 0, 2*%pi], [y, -100, 100]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot2d(sin(x), [x, 0, 3*%pi]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+find_roots(sin(x), x, 0, 2*%pi);
+seq(0, 2*%pi, 1.0);
+intervals(seq(0, 2*%pi));
+intervals(find_roots(sin(x), x, 0, 2*%pi));
+integrate(sin(x), x, 0, %pi);
+integrate(sin(x), x, 2*%pi, %pi);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(find_roots)$
+load(mnewton)$
+find_roots(expr, var, min, max, [stepping]):=
+block(
+[ ans:[], 
+ steps:(if (not(emptyp(stepping))) then
+              float(first(stepping)) else 1.0),
+  shift:(if (not(emptyp(stepping))) then
+              if (length(stepping)>1) then
+                 float(second(stepping)) else 0.0)],
+
+seq(start,stop,[stepping]) := block(
+[ control:stop, stop:ceiling(stop),n, y:[],
+stepping: (if (not(emptyp(stepping))) then 
+                    float(first(stepping)) else 1.0),
+shift: (if (length(stepping)>1) then
+                float(second(stepping)) else (0.0)) ],
+
+            (n:(float(stop-start)/float(stepping))),
+            (if (start < stop)
+            then
+            (y:flatten(append([y], 
+                                        makelist(float(start+shift+(stepping*(i-start))), 
+                                        i, start, n+start))))
+            else
+            (y:flatten(append([y], 
+                                        makelist(-(float(stop-shift-(stepping*(i-stop)))), 
+                                        i, -(n+stop), stop)))))
+            (if (n>1.0)
+                then return(y)
+                else return([]))),
+
+ratprint:false,
+errormsg:false,
+    for x in seq(min, max, steps) do 
+        ans:(append(ans,
+            (solve(sin(x)=0)))), 
+            errormsg:true, ratprint:true, return(ans))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+find_rootspoles(sin(x), x, 0, 2*%pi);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(ev(sin(x)), x, 0, 7), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+continuous_at(expr, var, at):=block(
+if(is(equal(limit(expr, var, rat(at), plus), limit(expr,var, rat(at), minus))))
+then at else false)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+continuous_at(cot(x), x, %pi);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+discontinuous_at(expr, var, at) := block(
+if is(equal(limit(expr, var, at,plus), 
+                  limit(expr, var, at, minus))) then false else at)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+continuous_at((x+1)/(x-1), x, 1);
+discontinuous_at((x+1)/(x-1), x, 1);
+continuous_at(cot(x), x, %pi);
+discontinuous_at(cot(x), x, %pi);
+discontinuous_at(cot(x), x, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+continuous_over(expr, var, min, max, [stepping]):=
+block([ratprint:false, stepping: (if (not(emptyp(stepping))) then 
+                    rat(float(first(stepping))) else rat(1.0))],
+map(lambda([n], continuous_at(expr, var, n)), seq(min,max, stepping)))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+continuous_over(expr, var, range, [stepping]):=
+block(
+[ min:lmin(range), max:lmax(range), seq:[], ratprint:false, 
+stepping: (if (not(emptyp(stepping))) then 
+                    rat(first(stepping)) else rat(1.0)) ],
+
+seq(start,stop,[stepping]) := block(
+[ n, y:[], ratprint:false, 
+stepping: (if (not(emptyp(stepping))) then 
+                    rat(first(stepping)) else rat(1.0)),
+shift: (if (length(stepping)>1) then
+                rat(second(stepping)) else rat(0.0)) ],
+
+            (n:(float(stop-start)/float(stepping))),
+            (if (start < stop)
+            then
+            (y:flatten(append([y], 
+                                        makelist(float(start+shift+(stepping*(i-start))), 
+                                        i, start, n+start))))
+            else
+            (y:flatten(append([y], 
+                                        makelist(-(float(stop-shift-(stepping*(i-stop)))), 
+                                        i, -(n+stop), stop)))))
+            (if (n>1.0)
+                then return(y)
+                else return([]))), 
+
+continuous_at(expr, var, at):=block(
+if(is(equal(limit(expr, var, rat(at), plus), limit(expr,var, rat(at), minus))))
+then at else false), 
+
+lsplit(fn, lst):=block([ acc:[], m:[], src:lst], load(basic),
+while (not(emptyp(src))) do (
+if(fn(first(src))) then return() else
+push(pop(src), acc)
+), push(rest(src), m), return([reverse(acc), first(m)])), 
+
+seq:seq(min, max, stepping),
+ans:map(lambda([n], continuous_at(expr, var, n)), seq),
+req:block(if(member(false, ans)) then lsplit(lambda([n], n=false), ans) 
+else lsplit(lambda([n], n=n), ans)),
+return(req))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+peq(l, h, m):=block([k], 
+makelist(float(limit(n, k, n)), n, l, h, rat(float(limit(m, k, m)))))$
+peq(0, 5, 0.23);
+seq(0, 5, 0.23);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+continuous_over((x+1)/(x-1), x, [-3, 3], 0.1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+continuous_over((x-2)/(x-3), x, [-3, 10]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot2d(cot(x), [x, -4, 4], [y, -100, 100], [xtics, 1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+discontinuous_at(cot(x), x, 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ratprint:false$ a:3.14159;
+is(abs(a-(float(%pi)))<0.000001);
+declare(n, integer); let(n, 1000); letsimp(mod(n*a, a)), numer;
+mod(n*a, n), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+limit([n, 1/n], n, 0); limit([1/n, n], n, inf);
+limit([n, 1/n], n, inf); limit([1/n, n], n, 0);
+limit([n, 1/n], n, minf); limit([1/n, n], n, minf);
+
+length(limit([n, 1/n], n, 0)); length(limit([1/n, n], n, inf));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+length([0, 1]);
+length(setify([0, 1]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+rat(1.0); rat(0.0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+continuous_over(cos(x), x, [0, %pi]);
+continuous_over(cos(x), x, [0, %pi/2], %pi/100);
+floor(first(second(continuous_over(cos(x), x, [0, %pi/2], %pi/100))));
+ceiling(last(last(continuous_over(cos(x), x, [0, %pi/2], %pi/100))));
+floor(first(second(continuous_over(cos(x), x, [0, %pi], %pi/100))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot2d(cos(x), [x, 0,%pi/2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+continuous_over(sin(x), x, [0, %pi], %pi);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot2d(cot(x), [x, -%pi, 3*%pi], [y, -10 , 10], [xtics, 1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+errormsg:true$
+continuous_at(cot(x), x, %pi); 
+continuous_at(cot(x), x, %pi);
+discontinuous_at(cot(x), x, -%pi);
+2*%pi, numer;
+seq(-%pi, %pi)$
+a:[rat(-%pi), rat(%pi)]$
+limit(cot(x), x, 0); 
+limit(cot(x), x, %pi); 
+limit(cot(x), x, rat(%pi));
+map(lambda([n], continuous_at(cot(x), x, n)), a);
+continuous_over(cot(x), x, [-%pi, %pi], %pi);
+continuous_over(cot(x), x, [-%pi, 0]);
+continuous_over(cot(x), x, [0, %pi]);
+continuous_over(cot(x), x, [-%pi, %pi]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+b:intervals(seq(-%pi, %pi));
+map(lambda([n], first(intervals(n))), b);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+b:intervals(seq(-%pi, %pi));
+map(lambda([n], 
+             k:first(intervals(n)), continuous_over(cot(x), x, k)), [b]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot2d((x+1)/(x-1), [x, -10, 10], [y, -10 , 10], [xtics, 1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+discontinuous_over(expr, var, range, [stepping]):=
+block([min:lmin(range), max:lmax(range), stepping: (if (not(emptyp(stepping))) then 
+                    float(first(stepping)) else 1.0)],
+delete(false, 
+map(lambda([n], discontinuous_at(expr, var, n)), seq(min,max, stepping))))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+discontinuous_over(((x+1)*(x+2))/((x-2)*(x+1)), x, [-10, 10]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(all)$
+kill(find_roots)$
+find_rootspoles(expr, var, min, max, [stepping]):=
+block(
+[ ans:[], 
+ steps:(if (length(stepping)=1) then
+              float(first(stepping)) else 1.0),
+  shift:(if (length(stepping)>1) then
+                 float(second(stepping)) else 0.0)],
+
+intervals(items):=block([result],
+  result: if (emptyp(items)) then [] else
+          if(listp(items)) then
+           if(emptyp(rest(items))) then [] else
+               cons(cons(first(items),  [second(items)]),
+                       intervals(rest(items)))),
+
+seq(start,stop,[stepping]) := block(
+[ control:stop, stop:ceiling(stop), n, y:[],
+stepping: (if (not(emptyp(stepping))) then 
+                    float(first(stepping)) else 1.0),
+shift: (if (length(stepping)>1) then
+                float(second(stepping)) else (0.0)) ],
+
+            (n:(float(stop-start)/float(stepping))),
+            (if (start < stop)
+            then
+            (y:flatten(append([y], 
+                                        makelist(float(start+shift+(stepping*(i-start))), 
+                                        i, start, n+start))))
+            else
+            (y:flatten(append([y], 
+                                        makelist(-(float(stop-shift-(stepping*(i-stop)))), 
+                                        i, -(n+stop), stop)))))
+            (if (n>1.0)
+                then return(y)
+                else return([]))),
+
+lsplit(fn, lst):=block([ acc:[], m:[], src:lst], load(basic),
+while (not(emptyp(src))) do (
+if(not(emptyp(fn(first(src))))) then return() else
+push(pop(src), acc)
+), push(rest(src), m), return([reverse(acc), first(m)])),
+
+ratprint:false,
+find_root_error:false, 
+    for i in intervals(seq(min, max+min, steps)) do 
+        ans:(append(ans, delete(false, listify(
+                                        setify(
+                                          errcatch(
+                                            find_root(expr, var, 
+                                                            first(i), second(i)))))))), 
+            find_root_error:true, ratprint:true, return(ans))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+continuous_over(sin(x), x, [0, %pi]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot2d(((x+1)*(x+2))/((x-2)*(x+1)), [x, -10, 10], [y, -10 , 10], [xtics, 1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsplit(lambda([n], n=n), [1.0]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervals(seq(0, 3));
+ratprint:false$
+seq(0, 3);
+numberp(0);
+lsplit(lambda([n], n=n), seq(0, 3));
+lsplit(lambda([n], n=n), intervals(seq(-%pi, %pi)));
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

@@ -1,0 +1,1256 @@
+;;;;;;;;;;;;;;
+newer version in papers directory  July 2010
+
+\documentclass{article}
+\usepackage{fullpage}
+\title{DRAFT: Interval arithmetic, Extended numbers and Computer Algebra Systems (CAS)}
+\author{Richard J. Fateman\\
+Computer Science Division\\
+Electrical Engineering and Computer Sciences\\
+University of California at Berkeley }
+\begin{document}
+\maketitle
+\begin{abstract}
+
+%May, June, July, 2006
+
+Many ambitious computer algebra systems were initially designed in a
+flush of enthusiasm, with the goal of automating {\em any} symbolic
+mathematical manipulation ``correctly.'' Historically, this approach
+resulted in programs that implicitly used certain identities to
+simplify expressions. These identities, which very likely seemed {\em
+universally} true to the programmers in the heat of writing the CAS,
+(and often were true in well-known abstract algebraic domains) later
+needed re-examination when such systems were extended for dealing with
+previously unanticipated kinds of objects by extending ``generically''
+the arithmetic or other operations.  For example, approximate floats
+do not have the same properties as exact integers or rationals.
+Complex numbers may strain a system designed for real-valued
+variables.  In the situation examined here, we consider two categories
+of ``extended'' numbers: $\infty$ or {\em undefined}, and real
+intervals.  We comment on issues raised by these two troublesome
+notions, how their introduction into a CAS may require a (sometimes
+painful) reconsideration and redesign of parts of the program, and how
+they are related.
+\end{abstract}
+\section {Introduction}
+
+We discuss methods for dealing with intervals and extended numbers in
+a CAS. We think the interval approach presented in section 2 is novel
+compared to its usual treatment, partly because our approach uses some
+computations which are relatively easy to program in a symbolic
+system, but would require building up much more infrastructure if
+attempted in the numerical context in which interval arithmetic {\em
+usually} appears. Furthermore, the CAS user may be more inclined to
+allow extra computation time if it allows for better results given
+that for CAS, it is sometimes the case that results can be computed to
+{\em arbitrarily high precision} or when conditions permit, {\em
+exactly}. Naturally one would like computations to be done efficiently
+when the demands are less stringent, but if the arithmetic on the
+endpoints of an interval already involves non-traditional arithmetic
+and subroutine calls, it seems plausible to endorse the use of yet
+additional algorithms to keep the width of the interval down.  The
+same kinds of arguments hold for extended ``number-like'' objects such
+as $\infty$. 
+%considered in section \ref{inf}. 
+Whereas the IEEE-754 floating-point standard representations of
+$\infty$ and undefined are constrained to be exceptional operands
+fitting within the floating-point format, a CAS can expand upon the
+notation-- using extra time and space-- if the user is seeking
+somewhat better results.  We will explore this later, after
+considering intervals in more detail.
+
+To return to the notion of failing ``identities'' indicated in the
+abstract, here are examples that might plausibly be built in to a CAS
+simplifier: for any expression $x$, $x - x = 0$ and $x/x = 1$.  
+
+When might this not be true?  When $x$ is $\infty$ or an IEEE
+floating-point {\tt NaN} or an interval, say [-1,1], other rules apply.  Yet not
+applying such common simplifications, a sequence of symbolic manipulations
+may result in expressions that are unnecessarily complex
+and unwieldy. A path must be found that allows only legal operations on extended
+expressions.  
+
+Let us use the term {\em non-nullable} for a value or pseudo-value $x$
+for which $0 \times x$ cannot be replaced by $0$, $x-x$ cannot be
+replaced by $0$, and $x/x$ cannot be replaced by $1$.  A pseudo-value
+might be $\pm \infty$, (unsigned) $\infty$, one of the IEEE
+floating-point operands {\tt nanSingle, nanDouble, nan,} or extra
+items like {\em indeterminate, undefined,} and in many contexts, {\em
+real intervals}.  How these are notated in a system can vary: it might
+be convenient to use the notation $\infty$ or $1/0$ for the same
+concept, and {\tt NaN} or {\tt undefined} might be $\bot$.  There
+might also be such concepts as bounded but not definite, or ``no
+number at all'' as would be the case for the empty intersection of two
+numeric intervals. In some CAS, the designers have yielded to the
+temptation to use intervals as sets.  For example, they may assert
+that $\lim_{x->\infty}\sin(x) = [-1,1]$. The nominal interpretation of
+an interval is that it is a representation of a particular point along
+a real-line segment, but we can't tell which point.  The
+interpretation of [-1,1] as this limit is different: the solution is
+{\em not} any such point, but ``all the points''. The usual definition
+of a limit requires that the distance between a point $-1<r<1$ and an
+interval $I=[-1,1]$ should be 0, when in fact interval arithmetic
+tells us the distance is not zero, but $[r-1,r+1]$. Perhaps one could
+assert that it is not incorrect to return $[-\infty, \infty]$ for {\em
+any computation of a real limit}, but this is unlikely to receive full
+credit on a calculus exam.
+\medskip
+
+\section{A closer look at intervals}
+
+Let us revisit that assertion that [-1,1]- [-1,1] might be zero, or
+not.  There is a dependency issue, well known in interval arithmetic
+(or ``reliable computing'') circles, in which the inability to
+determine the ``source'' of an interval, i.e. whether two intervals
+are correlated, leads to wider (and therefore less useful) results.
+
+In our example, if the expression means the set \{$x-x ~|~ x \in
+[-1,1] $\} the answer is 0.  If we mean \{ $x-y ~|~ x \in [-1,1]$ and
+$y \in [-1,1]$ \}, then the answer is the interval [-2,2].
+
+Is there a neat way of distinguishing the two cases?  How
+about treating expressions this way. (In Macsyma) these might be notated
+\begin{verbatim}
+block([x:interval(-1,1)],  x-x)
+\end{verbatim}
+and
+\begin{verbatim}
+block([x:interval(-1,1),
+        y:interval(-1,1)],  x-y)
+\end{verbatim}
+
+This locution is an attempt to force a kind of interchange of
+simplification and evaluation, where in the first case the expression
+{\tt x-x} would be simplified to zero and in the second case the
+expression x-y would not be simplified, but just evaluated using
+interval arithmetic rules\footnote{Without changes in Macsyma, which
+currently does not have rules for arithmetic about intervals, it
+doesn't work. They both return 0.}.  Another example which illustrates
+the possibility of getting tighter bounds with additional work, is the
+expression $\sin(x) \times \cos(x)$ which, on the face of it, for all
+real $x$, seems to be in the interval [-1,1].  In fact, the expression is in
+[-1/2,1/2], a result which becomes clear by observing that $\sin(x)
+\times \cos(x) = \sin(2x)/2$.
+
+A non-constructive definition of interval arithmetic can be phrased in
+terms of constraints on a function.  Elucidating the situation of
+dependency requires more than one variable, so let us start with two.
+Then given a real-valued function of two real-valued arguments to
+evaluate: $f(x,y)$ for $x,~y$ interval-valued between $[x_0,x_1]$ and
+$[y_0,y_1]$ respectively, we return an interval $[z_0,z_1]$, where the
+real-valued $z_0$ is the minimum of $f(x,y)$ with the constraints $x_0
+<= x <=x_1$ and $y_0 <= y <=y_1$, and the corresponding maximum is
+$z_1$.  While the interval $[z_0,z_1]$ then is the ``best'' answer, it
+might not be possible to find it conveniently because we have lost
+information during the calculation, or the minimization computation is
+computationally too costly. We tend to accept the computation of some other, looser,
+version: $[w_0,w_1] \subseteq [z_0,z_1]$. That is $w_0 <= z_0$ and$ w_1
+>= z_1$.  We may also need to extend the notation to allow for
+situations such as division by zero.
+%%\begin{verbatim}
+%%\end{verbatim}
+
+Much effort can sometimes be expended in improving ``tightness'' of the
+result, and this may be useful in the long run, since any slack in the result can be magnified by subsequent
+operations.
+
+Generally there is a tradeoff between width of a result interval and
+effort taken to compute it.
+
+In our assumptions about a CAS, we mean by ``interval()'' a program
+which produces a new object, not shared.\footnote{Maple has a feature
+making all compound objects which simplify to the same structure
+isomorphic. Implementationally they are pointers to one copy in
+memory. This is helpful in some processing, but not this one.  There
+is sometimes a difference between holding two chocolate-chip cookies,
+one in each hand, and holding just one cookie but with both hands.}
+
+\section{An approach}
+In this section we discuss a collection of approaches for computing
+with {\em real intervals}. We claim no novelty in these
+matters\footnote{Indeed, any time we thought we had a new idea in
+interval arithmetic, we found we were simply rediscovering something
+that had been previously identified as interesting (and often analyzed
+in great detail).}.  Our perspective here is to briefly introduce
+ideas to a reader who may not have seen these before, or has not seen the
+alternative possibilities to 'naive' intervals.  We will not
+thoroughly examine them. Our objective is to provide enough background
+so that we can reasonably, in the following section, point out the
+relationship with pseudo-values that occur in CAS.
+\subsection{Intervals are Three-tuples}
+
+We create a numeric interval of the real line by calling a function,
+{\tt Ninterval}.  For example, for the interval between -1 and 2, we
+evaluate a form like this $v=${\tt Ninterval(-1,2)}.
+%(setf v (ri -1 2))
+What this function constructs, rather than
+our usual representation of an interval as a pair, e.g. [-1,2], is
+an internal data structure with {\em three} slots. The
+% (describe *)
+%[-1,2] is a structure of type ri.  It has these slots:
+% lo                 -1
+% hi                 2
+% exp                #(#:g478 0 1)  ;; note, g478 is a made-up index.
+first two are the visible upper and lower limits, often denoted
+${\underline x}$ and ${\overline x}$, and in our example, ${\underline
+x}=-1$ and ${\overline x}= 2$.  These can be exact integer or rational
+numbers, machine floating-point numbers, software ``bigfloats'', or
+(we do not recommend this) literal parameters or expressions (say $a$
+or $\exp(b-1)$). Before constructing the third slot, we must first
+manufacture a new symbolic variable name\footnote{a counter is
+incremented after each newly constructed name.}.  Here we denote that
+variable by \#n for some integer n. The third slot is then an
+algebraic expression involving that variable, initially just \#n.  The
+exact representation used is specified in the implementation, and
+might be a list of polynomial coefficients, a ``tree'' or some other
+form that might be convenient in a CAS.
+
+Our example $v$ might be described this way: {\tt[-1,2,
+\#5]}. However, since we (humans) ordinarily do not need to see the
+extra slot, programs ordinarily will not display it in the computer
+output. For purposes of exposition in this section of this paper, we
+will show them.
+
+If we compute $u= v \times v$, we create the slots in $u$ as
+{\tt[0,4,\#$5^2$].}  Note that if we had two independent
+intervals that happened to have the same bounds, and multiplied them,
+we would compute {\tt[1,2,\#5)* [-1,2,\#6]} as {\tt [-2,4,\#7]}. 
+This is the interval [-2,4], which is wider than [0,4], and
+where we have generated a new variable for the use of this interval.
+
+Let us continue our example.
+If we compute $u \times v$, we can notice a coincidence in indexes in
+{\tt [-1,2,\#5) * [0,4,\#$5^2$]}. By realizing that we are
+computing \#$5^3$,  the resulting interval is [-1,8], instead of the result of straight
+multiplication of intervals,  which would give [-4,8].
+
+Under certain conditions we can maintain this stream of computation,
+and more generally recompute the expression in the third slot. To do
+this we must not only represent the polynomial, but remember the
+original value.  In this example we do this by keeping the original
+\#5 around as long as there is a live ``accessible'' value that uses
+it. There is a convenient mechanism that is built-in to Lisp for this
+purpose, a ``weak hash table''.
+
+Another optimization we can make is for quadratic polynomials. We can
+rewrite $p=3x^2+2x+1$ as $q=3(x+1/3)^2+2/9)$. This is a ``single use
+expression'' and provides tighter bounds as $p([-1.1,-1.0])$ is
+$[1.8,2.63]$ but $q([-1.1,1.0])$ returns the tighter (in fact optimal!) $[2.0,
+2.43].$ The order of computation here is based on ``completing the square''
+but unfortunately does not generalize to higher order.
+\subsection{Variations}
+What are the options for that final slot?  We initially considered
+just expressions of the form $r x$ for a scalar number $r$ or $rx^n$
+for some integer $n$ but then realized that it would be simple to use
+existing subroutines for symbolic mathematics to carry around a more
+elaborate form.  We initially settled on a polynomial in (any) {\em one
+variable}, in some encoded canonical form. {Given such a form, we can
+feed it into a program for further analysis: for evaluating a
+polynomial $P$ in one variable $x$ at an interval point, the tightest
+bounds can be computed by considerably more elaborate computation than
+just going through the adds and multiplies: locating suitable
+intervals around the zeros of $P'(x)$, then evaluating $P$ at those
+places to find relative extrema. Combined with $P$ at the endpoints
+(absolute min/max), we can find sharp bounds subject only to the
+representation of the endpoints.  Such a computation {\em could} be
+worthwhile if the advantage of finding tighter bounds is more
+important than the increased computational expense.}
+
+Any expression that turns out to be more complicated than we wish to
+deal with can be given a fresh name, and from that point forward it is
+assumed to be independent of all previous variables.  Thus our current
+program would never notice the correlation possibility that is
+inherent in the identity $\sin(x) \times \cos(x) = \sin(2 x)/2$ since
+each of the expressions $\sin()$ and $\cos()$ would be given different
+(presumed to be independent) names.
+\medskip
+
+Where do we draw the line, though: what is too complicated? Can we in fact
+use something more elaborate than polynomials? Indeed, there are
+a host of variations on interval arithmetic: our invention of a
+``polynomial'' slot is subsumed under any of a number of previously documented
+innovations, many of which are reviewed by Arnold Neumaier, see
+\verb|http://www.mat.univie.ac.at/~neum/papers.html#taylor|.  This paper
+reviews so-called Taylor forms -- an extension which revolves around carrying
+a truncated Taylor series with remainder, evaluated at the midpoint of
+the interval. In certain calculations this additional information can
+be effective in reducing the width of the intervals being
+carried.  To produce this model, we could use the extra slot
+effectly as an expression of a Taylor series, with remainder, for the
+number being represented.  We could start our trigonometric
+calculation by considering that we are evaluating $f(x)=\sin(x)$,
+where $x=[a,b]$.  We then expand sin in a Taylor series around the
+midpoint, $x=x_0=(a+b)/2$, and use an expression for the remainder (error).
+Note that operations on Taylor series are similar to those on polynomials. The
+major difference is that the Taylor method sets a global order, and
+high-order terms are truncated, with the error term calculated separately as
+another interval calculation.
+
+%[[[Just refer to Berz paper in Reliable computing...
+
+It is important to observe that the evaluation of the remainder term,
+which can itself be elaborate, may have to be done carefully too, or
+some blow-up is re-inserted.  Programs for evaluating derivatives can
+be generated by ``Automatic Differentiation'' programs, but these must
+also be evaluated in an interval fashion. When the error term looks
+sufficiently well-behaved, ``naive'' interval arithmetic may do. The
+net effect of tighter bounds is that some convergent procedures
+(typically Newton iteration combined with interval bisection) can
+sometimes converge with {\em far fewer iterations}. This accelerated
+convergence may more than compensate for the more expensive operations
+at each step, as shown in the references.
+%]]]
+
+Other possibilities include allowing the extra slot to contain  a
+linear function of any number of interval values (more about this later). In this case a
+linear-programming method could be used to find min and max.  If the
+extra slot were allowed to be a multivariate polynomial, a method
+based on cylindrical algebraic decomposition might be suitable.
+
+An idea called ``Affine Arithmetic'' for intervals has also been
+pursued in the recent literature on reliable computation.  In this
+model, a quantity $x$ is represented as a first-degree (``affine'')
+polynomial in the values it depends upon.  In particular, $$x=x_0+
+x_1e_1+x_2e_2+ \cdots + x_k e_k$$ where the $\{x_i\}$ are given ``real
+numbers'' and the $\{e_i\}$ are dummy variables, assumed uncorrelated
+for calculation purposes, but each of whose values is known to be in
+$[-1,1]$.  When possible the representation is maintained through
+ordinary arithmetic, and when it is not, the operational routine must
+find an alternative acceptable approximation, by introducing another
+variable $e_{n}$ and positing it as uncorrelated.  Affine arithmetic
+(AA) seems especially appealing when geometric objects are defined in
+which the coordinates share a set of dummy variables.  This situation
+produces centrally-symmetric convex polygons or ``zonotopes''.  In two
+dimensions these can be visualized as ``lozenge'' shapes that are
+smaller than the enclosing rectangular intervals that would appear
+from naive intervals. There are benchmarks illustrating particularly
+advantageous results in approximate computations for graphics: they
+can provide closer adherence to lines or planes that are being
+approximated. Not all computations ultimately benefit from AA:
+it may be beneficial to switch between methods to
+increase overall efficiency: AA may be better for small
+intervals.  An extensive comparison of interval variations is given in
+the paper by Martin et al.\cite{martin}.
+
+%(a  +b e1) +( c +d e1) --> (a+c) + (b+d)e1.
+%(a  +b e1) *( c +d e1) --> (ac) + (ad+bc)e1 +bd*e1^2 
+% A*e1^2 ->   A/2 +A/2*e3
+
+See for example,\\
+ \verb|http://www.icc.unicamp.br/~stolfi/EXPORT/projects/affine-arith/Welcome.html|
+or\\
+\verb|http://www.tecgraf.puc-rio.br/~lhf/ftp/doc/oral/aa.pdf|
+%http://www.ic.unicamp.br/~stolfi/EXPORT/projects/affine-arith/Welcome.html
+
+Implementing AA on top of our structure is straightforward, and we
+have done so up to addition and (non-trivial) multiplication, for
+arithmetic combining scalars and intervals.  Yet another possibility
+is to try to compute an algebraic ``single use expression'' (SUE) from
+some set of variables. (see whitepaper on Sun Forte Fortran by
+G.W. Walster\\ {\tt
+http://developers.sun.com/prodtech/cc/products/archive/whitepapers/tech-interval-final.pdf}
+).  This would transform an expression like $ax+bx$ where $a$ and $b$
+are scalars, but $x$ is an interval, into $(a+b)x$, which may be a
+tighter expression.
+
+Similarly, for intervals $x$ and $y$, $A= x/(x+y)$ can be rewritten as
+the SUE $B=1/ (1+y/x)$, although the acceptable domains for $x$ and
+$y$ have now been changed. (Look for division by interval expressions
+that might include zero!)  Walster suggests obtaining the answer by
+computing $C = 1- (1/(1+x/y))$ and then returning their intersection,
+$B \cap C$.
+
+One approach for SUE is for us to establish a set of heuristics for
+driving an algebraic expression into a more-nearly SUE form.  A good
+algorithm to find an optimal ``sharp'' solution (that is, more
+efficient than exhaustive enumeration and evaluation) would be
+welcome, but tradeoffs such as whether a SUE version with respect to
+$x$ is better than a SUE with respect to $y$, or some other variation
+is yet better, cannot be computed at compile-time, since in general
+the optimimum depends not only on the expression available at
+compile-time, but on the particular {\em run-time} interval values associated
+with $x$ and $y$.  {Note that given any collection of ``mathematically
+equivalent'' expressions transformed at compiled-time into various
+interval expressions, each version of an expression could be
+numerically evaluated, and the best solution emerges by computing
+their intersection.}  Such evaluations must be done while aware of the
+possibility of the introduction of extraneous singularities; if any of
+the expressions is non-singular at a point in the interval, then it
+presumably reflects a valid mathematical result. A good expression might be
+a Taylor series expansion at the midpoint of the interval. This cannot be
+computed without knowing the interval endpoints.
+
+We could attempt to use some existing (essentially black-box and
+possibly heuristic) programs like Mathematica's {\tt Maximize} and
+{\tt Minimize}.  Yet, even when they nominally work according to their
+own specifications, the answers may not be satisfactory for interval
+computations. Reliable computing requires strict inclusion: these
+imply stronger requirements for directed rounding of endpoints than
+typical numerical min/max programs.
+
+In (see http://citeseer.ist.psu.edu/nedialkov03interval.html),
+Interval Arithmetic, Affine Arithmetic, Taylor Series Methods: Why,
+What Next? (2003) by Nedialko S. Nedialkov, Vladik Kreinovich, Scott
+A. Starks, various methods are considered. 
+A theoretical comparison can be summarized by an
+optimality result: representation by polynomials is, in their presented
+context, optimal.
+
+
+\subsection{Other approaches to improved interval computation}
+Other techniques, such as (repeated) bisection of intervals can be
+used to attempt to narrow the result width. Our suite of programs
+includes this conceptually simple technique: the result for $P(x)$
+would be the smallest interval containing all the ranges of $P(x_1),
+..., P(x_n)$ where $x$ has been subdivided.  That is, $x$ is the union
+of the $x_i$; some criteria determine which of the subdivisions to
+divide again in an attempt to narrow the interval. (In particular the subdivisions
+containing the current maximum and minimum should be re-divided.)
+
+This kind of interval arithmetic is more encapsulated and therefore
+``hands-off'' compared to the usual numeric version.  It takes the
+form of a functional programming model: new values may be created out
+of components; but we do not allow user-level operations like ``change
+the lower limit of variable $x=[{\underline x},~{\overline x}]$ to be
+the number 43.'' Instead, we allow the creation of a new object which
+can be re-assigned to the same name: $x=[43,~{\overline x}]$.  Old
+values, if they are no longer accessible, will be collected, and their
+memory locations re-used.
+
+\section {Pseudo-values: Infinities and intervals}
+
+At this point it may not seem that there is any direct connection
+between intervals and extended numbers such as infinity. In fact,
+the resemblance has more to do with the techniques to resolve
+difficulties than the mathematical concepts.
+
+Note that without intervals, the production and therefore occurrence
+of infinities is limited to singularities (of which division by zero
+is the most obvious, but not the sole example).  With intervals, the
+exceptional treatment of zero must be extended in some way to {\em
+intervals that contain zero}.  Once having produced such an object,
+can one make it go away?  For example, can we assure that $1/(1/x)=x$
+true, even if $x$ is an interval containing zero?
+
+\subsection{Infinity as a symbol}
+One of the problems of a CAS design is that there is a tradeoff
+between convenience for human users and for computation. As an
+example, computationally, we might construct a system in which an
+infinite value appears only as a result of certain operations, and in
+each case we can find some more informative alternative. Unfortunately,
+if its origin is simply ``a human typed it into the system'' we do not
+have an alternative to ``just compute with this.''
+
+What can we propose?  We can keep $\infty - \infty$ from becoming zero
+if, each time we generate (a new) $\infty$, we give it a unique
+subscript or index, in a manner similar to the indexed variables used
+with the intervals.  That is, $\infty_1$, $\infty_2$ ,..., $\infty_n$.
+In Macsyma/Maxima this is rather simple to start:
+{\tt (inf\_counter:0,
+infinity():=(?incf(inf\_counter),Infty[inf\_counter]), nofix(infinity))}
+
+After this, any mention of {\tt infinity} as in {\tt infinity+3} will generate
+an expression like {\tt Infty[4]+3}. In \TeX\ this could be displayed
+as
+$\infty_4+3$.
+
+This is not enough: A search through the Maxima code for all producers and
+consumers of infinities may reveal locations that must be changed to
+conform to this model. These occur principally in the {\tt limit}, {\tt sum}, and
+{\tt definite integration} facilities.  Also saving such values off-line and reading
+them back much re-create the proper values, shared when appropriate.
+
+We need a new simplifier that is able to compute a kind of pessimistic
+simplified form. For example, given the expression $\infty_2-
+\infty_3$, {\em assuming that there are no occurrences of} $\infty_2$
+or $\infty_3$ {\em anywhere accessible in the CAS}, can be simplified
+by generating an undefined: {\tt und}. Such symbols are also
+indexed. If there are other occurrences of those $\infty_k$ symbols elsewhere, it
+is prudent to keep the expression uncombined in the hope that at some
+later point one of those symbols will interact and cancel.  We typeset
+the undefined quantity with the ``bottom'' symbol, for example,
+$\bot_4$.
+This gives us an opportunity to consider a case where we assign {\tt x :=
+limit(1/x\^2,t->0,plus)} and thus x=$\infty_5$ , a specific value. Then
+{\tt x-x} is $\infty_5-\infty_5$ , and indeed this can be simplified
+to $0$ because this is the difference of two of ``the same $\infty$''.
+
+Mathematica uses a notation for infinity which provides a direction in
+the complex plane; $(1+i)\infty$ is effectively
+DirectedInfinity($(1+i)/\sqrt{2}$) after normalization. There is
+presumably only one infinity in each direction, and so rules combining
+them must either be very conservative or sometimes wrong. This design
+suggests that for each directed infinity generated, there should be a
+subscript as well.
+
+This simplifier must deal with any expression with one or more
+infinite or undefined objects, possibly other forms such as
+``indefinite'' (but bounded) and generally should come up with the
+most informative and compact result possible.  For example, {\em in
+the absence of any other occurrences of the same-indexed infinities,}
+$\infty_2+\infty_3$ could be replaced with $\infty_4$ as a simpler
+result\footnote{ To reiterate: it would be a mistake to make this
+replacement if there were another expressionalgebraically dependent on
+either of the two component $\infty$ objects, since the replace would
+lose dependency information.}.  In similar circumstances (no
+dependencies) there is no point in retaining the details of
+$(\bot_4+1)/\bot_7$.  This should be replaced by (say) $\bot_8$.  An
+expression involving such objects should be simplified as much as
+possible, using standard rules for combination.
+This is not necessarily trivial, and for rational functions
+may be solved using a resultant technique devised by Neil Soiffer in
+his MS project at Berkeley (1980). That work calculated the minimal
+number of ``arbitrary constants' needed to provide the same degrees of
+freedom as a given expression with perhaps many such constants.
+
+\section{insert: algebra}
+It is worth observing the properties that fail when we have $\bot$ and
+$\infty$ without subscripts. (or in some cases, with subscripts).
+
+Consider that at the base of the ordinary simplifier we assume that
+the otherwise uninterpreted symbols $x$, $y$, $z$ etc., come from the properties
+of integral domains, which include the postulates for commutative rings.
+
+Commutative Rings:
+\begin{enumerate}
+\item %1.
+ Closure:
+ $a,b$ in R imply $a+b$ and $a\times b$ are in $R$.
+\item %2.
+ Uniqueness: $a=a'$ and $b=b'$ imply $a+b=a'+b'$ and $a\times b
+ =a'\times b'$
+\item %3. 
+commutation:  $a+b=b+a;$ $a\times b=b\times a$.
+\item %4. 
+
+Association: $a+(b+c)=(a+b)+c$; $a\times(b\times c)=(a\times b)\times c$.
+\item %5.
+Distribution: $a\times (b+c)=a\times b+a\times c$.
+\item %6.
+Additive Identity (Zero). there is an element, 0, such that $a+0=a$ for all $a$ in $R$.
+\item %7.
+Multiplicative Identity (One). there is an element, 1, such that $a\times 1=a$ for all $a$ in $R$.
+\item %8.
+Additive Inverse: $a+x=0$ has a solution $x$ in $R$ for all $a$ in $R$.
+
+integral domain adds
+
+%9. 
+\item Cancellation: if $c$ is not zero and $c \times a=c \times b$, then $a=b$.
+
+Other property usually assumed for the symbols include {\em ordering.}
+
+%10. 
+\item Trichotomy:  $a>0$, $a<0$ or $a=0$.
+
+%11. 
+\item Transitivity: $a<b$ and $b<c$ implies $a<c$.
+
+Here are some consequences:
+
+%12. 
+\item $a<b$ implies $a+c < b+c$.
+
+%13. 
+\item $a<b$ and $0<c$ imples $ ac<bc$.
+
+%14. 
+\item $a<b$, $a=b$, or $a>b$.
+
+What about fields, reals?
+
+%15. 
+\item
+A field is an integral domain in which each element $e$ except 0 has an
+inverse, $e^{-1}$ such that $e\times e^(-1)=1$. (This seems simple enough, but has lots of consequences.
+
+\end{enumerate}
+%.........
+How do elements $\infty$ and $\bot$ fail to satisfy these postulates?
+
+We would like to know that, if we use rules such as $0\times x = 0$, $x/x=1$ and $x-x=0$, that 
+these statements are true for
+any possible legal assignment of values for $x$.
+
+Since these are not true for certain values of $x$, what should we do?
+
+Consider clarifying =. 
+
+The usual way of providing inference rules for equational logic, includes the following:
+
+Substitution: If $P$ is a theorem then so is $P[x\rightarrow E]$  where 
+ $P[x\rightarrow E]$ means textual substition of expression $E$ for variable $x$ in $P$.
+
+If $P=Q$ that is, $P$ and $Q$ are of the same type and are equal, then
+$E[x\rightarrow P] = E[x\rightarrow Q] $
+
+If $P=Q$ and $Q=R$ then $P=R$.
+
+Some CAS essentially say that two expressions are ``='' under much
+looser conditions.  For example 
+\begin{enumerate}
+\item[a] They are equal if, for {\em nearly every} substitution of
+values into the variables, the expressions evaluate to equal
+expressions.  Yes, this ``nearly every'' sounds just wrong, but the
+argument is made by the authors of Mathematica that a ``generic
+solution'' is acceptable if all exceptions to that solution are in a
+space of lower dimensionality. Example: $x/x=1$ even if it is perhaps
+false if $x=0$ or if $x$ is an interval containing zero.  Another
+example: For all pairs of real numbers $\langle x,y\rangle$ in ${ R}^2$,
+$(x^2-y^2)/(x-y)= x+y$ except along a particular line, namely
+$x-y=0$).  This is not a kind of argument that builds confidence in
+the capability of the program to produce ``guaranteed'' answers or
+prove other programs correct\footnote{We understand why some people
+advise against learning
+mathematics from a physicist.}.
+\item[b] Two floating-point single- or double-precision
+results are equal if they are ``close enough'' (by some relative or
+absolute error).
+\item[c].Two approximate or imprecise numbers are ``close enough'':
+In Mathematica we can construct a very imprecise number $n$,
+ {\tt n=N[1,1]}, a number 1 with one digit of accuracy. Then
+this equation is ``true'': $3+n=4+n$.
+\item[d] Mathematica claims that two values each {\tt Infinity} are equal, yet the
+difference of them is {\tt Indeterminate}. This can't be right.
+% Other examples, by mixing intervals or vectors with scalars, can result
+%in questionable ``equalities''. [specify?]
+\end{enumerate}
+
+How can we reconcile the different behaviors of a CAS resulting from
+such designs with the intention that a CAS can ``prove'' mathematical
+theorems?  If a proof that $f(x)-g(x)$ is zero (or is non-zero) ``for
+all $x$'' (where ``prove'' is implemented as simplification), is
+contradicted for some $f(c)-g(c)$ at a specific value $c$? Certainly
+if $c$ is not in the domain of $x$ we can make some case that this
+does not matter.  What, though, if it is in the domain?
+
+\subsubsection{What is equality?}
+
+If we approach this question operationally from the perspective of
+a CAS design, the most plausible definition is to say that
+two objects are equal if a simplifier program provides the same
+canonical result, that is, lexicographically identical, and programmatically
+indistinguishable\footnote
+{We may (and will) forbid examining the representation at some abstraction
+level, otherwise we would be faced with conundrums like declaring as unequal
+two integers because they are stored in different memory locations, even if
+they had the same value.}, for each side of the relation. 
+
+In Lisp this is {\tt equal}. {Lisp has {\tt eq} to
+represent equality as ``same storage location'', as well as several
+specialized equalities for numbers ({\tt =}), strings ({\tt string=}),
+and combinations ({\tt eql}).}  It is possible to have a canonical
+expression which is, for example, {\tt 3*inf[3]+14*inf[7]}.  which
+would be different from {\tt 14*inf[7]+3*inf[3]}; a canonical
+simplifier would rearrange one or the other so they would look the
+same. Mathematics texts are generally insufficiently pedantic to make
+the subtle distinctions necessary for programmers.
+
+We can require that testing for numerical equality, as between
+floating-point numbers, use a different predicate. (Advice given to
+novice programmers dealing with floating-point computation is to never
+test for equality; this is overkill.)
+
+Equality for intervals has several different variations-- possibly,
+certainly, impossible.
+
+
+\subsubsection{An alternative approach}
+Assume that manipulation in the general simplifier is bound by rules
+of computation in a commutative field with identities 0,1 with algebraic
+extensions for each independent indeterminate with domain Real or Complex
+numbers, and that in this field, $x/x=1$ 
+
+Any computation that we do must first make sense in this domain. After
+the computation is complete, a valuation can be done in some other
+domain in which an algebraic expression is associated with an ordered
+list of arithmetic commands that can be performed on elements in any
+domain, including elements that are infinite, undefined, intervals, or
+other objects.
+
+Except for the discomfort caused by $ x^0=1$ and   $0^x=0$, this might work.
+
+%***
+
+consider 8, inverse. $\infty+x= 0$ has no solution. However, if we have a
+indexed set of infinities, $\infty_1,~\infty_2,$ etc.  then each $\infty_k$ has
+an inverse. Real intervals spanning zero arguably do not have inverses
+unless the language of intervals is expanded to exterior intervals.
+
+consider 9. If c=inf, then ca=cb becomes inf=inf, or und=und, which does not imply a=b. 
+ If c=und, then ca=cb becomes und=und.
+
+consider 10: und has an unknown sign.
+
+consider 12, 13. the case c=inf or und does not work.
+
+consider 16.  und does not have an inverse. inf does not, since inf*0=und, not 1.
+Arguably, indexed inf, maybe.
+
+
+How do intervals fail to satisfy these postulates?
+First, what intervals are allowed?
+[real,real], [real,inf], [und], [-inf, real], [-inf,inf]
+
+
+\subsection*{Consider clarifying =}
+ Two intervals are equal if a simplifier
+program provides the same canonical result for each side of the
+relation. This can happen if two intervals are each degenerate (one
+point), and that point is the same numbers, or if the two intervals
+match in upper/lower bounds and index expression.  In particular it is
+insufficient to have equal endpoints alone.
+
+
+consider 8, inverse. [-1,1] +x= 0 has no solution. However, if we have
+a indexed set of intervals, [-1,1,p], then [1,-1,-p] may work.
+an inverse.
+
+consider 9. If c=inf, then ca=cb becomes inf=inf, or und=und, which does not imply a=b.  If c=und, then ca=cb becomes und=und.
+
+
+........end insert
+
+A list of a few plausible rules shows that intervals and the pseudo-values
+of $\infty$ and $\bot$ relate to each other. We are here concerned
+only with {\em real} values and pseudo-values, and we may need to have separate
+rules for {\em complex} $\bot$. This might occur if one computes  $\sqrt{[-4,-1]}$ 
+which has no real value, and could arguably be $\bot$  but perhaps should be $[1,2]i$
+in the context of a CAS which knows about complex numbers.
+
+\noindent
+  What is $\sin(\bot)$?  [-1,1] if $\bot$ is {\em real}, otherwise $\bot$.\\
+  What is $\exp(\bot)$?   Perhaps $[0,\infty]$ if $\bot$ is {\em real}?\\
+  Is $[-\infty,\infty]$ the same as real $\bot$?\\
+  Is $[\bot,\bot]$ meaningful?  Is it $\bot$?\\
+
+Et cetera.
+\medskip
+
+A CAS designer has a choice to make: are these activities to be confined to the
+numeric type hierarchy (an uncomfortable choice, I think, in which
+case there may be both single- and double-float infinities, and the
+choice of projective or affine models of the real line are relegated
+to the numeric system), or are such pseudo-values used as an overlay
+of a separate algebraic system that coexists more with the language of
+variables and constants (like $\pi$ and $e$).  The latter seems more
+plausible in context of a CAS.
+
+An extended discussion of what choices to make is beyond the scope of the
+present paper; a doctrinaire approach is likely to annoy at least some
+CAS users. We defer further discussion to a future paper.
+% [[ much more could be added here]]
+\subsection{Big-Oh notation}
+We hesitate to step into this muck, but one might be tempted to relate
+this material to Big-Oh notation in asymptotic analysis. In particular
+$O(x)-O(x)$ is not zero, but $O(x) \times O(x) is changed to O(x^2)$.
+The common notation is further hindered by the misuse of the symbol
+``='' which is usually considered an equivalence relation.  Yet
+$T(n)=O(n^2)$ does not mean $O(n^2)=T(n)$; an expression which would
+be rejected as illegitimate.  Proposals to remedy this notation by
+using curly inequalities or set notation have not driven out the
+traditional notation.
+
+\subsection {Notes on Mathematica}
+
+[[ particular +/- features from WRI]].
+
+Mathematica has Indeterminate, DirectedInfinity[], and
+DirectedInfinity[z] for an infinite quantity that is a positive real
+multiple of the complex number z. Among the rules, 0*Indeterminate is
+Indeterminate.
+
+In the typical CAS, including
+Mathematica, 0*f[x] is simplified to zero; this is
+a mistake, in some sense if we later learn that  f[x]:=Indeterminate.
+
+Where do we go with this?  A calculus of infinities for Limit
+computations perhaps. A more cautious simplifier that doesn't say $x/x
+\rightarrow 1$ but $x/x \rightarrow 1 ~~(x\ne 0)$?
+
+It would be nice to know the rules being used, instead of having to
+guess them; the treatment has evolved over various versions of Mathematica.
+
+Or this section could be left out.
+
+{\section{Implementation notes}
+
+For an arithmetic package in which there are typed objects
+that look explicitly like tagged numeric intervals, it is
+not difficult in principle to attach methods for all the component-pair
+combinations that may be of interest. For example, a two-argument ``+'' in
+which each of the arguments is a scalar machine double-float can be
+translated fairly easily into an operation.  Running through the plethora
+of additional operations, e.g. ``+'' of a interval with an exact rational number,
+or a symbolic expression like ``f(x+1)'' can be tiresome, and inheritance
+hierarchies cannot make all the right decision automatically. Some operations
+may not make sense outside the interval context. For example, there are many more ways
+of ``comparing'' intervals: which may involve inclusion, overlap, disjointedness. These
+can be phrased as ``certainly'' or ``possibly''  as in ``certainly greater than''.
+etc.
+
+Using the Common Lisp Object System (CLOS), we define methods for
+\begin{verbatim}
+(defmethod two-arg-+ ((u Ninterval)(v Ninterval)) ....)
+\end{verbatim}
+etc. for all argument type pairs.
+
+This provides a default for each of the possible comparisons used to
+evaluate $x+y$.  Additionally we can define how to combine an interval
+with a complex number, a matrix, or a symbolic variable (or perhaps
+more likely, refuse to do so).  In an object-oriented hierarchy, it
+may be possible to place intervals in a lattice with respect to some
+operations and use inheritance for method resolution, but in some
+sense a response like ``{\tt no method available for two-arg-+ with
+types Interval and Matrix}'' will wait in the background for
+unimplemented combinations.  The structure for extending the ordinary
+Lisp arithmetic to intervals (namely by overloading existing n-ary
+operations like ``+'' and ``*'' by using two-argument versions of
+these operations) is straightforward and can be done through
+macro-expansion\footnote {see generic arithmetic (in lisp/generic
+directory.}.
+
+Using CLOS for keeping track of types does not resolve how to
+integrate interval ``stuff'' into a CAS, exactly.  This is because we
+must patch an existing system, say Maxima, so that it will not apply
+identities prematurely that are incorrect for intervals.  To
+illustrate how pervasive such errors can be, note that Intervals were
+introduced in Mathematica in version 3, and even after many years, in
+version 5.1, {\tt Interval[{a, b}] - Interval[{a, b}]} returns 0,
+which is presumably false\footnote{I reported this bug and have been
+told that it is fixed in the current development version.}.
+
+Ideally we have localized a simplification that says $x + (-1)\times x$ = 
+$0\times x$  = 0.
+
+This would operate only in the case that $x$ is nullable.  In
+particular $x$ being some version of infinity, or some
+as-yet-unspecified interval, makes this simplification false.  We must
+assert some criterion for $x$ before establishing this exception to
+the general simplification. We must also process $x$ to some extent to
+see if this criterion holds.  It is rather commonplace to try to
+``short circuit'' processing by asserting that if any factor in a
+product simplifies to zero, the rest of the product need not be
+evaluated; this leads to inconsistencies.  Perhaps we want to patch
+the ``rational function package'' or alternatively argue that these
+programs are doing arithmetic in a field and we are violating one of
+the assumptions, evaluating at an illegitimate point.  We could try
+intercepting any explicit setting of a value to Inf or Ind, but that
+would not prevent manipulation of arbitrary symbols, where only later
+the value is proffered.
+
+But getting back to the Maxima simplifier in particular: we must
+change it so that $0$ times $x$ is sometimes computed as indefinite,
+rather than short-circuit the simplification of $x$ entirely, and just
+return $0$.
+
+%This is done in simptimes, I think.}
+
+\section{Acknowledgments}
+A version of this paper was linked to a message on the newsgroup
+sci.math.symbolic in June, 2006, which provoked a number of useful
+comments. Thanks especially to Christopher Creutzig.
+
+\begin{thebibliography}{99}
+
+\bibitem {berz-taylor}Berz-Taylor model of intervals
+Reliable Computing 4: 83-97.
+\bibitem {martin}
+Ralph Martin, Huahao Shou, Irina Voiculescu, Adrian Bowyer and Guojin
+Wang, ``Comparison of interval methods for plotting algebraic curves,''
+Computer Aided Geometric Design, Volume 19, Issue 7, July 2002,
+Pages 553-587.
+%(http://www.sciencedirect.com/science/article/B6TYN-46C8RF8-1/2/cb147638a60fd464363ae5db7f337ede)
+%Author Keywords: Subdivision; Interval analysis; Range analysis;
+%Algebraic curves
+\bibitem {kahan}
+W. Kahan,
+``How Futile are Mindless Assessments of Roundoff
+in Floating-Point Computation?''
+\verb|http://http.cs.berkeley.edu/~wkahan/Mindless.pdf|
+
+\bibitem {berz}Computation and Application of Taylor Polynomials
+with Interval Remainder Bounds
+
+http://citeseer.ist.psu.edu/cache/papers/cs/8022/http:zSzzSzbt.nscl.msu.eduzSzpubzSzpaperszSzrdaiczSzrdaic.pdf/berz98computation.pdf
+
+\bibitem{markst} http://www.nd.edu/~markst/la2000/slides272f.pdf
+
+\bibitem {mpfi}MPFI (Revol, Rouillier) INRIA
+http://www.cs.utep.edu/interval-comp/interval.02/revo.pdf
+
+\bibitem {walster}Sun Forte Fortran / G.W. Walster
+http://developers.sun.com/prodtech/cc/products/archive/whitepapers/tech-interval-final.pdf
+\end{thebibliography}
+\end{document}
+
+\section{where is the payoff?}
+\begin{verbatim}
+
+
+{do I believe this?  consider 
+
+$x(x+3)$    vs $x^2+3x$ 
+
+Let x = [-2,1]
+x(x+3) is 
+[-2,1]*[1,4] = [-8,4]
+
+$x^2+3x$  is 
+[0,4]+[-6,3] = [-6,7],   better, tighter..}
+let x= [-2,1]
+consider $x*(x+2)$         vs   $x^2+2*x$.
+                     
+[-2,1]*[0,3] = [-6,3]       [0,4] + [-4,2] = [-4,6]
+
+
+A tight bound would be [-1,3]. On [-2,1],
+ $f(w):=w^2+2*w$ has a  min at w=-1, where f(-1)=-1
+and a max at 1, where f(1)=3. Our simple routine for {\em NOT}
+using Horner's rule 
+will not work for  (x+A)*(x+B). We need to make
+more use of symbolic info: the polynomial roots.
+
+\section {How far to extend, e.g. beyond univariate polynomials?}
+
+\begin{verbatim}
+Ninterval^NInterval -> no change, or change to Sinterval.
+
+We suspect In the following, k is the next unused interval index.
+
+exp(Ninterval(a,b,#n,f)) -> Ninterval(exp(a){round down},exp(b){round up},#k,1)
+log(Ninterval(a,b,#n,f)) -> Ninterval(log(a) etc)
+sin(Ninterval(a,b)#n,f)) -> find if rel max min occur in [a,b], check ends
+                            Ninterval(low (round down if not -1), high (round up if not +1) #k, 1)
+
+
+cos (etc)
+
+must fill out the matrix of programs for all binary ops and unary ops
+Ninterval OP  other
+other     OP  Ninterval
+
+* - * / expt
+=, not=, >, >=, <=, <, included, overlap, disjoint.
+
+
+perhaps consider reordering of operations if A op B op Ninterval?
+
+\end{verbatim}
+
+
+
+
+
+-------------------------------------old
+
+
+Here we are principally interested in integrating into a CAS in some
+useful fashion, the manipulation of real number intervals, even given
+that they general violate rules of the algebraic system that we are
+using for ordinary numbers and symbols.  Mathematica (now) does
+Intervals in a reasonable fashion, in its latest versions.  Maple 7
+does not.  Maple 7 requires the user to invoke evalr (range arithmetic
+on objects that look like INTERVAL(a..b), or evalrC (complex range).
+[check out newer Maple -- I only have Maple 7].  Maple seems to do its
+calculations in such a way as to make the assumption that ALL
+intervals with the same endpoints represent the same constant, and
+thus INTERVAL(-1,1)-INTERVAL(-1,1) becomes zero, even before evalr
+does its job.
+
+One consequence of dealing with intervals is that it introduces some
+variety in our thinking of the types of computational objects that
+might occur in mathematical thinking outside the ring/field extensions
+that --while well supported in CAS -- may not be sufficiently
+expressive. Resolving what to do about intervals may help in thinking
+about computing with other pseudo values Infinity - Infinity as
+Indeterminate. \\ 
+Indeterminate - Indeterminate as Indeterminate \\
+
+
+Interestingly, in MMA 5.1 Interval[{a,b}] - Interval[{a,b}] comes out
+ 0.  Oh well.
+
+
+......................
+
+{\section{Other extended numbers}
+
+
+
+
+\section {Symbolic endpoints for intervals}
+
+Intervals with one or two symbolic endpoints, Sinterval(low,hi)  are generally
+not worth attempting to simplify. They usually get unwieldy, fast.
+Perhaps sums are worthwhile, but a product of
+two Sintervals is rather clumsy, involving min and max.
+An explicit product with a numeric constant may be worth
+simplifying:  3*Sinterval(low,hi) --> Sinterval(3*low,3*hi).
+
+An explicit product with a symbol x probably cannot be 
+simplified, at least if x may be an interval, or not.
+
+Mathematica is rather cautious about its equivalent to
+Sinterval, and we could poke around and see what rules it uses.
+
+Intervals with two numeric endpoints (real numbers: single or double
+floats, rationals, bignums, bigfloats, QD, MPFR). We exclude 
+Infinities, NaNs, from the possible endpoints.  Given the
+context of a symbolic system, we would like to deal with UND
+(etc) in a symbolic context, not as a sub-case of an interval.
+There are, however, things that can be plausibly most easily
+expressed as intervals. For example, 
+numbers (or alternatively, a representation for ``any real number''
+could be an interval from $-\infty$ to $infty$.)  Or by an abuse that
+seems common, but can be very harmful, this notation
+could be ``the set of all possible real numbers.''
+
+Among the other plausible interval concepts:  an interval containing
+no numbers at all, say [+0,-0] or an exterior interval [1,-1]: the complement of 
+an ordinary interval [-1,1]. This can be done in an affine or a projective
+model (refs);  it is possible to represent the union or intersection
+of intervals, closed or open endpoints, etc.  
+
+
+We expect that both endpoints should be the same type and precision,
+and that given the usual usage of intervals these will be
+floating-point.  However, rational operations on rational intervals
+may be useful, especially since they provide exact (free of rounding)
+intervals.}
+
+\end{document}
+example from Hongkun Liang and Mark Stadtherr, Univ Notre Dame
+AIChe Annual Meeting session 272, Nov. 2000,
+
+f(x) = x ln x for X = [0.3, 0.4]
+Using interval arithmetic
+F(X) = [0.3, 0.4] * [-1.2040,-0.9163] = [-0.482,-0.275]
+ Using Taylor model (3rd order, x_0 = 0.35)
+F(X) = -0:3674 - 0:04982 *(X - x0) + 1.4286 * (X - x0)^2
+-1.3605 * (X - x0)^3 + [-1.25 * 10^-4, 4.86 * 10^-5]
+= [-0.370,-0.361]
+The exact range is [-0.368,-0.361]
+
+
+try also
+f = sin(2x) + sin(3x) + cos(4x) for X = [0:2; 0:5]
+
+............. do the log example............
+3rd order
+
+%keepfloat:true; taylor(x*ln(x),x,0.35,4);
+
+% -0.36744-0.04982*(X-0.35)+1.42857*(X-0.35)^2-1.36055*(X-0.35)^3+1.94364*(X-0.35)^4
+$$ -0.36744-0.04982\,\left(x-0.35\right)+1.42857\,\left(x-0.35\right)%
+ ^{2}-1.36055\,\left(x-0.35\right)^{3}+1.94364\,\left(x-0.35\right)^{%
+ 4}+\cdots  $$
+
+good answer should be about [1/e, 0.3*ln(0.3)] = appx [-.36788,-.36119185].
+note that the 4th derivative of $x \ln x$ is $2/x^3$. 
+% (* 0.35 (log 0.35)) = -0.36743772
+Now try evaluating taylor series expanded at ([0.3,0.4]-0.35) = [-0.05,0.05]
+ to 3rd order. This is 
+[-0.05,0.05]
+$[-0.05,0.05]^2= [0, 0.0025]$
+$[-0.05,0.05]^3= [-1.25\times 10^{-4}, 1.25\times 10^{-4}]$
+
+(+ -0.36744 (* -0.04982 0.05) (* 1.42857 0.0025) (* -1.36055 1.25e-4))
+
+%%= -0.36652964 with error term   $1/4! \times 2/\(xi)^3 \times(\xi-0.35)^4$
+
+%% what is the largest value of 2/(xi)^3 for xi in [0.3,0.4]? It is at 0.3, and
+%% the value is 74.07407407407406d0
+%% that times (1/4!*(0.05)^3
+
+%% which looks like , bounding,..
+%%  1/4! *  2/(0.3)^3*0.5^4
+%% (* 1/12 (expt 0.3 3)(expt 0.5 4)) = 1.4062e-4
+%% (* 1/12 (expt 0.4 3)(expt 0.5 4)) = 3.3333e-4
+
+ $1/12\times  ([0.3,0.4] -0.35])=$ %??
+
+  $0.08333 \times [0.027, 0.064] \times [0, 6.25\times 10^{-4}]= 3.333\times 10^{-4}$
+
+%%  (* 0.08333  0.064 6.25e-4) = 3.333\times 10^{-6}$
+%    (* 0.08333  0.027 6.25e-4) = 1.4061937e-6
+
+[-0.36744, -0.3673066]
+
+%%??? not right. slide gives eror as [-1.25e-4, 4.86e-5]
+%%total interval is [-0.370, -0.361]
+
+
+%%% hummmmmm
+
+{--- this next example is not so convincing --
+
+$$f(x)= \sin(x_0)+\cos(x_0)(x-x_0)-sin(x_0)(x-x_0)^2/2+ \cdots$$ or
+using a remainder formula,
+where $\xi$ is some value between $x$ and $x_0$, and we (somewhat arbitrarily)
+cut off the series after one term:
+
+$$f(x)= \sin(x_0)+\cos(\xi)(\xi-x_0) = \sin(x_0)+ R_s$$
+
+And similarly for $g(x)=\cos(x)$,
+
+$$g(x)= \cos(x_0)-\sin(\xi)(\xi-x_0)= \cos(x_0) + R_c$$
+
+If we then $f(x) \times g(x)$ we get  $\sin(x_0)\cos(x_0) + R_s \cos(x_0)+R_c\sin(x_0)$
+ + additional remainder terms from the product of the Taylor series which have been
+truncated.
+
+Now consider $\sin(x)\cos(x)$ evaluated on $x=[-1,1]$. Since $\sin(x)$
+is about [-0.84, 0.84], and $\cos(x)$ is about [0.54, 1], the naive interval
+product is [-0.84, 0.84].  Next consider the Taylor model, using
+$x_0=0.0$ as the midpoint.  Conveniently, $x_0=0,~\sin(x_0)=0,~
+\cos(x_0)=1$, so in computing $f\times g$ almost all the terms simplify nicely
+leaving us only to compute $ R_s =-\xi \cos(\xi)$, knowing only that
+$\xi$ is some value in [-1,1].  A naive computation of this gives us
+[-1,1]*[0.54,1] or [-1,1], but if we could do something slightly cleverer, maybe
+we could get
+[-0.54, 0.54]. This would be much better than [-.84, 84], and not much wider
+than the tightest answer, [-0.5, 0.5].  
+
+What if we evaluated on $x=[-1/2, 1/2]$ instead?
+%-1/4,1/4
+then $\sin(x)= [-0.48,48]$
+% [-0.248, 0.248]
+$\cos(x)= [0.87,1]$.
+% [0.9699,1]
+The naive interval product is  $[-0.48, 48]$.
+% [-0.248, 0.248]
+Then $ R_s =-\xi \cos(\xi)$, knowing only that
+      $[-1/2,1/2] \times [0.87,1] = [-1/2,1/2]$
+%      $[-0.25,0.25] \times [0.96,1] = [-1/4,1/4]$
+
+%DO I BELIEVE THIS??
+%CHECK IT OUT again.
+
+%%Carrying another term in the Taylor series:
+f(x)=sin(x0)+cos(x0)*(x-x0)   - sin(z)*(z-x0)^2/2
+g(x)=cos(x0)-sin(x0)*(x-x0)   - cos(z)*(z-x0)^2/2
+
+Evaluate f*g on X=[-1,1]
+x0=0, sin(x0)=0, cos(x0)=1
+f(X) = 0 + x              -sin(z)*z^2/2   
+g(X) = 1 + 0              -cos(z)*z^2/2
+
+f*g= x +                - x*(cos(z)+sin(z)) *z^2/2 
+
+what can we say about this?  looks worse!?   z^2/2 = [0,1/2]. cos(z)+sin(z) =? [-.3,1.84]
+}
+
+..............
+note from G W Walster in Forte doc
+consider  
+A= x/(x+y).   This can be rewritten as the SUE
+
+B=1/ (1+y/x)
+
+But the domains of A and B are not the same!
+
+A is defined except when x+y=0.  
+B is defined except when x=0  or  x=-y \ne 0
+
+For intervals,  
+0 \not\in X+Y,
+0 \not\in 1+y/x  and 0 \not \in x.
+
+What about 
+
+C = 1-  (1/(1+x/y)) ?
+
+different domain restrictions!
+
+unless A and B return R* (undef.) this is sharp:
+
+
+B \cap  C % intersection.
+
+Walster asks
+When is it legitimate to substitute
+one interval expression for another? Is substitution possible when the enclosed
+expressions have different domains? The analysis of this and other questions is
+facilitated by introducing the closed R* -system in which the containment set of
+an interval expression is always defined.
+
+................
+some local rules. do we assume inf[a] is positive or unsigned?
+This is just writing off the top of my head, and must be checked.
+
+
+ADDITION
+
+IMPORTANT: assume non-unique inf[a], und[a]
+
+UND RULES
+
+
+n*und[a]+m*und[a] = (n+m)*und[a]  for n,m numbers
+n*und[a]+m*und[a] = 0 if n+m=0   
+ in particular, und[a]-und[a] = 0
+
+n*und[a]+ {anything else} = no change
+
+INF RULES
+n*inf[a]+m*inf[a]= (m+n)*inf[a]
+n*inf[a]+m*inf[a]= 0 if (m+n) = 0
+  in particular inf[a]-inf[a] =0
+
+n*inf[a]+m*inf[b] = no change?
+
+Assume Q does not involve inf[a].
+n*inf[a]+Q = no change?
+
+IMPORTANT: assume UNIQUE inf[a], und[a]
+
+und[a]*+{any} = und[a]
+
+ n*inf[a] = inf[a] for n nonzero ; re-use symbol
+          = und[new] for n zero
+
+inf[a]+inf[b] = und[new]
+inf[a]*inf[b] = inf[new] or nochange.
+
+MULTIPLICATION
+
+assume non-unique inf[a]
+
+und[a]*und[a] = no change
+
+und[a]/und[a] = 1  (or und???)
+
+und[a]^n*und[a]^m = und[a]^(n+m)  for n,m numbers?
+inf[a]^n*inf[a]^m = inf[a]^(n+m)  for n,m numbers?
+ special case und[a]^0?  Should it be 1??
+ special case inf[a]^0?  Should it be 1??
+und[a]^n = und[new] .  what if n=0? plausibly 1??
+
+und[a]* {anything} = und[a]];reuse
+
+inf[a]*inf[b] = inf[c]
+
+inf[a]^n*inf[b]^m = no change
+
+n*inf[a]/m*inf[a]= n/m
+n*inf[a]/m*inf[a]= und if m=0 . what if n=0?
+n*inf[a]+m*inf[b] = no change?
+
+inf[a]^n*B  with n negative, B free of inf[..] or und[..]  --> 0
+Assume Q does not involve inf.
+n*inf[a]+Q = no change?
+
+
+If inf[a] is unique (no possible collapse with other occurrences of inf[a])
+If inf[b] is unique (no possible collapse with other occurrences of inf[b])
+
+ n*inf[a] = inf[a] for n nonzero
+          = und[new] for n zero
+
+inf[a]+inf[b] = und
+inf[a]*inf[b] = inf[c] ? or inf[a]? or und? 
+
+DIVISION RULES
+There are no division rules because $A/B$ is the same as $AB^{-1}$. Look at rules for powers.	

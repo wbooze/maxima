@@ -1,0 +1,2096 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 14.12.1 ] */
+
+/* [wxMaxima: input   start ] */
+bin:[0,1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for i in bin do for j in bin do (print([append([i],[j])]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(append([bin[i]], [bin[j]]), i, 1, 2), j, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist([bin[i], bin[j]], i, 1, 2), j, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+bin:[0,1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(k,i,j,m,l)$
+k(i,j):=for m:1 thru i do for l:1 thru j do (print([concat(m, l)]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+k(1, 1); k(1, 2); k(2, 1); k(2, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(concat(k(1,1), k(1,2)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(k(i,j), i, 1, 2), j, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(0, k, 1, 2);
+makelist(1, k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(0, k, 1, 2), k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(0, k, 1, 2); makelist(1, k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+setify(makelist(0, k, 1, 2)); setify(makelist(1, k, 1, 2));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+union(setify(makelist(0, k, 1, 2)), setify(makelist(1, k, 1, 2)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(b, S)$
+b[m]:=[0,1][m];
+S(m,k):=[b[m], b[k]];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+b[m]:=[0,1][m];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S[m,m]:=[concat(b[m], b[m])];
+S[m,k]:=[concat(b[m], b[k])];
+S[k,m]:=[concat(b[k], b[m])];
+S[k,k]:=[concat(b[k], b[k])];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+b[2];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S(1,1);S(1,2);S(2,1);S(2,2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+merge(S(1,1), S(1,2));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??merge;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??list;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+create_list([i,j], i, [0,1], j, 0, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+create_list([i,j,k], i, [0,1], j, [0,1], k, 0, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for m:1 thru 8 do print(matrix(create_list([i,j,k], i, [0,1], j, [0,1], k, 0, 1)[m]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+b(s):=for m:1 thru 2^s do print(create_list([i,j], i, [0,1], j, 0, 1)[m]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+h(s):=for m:1 thru 2^s do print(create_list([i,j,k], i, [0,1], j, [0,1], k, 0, 1)[m]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+b(2); h(3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+load(integer_sequence);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+h(s, [l]):=
+for m:1 thru s 
+do print(
+    create_list(l, k, 1, m)[m][m]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+h(4, [0,0], [0,1], [1,0], [1, 1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+h(n,d):=while(n>=d) do ((n:n-d), print(n));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+h(10, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+1+1;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+n(a,b):=block([x:a, y:b, u], while(x>0.1) do (u:x/y, x:u, print(float(x))))$
+n(10, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+n(a,b):=block([x:a, y:b, u], while(y>0.01) do (u:y/x, y:u, print(float(y))))$
+n(10, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(n,val,a,b,x,y)$
+val:(a,b)$
+n(f,[pair]):=block(buildq([f, pair], lambda([[x]], apply(f, append(pair, x)))))$
+g:n("/");
+g(20, 3); g(22, 7), numer;
+g:n("*", 2*x); 
+g(20, 3); 
+20*3*40; 20*3*6; 
+g:n("*", 3, x)$ g(a+b); g:n("*", 3, y)$ g(a+b);
+g:n("+", x)$ g(a+b);
+g:n("*", x)$ g(a+b);
+g:n("*", x^2)$ g(a+b);
+g:n(".")$ m:g([a+b+c], [d+e+f]), expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sort([a*d, a*c, a*b], orderlessp);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+limit(3^(1/x), x, 0);
+limit(3^(1/x), x, 0, plus); limit(3^(1/x), x, 0, minus);
+limit(2^(1/x), x, 0);
+limit(2^(1/x), x, 0, plus); limit(2^(1/x), x, 0, minus);
+limit(%e^(1/x), x, 0);
+limit(%e^(1/x), x, 0, plus); limit(%e^(1/x), x, 0, minus);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+describe("dot");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+a . b; 3 . 2; [2 . 2] . [3 . 3];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f)$
+f[1]:1$ f[n]:=2^f[n-1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(f[n], n, 1, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+obase:2$ makelist(f[n], n, 1, 10); obase:10$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(f[n], n, 1, 10), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sremove("0", "00a", 'sequal, 1, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+base(n,d, [prefix]):= 
+block([q:0, r:n, ans:0, obase:d, a, b], 
+/* prefix has to be a string like "0x" or "0b" */
+(while(r>=d) do (q:q+1, r:r-d), a:string(r), 
+b:concat(q, sremove("0", a, 'sequal, 1, slength(a))),
+if(emptyp(prefix)) then sremove("0", b, 'sequal, 1, 2) else 
+concat(first(prefix), b)))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+base(10, 2);             base(10, 16);
+base(10, 2, "0b");     base(10, 16, "0x");
+base(10, 16, "");
+base(26, 2); base(26, 16);
+base(26, 2, ""); base(26, 16, "");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(base(n,k), k, 2, 2), n, 0, 26);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(base(n,k, ""), k, 2, 2), n, 0, 26);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(base(m, 16), m, 0, 128);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(base(m, 16, ""), m, 0, 128);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(base(m, 3, ""), m, 0, 128);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for m:1 thru 10 do printf(true, " [~b] ~&", m);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for m:1 thru 40 do printf(true, "[~x] ~%", m);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??printf;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+if (!listp(list)) then nil elseif (!zerop(list)) map(first, list[m]) else map(rest, list[m]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??listp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(makelist(makelist(S(m,k), m, 1, 2), k, 1, 2));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+concat( first(S(2,2)) , first(S(2,2)) );
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(map(concat, S(m,m), S(m,m)), m, 1, 2), k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(map(concat, S(m,m), S(m,k)), m, 1, 2), k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(map(concat, S(m,m), S(k,m)), m, 1, 2), k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(map(concat, S(m,m), S(k,k)), m, 1, 2), k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(map(concat, S(m,k), S(m,m)), m, 1, 2), k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(map(concat, S(m,k), S(m,k)), m, 1, 2), k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(map(concat, S(m,k), S(k,m)), m, 1, 2), k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(map(concat, S(m,k), S(k,k)), m, 1, 2), k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(map(concat, S(m,k), S(k,m)), m, 1, 2), k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(map(concat, S(m,k), S(k,k)), m, 1, 2), k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(map(concat, S(m,m), S(k,k)), m, 1, 2), k, 2, 1, -1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+permutation(S(1,1), S(2,2));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+permutation(S(1,2), S(2,2));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subset(setify(S(1,2)), lambda([x], oddp(x) and atom(x)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T(m,k):=map(concat, S(m,k), S(m,k));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F(m,k):=map(concat, S(m,m), S(m,k));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+L(m,k):=map(concat, S(m,k), S(k,m));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+H(m,k):=map(concat, S(m,m), S(k,m));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+K(m,k):=map(concat, S(m,m), S(k,k));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+N(m,k):=map(concat, S(k,m), S(k,m));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Z(m,k):=map(concat, 
+                    (S(m,m), S(m,m)), 
+                    (S(m,m), S(m,k)), 
+                    (S(m,m), S(k,m)),
+                    (S(m,m), S(k,k)),
+                    
+                    (S(m,k), S(m,m)),
+                    (S(m,k), S(m,k)),
+                    (S(m,k), S(k,m)),
+                    (S(m,k), S(k,k)),
+                    
+                    (S(k,m), S(m,m)),
+                    (S(k,m), S(m,k)),
+                    (S(k,m), S(k,m)),
+                    (S(k,m), S(k,k)),
+                    
+                    (S(k,k), S(m,m)),
+                    (S(k,k), S(m,k)),
+                    (S(k,k), S(k,m)),
+                    (S(k,k), S(k,k))
+
+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist((Z(m,k)), k, 1, 1), m, 1, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(Z(m,k), k, 1, 1), m, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(Z(m,k), k, 1, 2), m, 1, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(Z(m,k), m, 1, 2), k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(Z(m,k), m, 2, 1, -1), k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(Z(m,k), m, 1, 2), k, 2, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(Z(m,k), m, 2, 2), k, 2, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+num_partitions(4, list);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+permutation(4, 4);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+combination(4, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(T(m,k), m, 1, 2), k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(F(m,k), m, 1, 2), k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(L(m,k), m, 1, 2), k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(H(m,k), m, 1, 2), k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(K(m,k), m, 1, 2), k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(N(m,k), m, 1, 2), k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+b(1,1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S[1,1];S[1,2];
+S[2,1];S[2,2];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(S(m,k), m, 1, 2), k, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(S(m,k), m, 1,2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+block([dontfactor: [ ]], factor(sum(S(m), m, 0, 4)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(S(m), m, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+solve([x=3, y=2], [x, y]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(i, y)$
+block(y:[], for i in makelist(n, n, 1, 10) do 
+    (y:sort(flatten(append([y], [i/100.0])))), 
+return(y));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(start,stop,step):=block(
+            n:truncate(round((stop-start)/float(step))), 
+            (if (n>1)
+                then (for i in makelist(k, k, 1, n+1) do (print([start+inc*i])))
+                else print([])));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(str,stp,stepping, increment) := block([n, y:[]],
+            (n:floor((float(stp-str)/float(stepping))), float),
+            (y: sort(flatten(append([y], makelist(float(str+increment+(stepping*(i-increment))), i, 0, n-increment)))))
+            (if (n>1.0)
+                then return(y)
+                else print([])));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sek(1, 3, 1.0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(0, 10, 0.5, 3.14159);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+prime(z):=block([k:z, y:1], 
+    (y:listify(setify(append(makelist(if(primep(k)) then k else 1, k, 1, k), [y])))),
+    return(y));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+prime(10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+primes_between(m,z):=block([k:z, y:1, l:m], 
+    (y:listify(setify(append(makelist(if(primep(k)) then k else 1, k, l, k), [y])))),
+    return(rest(y)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+primes_between(10, 20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+primes_between(1000, 1100);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+length(primes_between(1000, 1100));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(k^2, k, 1, 10);
+makelist(2^k, k, 1, 10);
+listify(disjoin({}, setify(listify(setify(makelist(if(is(k^2=2^k)) then k else {}, k, 1, 10))))));
+listify(disjoin({}, setify(listify(setify(makelist(if(is(k^2>2^k)) then k else {}, k, 1, 10))))));
+listify(disjoin({}, setify(listify(setify(makelist(if(is(k^2<2^k)) then k else {}, k, 1, 10))))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+solve(3*sin(x)^2=5, [x]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+%, numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sin(sqrt(5)/sqrt(3)), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sin(sqrt(5)/sqrt(3))*180/%pi, numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+asin(sqrt(5)/sqrt(3))*180/%pi, numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+load(to_poly_solve)$
+to_poly_solve(3*sin(x)^2 = 5*cos(x)+1, x, 'simpfuncs = ['expand, 'nicedummies]);
+to_poly_solve(3*sin(x)^2 = 5*cos(x)+1, sin(x), 'simpfuncs = ['expand, 'nicedummies]);
+to_poly_solve(3*sin(x)^2 = 5*cos(x)+1, cos(x), 'simpfuncs = ['expand, 'nicedummies]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+%, numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+to_poly(3*sin(x)^2 = 5*cos(x)+1, [x]);
+subst([%g133=z], %);
+to_poly(3*sin(x)^2 = 5*cos(x)+1, [sin(x)]);
+to_poly(3*sin(x)^2 = 5*cos(x)+1, [cos(x)]);
+nicedummies(%);
+subst([%g0=z], %);
+solve(first(to_poly(3*sin(x)^2 = 5*cos(x)+1, [cos(x)])), [x]);
+%, numer;
+solve(first(to_poly(3*cos(x)^2 = 5*sin(x)+1, [sin(x)])), [x]);
+%, numer;
+solve(subst([%g0=x], first(nicedummies(to_poly(3*cos(x)^2 = 5*sin(x)+1, [x])))), x);
+%, numer;
+solve(subst([%g0=x], first(nicedummies(to_poly(3*sin(x)^2 = 5*cos(x)+1, [x])))), x);
+%, numer;
+sin(-rhs(last(%)))*180;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+cos(.2647543685144707)*180;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+multinomial(11, [4, 4, 2, 1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+multinomial(2, [0, 0]);
+multinomial(2, [0, 1]);
+multinomial(2, [0, 2]);
+multinomial(2, [1, 0]);
+multinomial(2, [1, 1]);
+multinomial(2, [1, 2]);
+multinomial(2, [2, 0]);
+multinomial(2, [2, 1]);
+multinomial(2, [2, 2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(multinomial(2, [n, k]), n, 0, 2), k, 0, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+multinomial(3, [0, 0]);
+multinomial(3, [0, 1]);
+multinomial(3, [0, 2]);
+multinomial(3, [0, 3]);
+multinomial(3, [1, 0]);
+multinomial(3, [1, 1]);
+multinomial(3, [1, 2]);
+multinomial(3, [1, 3]);
+multinomial(3, [2, 0]);
+multinomial(3, [2, 1]);
+multinomial(3, [2, 2]);
+multinomial(3, [2, 3]);
+multinomial(3, [3, 0]);
+multinomial(3, [3, 1]);
+multinomial(3, [3, 2]);
+multinomial(3, [3, 3]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(multinomial(3, [n, k]), n, 0, 3), k, 0, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+multinomial_coeff(4, 4, 2, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+permutations({a, b ,c});
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+permutations([t, o, o, l]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+permutation(4, 4); permutation(4, 3); permutation(4, 2); permutation(4, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+length(permutations([t, o, o, l]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+multinomial_coeff(1, 2, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+multinomial_coeff(2, 1, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+multinomial_coeff(1, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+permutations([u, l, l, l]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+permutation(4, 1); multinomial_coeff(3, 1); multinomial(4, [3, 1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+permutations([l, l, u, u]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+permutation(4, 2)/2!; multinomial_coeff(2, 2); multinomial(4, [2, 2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+4!/(4-2)!/2!;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??interval;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalp([0, 1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f(x):=2*x^3-3*x^2+1, simp:false;
+f(1); f(2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+g(x):=x^2*(2*x-3)+1, simp:false;
+g(1); g(2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[a, b]+[c, d];
+[a, b]-[c, d];
+[a, b]*[c, d];
+[a, b]/[c, d];
+"see, lists are not intervals!";
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+load(intervalArithmetic);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalsub([list]):=[first(first(list))-second(second(list)), second(first(list))-first(second(list))];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalsub([a, b], [c, d]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalsub([0, 3], [1, 2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalSubtract([list]):=[list[1][1]-list[2][2], list[1][2]-list[2][1]];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalSubtract([a, b], [c, d]);
+intervalSubtract([0, 3], [1, 2]);
+intervalSubtract([1, 2], [1, 2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+n(f,[pair]):=block(buildq([f, pair], lambda([[x]], apply(f, append(pair, x)))))$
+g:n("*")$ g([a, b]); g([a, b], [a, b]), simp:true;
+m:n("*",  [a, b])$ m([c, d]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+map("*", [a, b], [c, d]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalProduct([a, b], [c, d]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalProduct([1, 2], [1, 2]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalProduct([0, 0], [0, 0]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+y1:x^(0.2)*(k2*x^(4*%i)+k1*x^(-4*%i))$
+rectform(y1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+e:log(243)/(4*log(3)), logexpand;
+logcontract(%), ratsimp;
+radcan(e);
+e, numer; 5/4, numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalProduct([-3, 3], [0, 2]), simp:true;
+intervalProduct([-3, 3], [-1, 0]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[0, 2]+[-1, 0], simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalProduct([-3, 3],[0, 2])+ intervalProduct([-3, 3], [-1, 0]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalProduct([-3, 3], ([0, 2]+[-1, 0])), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+a:[2, 3]; b:[-2, 1]; 
+a+b, simp:true; intervalSubtract(a, b), simp:true; union(setify(a), setify(b)), simp:true;
+a/b, simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+a:[-1, 2]; b:[1, 2];
+a/b, simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([list]):= 
+block(if((list[2][1])<0 and 0 < (list[2][2])) then return("one of the intervals contains a zero!") else
+intervalProduct(([1/(list[2][2]), 1/(list[2][1])]), list[1]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([list]):= block(
+if((list[2][1]<0 and 0 < list[2][2]) or (list[1][1]<0 and 0 < list[1][2])) then 
+return("one of the intervals contains a zero!") 
+else 
+return(intervalProduct(([1/(list[2][2]), 1/(list[2][1])]), list[1])));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([-1, 2], [1, 2]), simp:true;
+intervalDivide([1, 2], [-1, 2]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+show([-1, 1]), simp:false;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+buildq([], [1/0]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+L:[[-1, 0]];
+show([1/L[1][1], 1/L[1][2]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalDivide([list]):= block(
+if((list[2][1]<0 and 0 < list[2][2]) or (list[1][1]<0 and 0 < list[1][2])) then 
+block("one of the intervals contains a zero!")
+else 
+block(intervalProduct(([1/(list[2][2]), 1/(list[2][1])]), list[1])));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst([1/0=inf, -1/0=minf], [-1/0, 1/0]), simp:false;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst([1/0=inf, -1/0=minf], [1/0]/[-1/0]), simp:false;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst([1/0=inf, -1/0=minf], [1/y1, 1/0]), simp:false;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst([1/0=inf, -1/0=minf], 1/ [y1, 0]), simp:false;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??buildq;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+buildq([L], [1/0]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+1/[0, y2];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pairs(items):=block([result],
+result:
+if (emptyp(items)) then [] else
+if (listp(items)) then 
+    if(emptyp(rest(items))) then  [] else
+    cons(cons(first(items),  [second(items)]), 
+                    pairs(rest(rest(items))))
+)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsplit(crit, lst):=
+block(
+[ acc:[], m:[], src:lst, fn:lambda([n], n=crit)], 
+load(basic),
+while (not(emptyp(src))) do (
+if(fn(first(src))) then return() else
+push(pop(src), acc)
+), push(src, m), 
+return(map(lambda([n], delete(false, n)),
+[reverse(acc), first(m)])))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsplit(fn, lst):=block([ acc:[], m:[], src:lst], load(basic),
+while (not(emptyp(src))) do (
+if(fn(first(src))) then return() else
+push(pop(src), acc)
+), push(src, m), return([reverse(acc), first(m)]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsplita(fn, lst):=block([ acc:[], m:[], src:lst],
+while (not(emptyp(src))) do (
+if(fn(first(src))) then return() else
+push(first(src), acc), pop(src)
+), push(rest(src), m), return([reverse(acc), first(m)]))$
+
+lsplitb(fn, lst):=block([ acc:[], m:[], src:lst],
+while (not(emptyp(src))) do (
+if(fn(first(src))) then return() else
+push(pop(src), acc)
+), push(src, m), return([reverse(acc), first(m)]))$
+
+lsplitc(fn, lst):=block([ acc:[], m:[], src:lst],
+while (not(emptyp(src))) do (
+if(fn(first(src))) then return() else
+push(first(src), acc),
+push(rest(src), m), pop(src)
+), push(first(src), acc), return([reverse(acc), first(m)]))$
+
+lsplitd(fn, lst):=block([ acc:[], m:[], src:lst],
+while (not(emptyp(src))) do (
+if(fn(first(src))) then return() else
+push(first(src), acc),
+push(rest(rest(src)), m), pop(src)
+), push(first(src), acc), return([reverse(acc), first(m)]))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsplita(lambda([n], n=0), [-1, 0, 2]);
+lsplitb(lambda([n], n=0), [-1, 0, 2]);
+lsplitc(lambda([n], n=0), [-1, 0, 2]);
+lsplitd(lambda([n], n=0), [-1, 0, 2]);
+lsplitc(lambda([n], n=2), [-1, 2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsplitc(lambda([n], n=1), [-1, 1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intersperse(thing, list):=map(lambda([x], if thing>x then [x, thing] else if thing<x then [thing, x]), list)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intersperse2(things, list):=
+block([result:[]], for thing in things do 
+(result:append(result, map(lambda([x], if thing>=x then [x, thing] else if thing<=x then [thing, x]), list))),
+return(result))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intersperse3(things, list):=
+block([thing:things], if(atom(things)) then
+map(lambda([x], if thing>x then [x, thing] else if thing<x then [thing, x]), list)
+else
+block([result:[]], for thing in things do 
+(result:append(result, map(lambda([x], if thing>=x then [x, thing] else if thing<=x then [thing, x]), list))),
+return(result)))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intersperse(0, [-1, 2]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intersperse2([0, 1, 2], [-1, 2]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intersperse3(0, [-1, 2]), simp:true;
+intersperse3([0, 1, 2], [-1, 2]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intersperse3(minf, [-1, 2]), simp:true;
+intersperse3([0, 1, 2], [-1, 2]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intersperse3([minf, inf], [-1, 2]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsplitc2(fn, lst):=block([ acc:[], m:[], src:lst],
+while (not(emptyp(src))) do (
+if(fn(first(first(src)))) then return() else
+push(first(src), acc),
+push(rest(src), m), pop(src)
+), push(first(src), acc), return([reverse(acc), first(m)]))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsplita(lambda([n], n=0), [-1, 0]);
+lsplitb(lambda([n], n=0), [-1, 0]);
+lsplitc(lambda([n], n=0), [-1, 0]);
+lsplitc(lambda([n], n=2), [0, 2]);
+lsplitd(lambda([n], n=0), [-1, 0]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+unique(flatten(intersperse3(0, [-1, 2]))), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intersperse4(things, list):=
+block([thing:things], if(atom(things)) then
+unique(flatten(map(lambda([x], if thing>x then [x, thing] else if thing<x then [thing, x]), list)))
+else
+block([result:[]], for thing in things do 
+(result:append(result, map(lambda([x], if thing>=x then [x, thing] else if thing<=x then [thing, x]), list))),
+return(unique(result))))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+simp:true$
+intersperse4(0, [-1, 2]);
+intersperse4([0, 0], [-1, 2]);
+intersperse4([minf, inf], [-1, 2]);
+delete([], map(lambda([n],if(n[1]<0 and n[2] >0) then [] else n), intersperse4([minf, inf], [-1, 2])));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intersperse4([0, 0], [-1, 1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalProduct(a, 1/b), simp:true;
+intervalProduct(a, [1/b[2], 1/b[1]]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+show(L)::=block(buildq([L], (1/['L])));
+show([0]), simp:false;
+first(show(0)), simp:false;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+show(L)::=block(simp:false, buildq([L], 1/['L]));
+show(0), simp:false;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+show(L)::=block(simp:false, buildq([L], 1/'[L]));
+show(0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+show(L)::=block(simp:false, buildq([L],  [1/L]));
+show(0), simp:false;
+simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??inverse;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+simp:true$
+inverse(L)::=
+block(simp:false, buildq([L], map(lambda([x], 1/x) , L)))$
+inverse([1, 0]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(y1, y2)$
+
+subst(1/0=inf, map(lambda([x], 1/x) , [0, y2]));
+subst(1/0=minf, map(lambda([x], 1/x) , [y1, 0]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(x1,y1,x2,y2)$
+intervalProduct(subst(1/0=inf, map(lambda([x], 1/x) , [0, y2])), 
+                           subst(1/0=minf, map(lambda([x], 1/x) , [y1, 0])));
+intervalProduct(subst(1/0=inf, map(lambda([x], 1/x) , [0, y2])), 
+                           subst(1/0=minf, map(lambda([x], 1/x) , [y1, 0])));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+L:[1, 0]$
+buildq([L], 1/L);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+simp;
+[x1:1, y1:0, x2:1, y2:0];
+(simp:false, map("/", [1, []], [y1, y2]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+spl(L):=block([ans:[]], ans:(simp:false, delete([]/0, map("/", [1, []], L))), 
+ans:subst(1/0=inf, ans));
+spr(L):=block([ans:[]], ans:(simp:false, delete([]/1, map("/", [[], 1], L))), 
+ans:subst(1/0=inf, ans));
+spl(L); spr(L);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+"here is the clue!";
+[1, 0]+[0, 1]; [0, 1]+[1, 1]; [1, 0]+[1, 1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+L:[0, 1]; R:[1, 0];
+[L, L+R, R];
+[L, 2*L+R, L+R, L+2*R, R];
+[L, 3*L+R, 2*L+R, L+R, L+2*R, L+3*R, R];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+show(L)::=block(simp:false, buildq([L], first([L[1]/L[2]])))$
+
+show([0, 1]), simp:false$
+
+L:[0, 1]$
+
+R:[1, 0]$
+
+k:[L, L+R, R], simp:true$
+h:[L, 2*L+R, L+R, L+2*R, R], simp:true$
+n:[L, 3*L+R, 2*L+R, L+R, L+2*R, L+3*R, R], simp:true$
+p:[L, 4*L+R, 3*L+R, 2*L+R, L+R, L+2*R, L+3*R, L+4*R, R], simp:true$
+
+block([k:[L, L+R, R]], for i in k do print(i)), simp:true$
+
+block([k:[L, L+R, R], simp:false], for i in k do print([show(i)])), simp:true$
+
+simp:true$ 
+block([m:[]], for i in k do (m:append(m, [show(i)])), return(m));
+block([m:[]], for i in h do (m:append(m, [show(i)])), return(m));
+block([m:[]], for i in n do (m:append(m, [show(i)])), return(m));
+block([m:[]], for i in p do (m:append(m, [show(i)])), return(m));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+map(show, [L, L+R, R]), simp:true;
+map(show, [L, L+L+R, L+R]), simp:true;
+map(show, [L, L+(L+L+R) ,(L+L+R)]), simp:true;
+map(show, [L, L+(L+(L+L+R)), L+(L+L+R)]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+map(show, [R, L+R+R, L+R]), simp:true;
+map(show, [R, L+R+R+R, L+R+R]), simp:true;
+map(show, [R, L+(R+(R+R+R)), L+(R+R+R)]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+L; R, simp:true;
+map(show, [L, L+R, R]), simp:true;
+map(show, [L, L+L+R, L+R]), simp:true;
+map(show, [L+R, L+R+R, R]), simp:true;
+map(show, [L, L+L+R, L+R, L+R+R, R]), simp:true;
+map(show, [L, (L+L+L)+R, (L+L)+R, (L+L+L)+(R+R), L+R, (R+R+R)+(L+L), (R+R)+L, (R+R+R)+L, R]), simp:true;
+[1*L, (3*L, 1*R), (2*L, 1*R), (3*L, 2*R), (1*L,1*R), (2*L, 3*R), (1*L, 2*R), (1*L, 3*R), 1*R];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for i in makelist([L, (n+1)*L+R, (n)*L+R], n, 1, 10) do print(map(show, i)), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for i in makelist([L+(n)*R, L+(n+1)*R, R], n, 1, 10) do print(map(show, i)), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+k:[L, R];
+map(show, block([l:L], l:L+R,  cons(l, [R]))), simp:true;
+block([l:L], l:L+R, cons(l, [R])), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+block([m:[]], for i in p do (m:append(m, [show(i)])), return(m));
+block([ans:0], for i:1 thru length(p) do (ans:ans+p[i]), return(ans)), simp:true;
+block([ans:[]], for i:1 thru (length(p)-1) do (ans:append(ans, [p[i]+p[i+1]])), return(ans)), simp:true;
+
+map(show, block([ans:[]], 
+for i:1 thru (length(p)-1) do (ans:append(ans, [p[i], p[i]+p[i+1], p[i+1]])), return(ans))), simp:true;
+
+p;
+block([ans:[], temp:[]],  
+return(ans)), simp:true;
+
+
+p[1]; p[2]; p[1]+p[2]; p[1]+p[2], simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+stern_brocot(list):=block([ans:[], h:list], 
+for i:1 thru (length(h)-1) do (ans:append(ans, [h[i], h[i]+h[i+1]])), 
+stern_result:append(ans, [last(h)]), 
+return(map(show, stern_result)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+stern_brocot([L, R]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+stern_brocot(stern_result), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+stern_brocot(stern_result), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+stern_brocot(stern_result), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+map(show, [[0, 1]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+farey(n):=block([asc:true, ans:[], a, b, c, d, k], 
+declare(k, integer), 
+if(is(asc)) then [a,b,c,d]:[0,1,1,n] else [a,b,c,d]:[1,1,n-1,n],  
+while((is(asc) and is(c<=n)) or (is(not(asc)) and is(a>0))) do 
+(k:floor((n+b)/d), ([a,b,c,d]:[c,d,k*c-a,k*d-b]), ans:append(ans, [a/b])),
+ans:delete(1, ans), 
+ans:append(map(show, [[0, 1]]), ans), 
+ans:append(ans, map(show, [[1, 1]])), 
+return(ans));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+farey(6), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+tree(L, [R]):=block([ans:[]],  
+temp:map("+", first(R), L), 
+for i in temp do(ans:append(ans, map("+", [i]))), 
+return(ans));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+tree(L):=block([ans:[]], 
+ans:tree_reduce("+", L), 
+return(ans));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+first(pairs([[1, 0], [0, 1]]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+map("+", [1, 0], [0, 1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+map("+", [[1, 0], [0, 1]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+tree([L, R]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+tree([L, R, L, L, R, L ]), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+block([m:[]], for i in k do (m:append(m, [show(i)])), return(m));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+block([m:[]], for i in k do (m:append(m, [show(i)])), return(m));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+test(m, n):=block([h:m, k:n, ans:[]],
+while(not(is(equal(h, k)))) do (if(h<k) then (ans:append(ans, ['L]), k:k-h) else (ans:append(ans, ['R]), h:h-k )), 
+return(delete([], ans)))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+test(1, 3); test(2, 3); test(3, 2); test(3, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+map(show, test(1, 3)); map(show, test(2, 3)); map(show, test(3, 2)); map(show, test(3, 1));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+test(1, 4); test(2, 4); test(3, 4); test(4, 3); test(4, 2); test(4, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(a)$
+test(1, 4); L+L+L, simp:true; show(L+L+L), simp:true;
+test(4, 1); R+R+R, simp:true; show(R), simp:false;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+map(show, test(1, 4)); 
+map(show, test(2, 4)); 
+map(show, test(3, 4)); 
+map(show, test(4, 3)); 
+map(show, test(4, 2)); 
+map(show, test(4, 1));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+delete([], block([ans:[]], for m:1 thru 4 do for n:1 thru 4 do (ans:append(ans, [test(m, n)])), return(ans))), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+delete([], block([ans:[]], for m:1 thru 4 do for n:1 thru 4 do (ans:append(ans, [show([m, n])])), return(ans))), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+delete([], block([ans:[]], for m:1 thru 4 do for n:1 thru 4 do (ans:append(ans, [ratsimp(show([m, n]))])), return(ans))), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+delete([], block([ans:[]], for m:1 thru 4 do for n:1 thru 4 do (ans:append(ans, [test(m, n)])), return(sort(ans)))), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+delete([], block([ans:[]], for m:1 thru 4 do for n:1 thru 4 do (ans:append(ans, [ratsimp(show([m, n]))])), return(ans))), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+delete([], block([ans:[]], for m:1 thru 4 do for n:1 thru 4 do (ans:append(ans, [ratsimp(show([m, n]))])), return(unique(ans)))), simp:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+test2(m, n):=block([h:m, k:n, ans:[]],
+while(not(is(equal(h, k)))) do (ans:append(ans, [if(h<k) then  (k:k-h, 'L) else ( h:h-k, 'R)])), 
+return(delete([], ans)))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+test2(1, 3); test2(2, 3); test2(3, 2); test2(3, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+test2(1, 4); test2(2, 4); test2(3, 4); test2(4, 3); test2(4, 2); test2(4, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(a, b, c, d)$
+Interval(a, b);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+interval(a, b):=block([x], setify([(x>a and x<b)]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+a:-2;b:3;
+printf(false, "(~d, ~d]~%", a, b), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+interval(a, b);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(a, b)$
+interval(a, b):=block([x, a:a, b:b, simp], simp:true,  
+printf(false, "(~a, ~a)~%", a, b));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??alphabetic;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+declare("[ , [", alphabetic);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+declare("] , ]", alphabetic);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+interval(a, x, b):=block([x], 
+setify([(a<=x) and (x<b)]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[a and b];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[a, b[:interval(a, b):=block([x], (a<=x and x<b));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+interval(a, b):=block([x, a:a, b:b, simp, 
+declare("( , ]", alphabetic)], simp:true, 
+print((a, b]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+declare("[ , ]", alphabetic);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+facts(); contexts;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+killcontext[initial);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+declare["( , ]", alphabetic);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??alphabetic;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(a, b]:interval(a, b):=block([x, a:a, b:b, simp], simp:true, 
+printf(false, "(~a, ~a]", a, b)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+interval(2, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[2, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??alphabetic;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??identifiers;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+union(interval(2, 3), interval(1, 1));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??struct;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??struct;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+structures;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+defstruct(interval(left, right));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+structures;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+I:new(interval(2, 3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+I@left; I@right;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+defstruct(interval(left, right))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+interval(a, b):=block([I], 
+I:new(interval(a, b)), 
+printf(false, "(~a, ~a)~%", I@left, I@right));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+a:interval(2,3); b:interval(3, 4);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+printf(false, "~%there's no length function for structs!~%");
+printf(true, " and structs begin indexing at 0 it seems!~%~%")$
+print("");
+a[0]; a[1]; a[2]; a[3]; a[4]; a[5];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+a@left;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervaladd(a,b):=block([simp], simp:true, 
+if(intervalp(a) and intervalp(b)) then
+[a@left+b@left, a@right+b@right] else 
+if(listp(a) and listp(b)) then 
+return([a[1]+b[1], a[2]+b[2]]) else "wrong input!");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+a:[2,3]$ b:[3, 4]$
+intervaladd([2, 3], [3, 4]);
+intervaladd(a, b);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[a@left, a@right]+[b@left, b@right];
+[a@left, a@right]+[b@left, b@right], simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+intervalp(a); intervalp(b);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+structures;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(inteval, intreval, interval)$ structures;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(a, b)$
+a:setify([a, b]); b:setify([c, d]);
+union(a, b);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(a, b)$
+a:set(a); b:set(b); union(a, b);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[a, b[;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??set;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+a:2; b:3;
+f(x):=x^2;
+map(f, union(set(a), set(b))), simp;
+subset(map(f, union(set(a), set(b))), lambda([x], evenp(x))), simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??random;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(ans)$
+Random(n):=block([m:n, ans], ans:random(m));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+test:makelist(Random(n), n, 2, 7);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+test;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+test;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+DiceRoll(n, [Print]):=block([result:[], simp], 
+Random(n):=block([m:n, ans], ans:random(m), if (ans=0) then ans:ans+1 else ans), 
+result:makelist(Random(n), n, 1, n), 
+if(emptyp(Print)) then result 
+else (print(result), printf(false, "~%~{~a~}~&", result)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+test:DiceRoll(6);
+test;
+DiceRoll(6, t);
+test:DiceRoll(6, t);
+test;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+control: "~:(~r~) bird~p ~[is~;are~] singing."$
+printf( false,control, n,n,if n=1 then 1 else 2 ), n=1;
+printf( false,control, n,n,if n=1 then 1 else 2 ), n=3;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Prob(n):=1/n;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+prob:makelist(Prob(2), n, 1, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+prob:makelist(Prob(6), n, 1, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lreduce("+", prob);
+lreduce("+" , [prob[1]]);
+lreduce("+", [prob[1], prob[2]]);
+lreduce("+", [prob[1], prob[2], prob[3]]);
+lreduce("+", [prob[1], prob[2], prob[3], prob[4]]);
+lreduce("+", [prob[1], prob[2], prob[3], prob[4], prob[5]]);
+lreduce("+", [prob[1], prob[2], prob[3], prob[4], prob[5], prob[6]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+prob;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+test(n, Prob):=block([ans, i:Prob], return(ans:i*n));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(test(n, 1/36), n, 6, 1, -1);
+makelist(1-test(n, 1/36), n, 6, 1, -1);
+
+makelist((1-test(n, 1/36))^2, n, 6, 1, -1);
+makelist(1-(1-test(n, 1/36))^2, n, 6, 1, -1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+"P";
+[1/6, 1/3, 1/2, 2/3, 5/6];
+not("P");
+[1-1/6,  1-1/3, 1-1/2, 1-2/3, 1-5/6];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(["n"=n, "P"=n/6], n, 1, 5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(test(n, 1/6), n, 0, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(test(n, 1/6), n, 1, 6);
+makelist(1-test(n, 1/6), n, 1, 6);
+
+makelist(test(n, 1/36), n, 1, 6);
+makelist(1-test(n, 1/36), n, 1, 6);
+
+makelist((1-test(n, 1/36))^2, n, 1, 6);
+makelist(1-(1-test(n, 1/36))^2, n, 1, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Prob(probability, throws, [n]):=
+block([ans1, ans2, p:probability, np:1-probability, m:throws], 
+ans1:1-np^(m), 
+ans2:p*np^(m-1), 
+if(emptyp(n) or n=1) then ans1 else ans2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[Prob(1/6, 1), 1-Prob(1/6, 1)];
+[Prob(1/6, 2), 1-Prob(1/6, 2)];
+[Prob(1/6, 3), 1-Prob(1/6, 3)];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[Prob(5/6, 1), 1-Prob(5/6, 1)];
+[Prob(5/6, 2), 1-Prob(5/6, 2), Prob(1/6, 2), 1-Prob(1/6, 2)];
+[Prob(5/6, 3), 1-Prob(5/6, 3), Prob(1/6, 3), 1-Prob(1/6, 3)];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[W, W, W]; [W, W, Z]; [W, Z, W]; [Z, W, W];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Prob(1/6, 2); Prob(1/8, 2); Prob(1/6, 3); "";
+Prob(1/6, 2, alt); Prob(1/8, 2, alt); Prob(1/6, 3, altt);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[Prob(1/6, 1), Prob(1/6, 2), Prob(1/6, 3)];
+[1-Prob(1/6, 1), 1-Prob(1/6, 2), 1-Prob(1/6, 3)];
+"";
+[Prob(5/6, 1),  Prob(5/6, 2), Prob(5/6, 3)];
+[1-Prob(5/6, 1),  1-Prob(5/6, 2), 1-Prob(5/6, 3)];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(Prob(1/6, 2), n, 1, 6);
+makelist(Prob(5/6, 2), n, 1, 6);
+makelist(Prob(1/6, 2, alt), n, 1, 6);
+makelist(Prob(5/6, 2, alt), n, 1, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(Prob(1/6, n), n, 1, 6);
+makelist(1-Prob(1/6, n), n, 1, 6);
+"";
+makelist(Prob(5/6, n), n, 1, 6);
+makelist(1-Prob(5/6, n), n, 1, 6);
+"";
+makelist(Prob(1/6, n, alt), n, 1, 6);
+makelist(1-Prob(1/6, n, alt) , n, 1, 6);
+"";
+makelist(Prob(5/6, n, alt), n, 1, 6);
+makelist(1-Prob(5/6, n, alt) , n, 1, 6);
+"";
+makelist(Prob(1/6, n, alt), n, 1, 6);
+makelist(1-Prob(1/6, n, alt), n, 1, 6);
+"";
+makelist(Prob(1-5/6, n, alt), n, 1, 6);
+makelist(1-Prob(1-5/6, n, alt) , n, 1, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+30*Prob(1/6, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Prob(1/6, 30), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+2/(2+7); 4/9; 2/9*4/9; 4/9*3/9; 2/9*4/9*3/9;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[1, 2, 3, 4, 5, 6];
+[1/6, 1/6, 1/6, 1/6, 1/6, 1/6];
+[[1, 2, 3, 4], [5, 6]];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+binomial(52, 5); (52*51*50*49*48)/(5*4*3*2*1);
+binomial(4, 3); (4*3*2*1)/(3*2*1);
+13*4; 
+"when one value is chosen out of 13 different ranks for the three of a kind field, there's 12 left for";
+"the pair field!";
+"why? cause:";
+"[A A A][A ?]";
+"when three of a kind is chosen that value is off of the sample space for the next pair to choose";
+"we can't take it anymore cause then we can't complete the pair!"; 
+"we only have 4 cards of the same value";
+"[A A A] [X!=A, X]";
+"full house = 3 of a kind + pair (2 of a kind)";
+"12 ways to choose a rank for the pair field";
+binomial(12, 1);
+"[A A A][X, X]";
+"we choose a value out of 4 cards for the pair"; 
+"remember the rank is already chosen!, when you choose one out of 12 ways for the rank!";
+"now we choose amongts the suits";
+"there is 4 of each suite per rank";
+"also there is 13 of each rank per suite in the deck (4 suits) and a pair is 2 cards so";
+binomial(4, 2);
+"so we have 12*6 ways to get a pair";
+12*6;
+"12 for the rank, 6 for the suit";
+"probability for full house is";
+(13*4*12*6)/binomial(52, 5);
+(13*4*12*6)/binomial(52, 5), numer;
+printf(false, "~%~G", %);
+"a little bit more than one promille";
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+"Suits";
+[heart, diamond, club, spade];
+[red, red, black ,black];
+[major, minor, minor, major];
+[rounded, pointed, rounded, pointed];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+binomial(4, 3);
+binomial(4, 2);
+binomial(13, 1);
+binomial(12, 1);
+binomial(4, 3)*binomial(4, 2)*binomial(13, 1)*binomial(12, 1);
+13*4*12*6;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+"have to word that better!";
+binomial(13, 2); binomial(13, 2)-binomial(4, 2);
+binomial(12, 2); binomial(12, 2)+binomial(4, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+s/(s+f);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+"4/(4+2)"=4/6;
+"2/(2+4)"=2/6;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+1/6+1/6+1/6+1/6; 1/6+1/6;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+map("/", [6, 3, 2, 3, 6], makelist(6, n, 1, 5));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+CoinTosses(n, [Stringp]):=block([ans:"", m:n], 
+Random(n):=block([m:n, ans], ans:random(m)), 
+if(not(emptyp(Stringp))) then 
+block(
+for i in subst([0=H, 1=T], makelist(Random(2), n, 1, m)) do 
+ans:concat(ans, i)) 
+else subst([0=H, 1=T], makelist(Random(2), n, 1, m)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+CoinTosses(20);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+CountHeadsTails(list):=block([Hs:0, Ts:0, x], 
+for x in list do (if(x=H) then Hs:Hs+1 else if(x=T) then Ts:Ts+1), 
+printf(false, "Hs: ~a        Ts: ~a", Hs, Ts));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+CoinTosses(20);
+CountHeadsTails(%);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??random;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+permutation(4, 3);
+binomial(4, 3);
+combination(4, 3);
+permutation(a, b);
+combination(a, b);
+binomial(a,b);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+4!/3!; 4!/3!*3!;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+fun(n):=map(lambda([s],[realpart(s),imagpart(s)]),makelist(cos(2*k*%pi/n)+%i*sin(2*k*%pi/n),k,1,n))$
+
+liss(n):=block([pts:fun(n)],pts:map(lambda([w],(x-first(w))^2+(y-last(w))^2=n),pts))$
+
+transform(eq,args,lis):=block([temp],
+eq:map(lambda([s],lhs(s)<rhs(s)),eq),
+temp:map("=",lis,eq),
+args:psubst(temp,args),args)$
+
+vennplot(n,args,lis):=block([reg,form:liss(n),temp,wee, ratprint:false, errormsg:false],
+temp:transform(form,args,lis),
+wee:[title="Venn Diagram",proportional_axes=xy,
+grid= true,line_type= solid,x_voxel = 60,y_voxel = 60,line_width=2],
+reg:apply(lambda([s],region(s,x,-n,n,y,-n,n)),[transform(form,args,lis)]),
+wee:endcons(reg,wee),
+for item in form do wee:endcons(implicit(item,x,-n,n,y,-n,n),wee),
+apply(wxdraw2d,wee))$
+
+vennplot2(n,args,lis):=block([reg,form:liss(n),temp,wee,i:1, ratprint:false, errormsg:false],
+temp:transform(form,args,lis),
+wee:[title="Venn Diagram",proportional_axes=xy,
+grid= true,line_type= solid,x_voxel = 60,y_voxel = 60,line_width=2],
+reg:apply(lambda([s],region(s,x,-n,n,y,-n,n)),[transform(form,args,lis)]),
+wee:endcons(reg,wee),
+for item in form do
+      (
+       wee:endcons(key=string(i),wee),i:i+1, 
+       wee:endcons(color=concat(
+                concat(concat("#",random(10)+10),random(40)+20),
+                                                                     random(90)+10),wee),
+       wee:endcons(implicit(item,x,-n,n,y,-n,n),wee)
+      ),
+apply(wxdraw2d,wee))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(a,b,c, n, s)$
+vennplot2(1,not(a),[a]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vennplot(2,a and  not(b) ,[a,b]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vennplot(2,not(a) and  (b) ,[a,b]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vennplot(2,not(a) and  not(b) ,[a,b]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vennplot(2,a and  b ,[a,b]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vennplot(2, a or b ,[a,b]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vennplot2(3, a and b or not(c), [a,b,c]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vennplot2(3, a and c or not(b), [a,b,c]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vennplot2(3, b and c or not(a), [a,b,c]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vennplot2(4, a and b or (c) or d, [a,b,c,d]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vennplot2(4, a and b or not(c) or d, [a,b,c,d]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vennplot2(4, a and b or not(c) and d, [a,b,c,d]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vennplot2(4, a and b or (c) and not(d), [a,b,c,d]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vennplot2(4, a and b or not(c) and not(d), [a,b,c,d]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vennplot2(4, a and b and not(c) and not(d), [a,b,c,d]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vennplot2(4, a and b and c and not(d), [a,b,c,d]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vennplot2(4, a and b and not(c) and d, [a,b,c,d]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vennplot2(4, a and b and c and d, [a,b,c,d]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (defun subsets (s)
+ (if (null s) (list nil) 
+ (let ((rest (subsets (cdr s)))) 
+ (append rest (mapcar (lambda (x) (cons (car s) x)) rest)))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (sort (subsets '(1 2 3)) 
+(lambda (a b) (if (and (not (null a)) (not (null b))) (and (< (length a) (length b)) (< (first a) (first b))))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (sort (subsets '(1 2 3)) 
+(lambda (a b) (if (and (not (null a)) (not (null b))) (or (< (length a) (length b)) (> (first a) (first b))))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (cons nil (remove nil (reverse (sort (subsets '(1 2 3)) 
+(lambda (a b) (if (and (not (null a)) (not (null b))) (or (> (length a) (length b)) (> (first a) (first b)))))))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subsets([a, b, c]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+length([]);
+emptyp([]);
+emptyp([[]]);
+rest([]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subsets(s, [len]):=block(
+[res:[], len:if(not(emptyp(len))) then first(len), p:(is(length(len)>1) and is(last(len)=p))], 
+res:sort(res:listify(map(listify, powerset(setify(s), len))), lambda([a,b], 
+    if(not(emptyp(b) and not(emptyp(a)))) then (length(a)) < length(b))), 
+if(p) then 
+block([res:[], k], for i in makelist((subsets(s, k)), k, 0, len) do print(i)) else res);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subsets([1, 2, 3]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subsets([1, 2, 3], 0);
+subsets([1, 2, 3], 1);
+subsets([1, 2, 3], 2);
+subsets([1, 2, 3], 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subsets([1, 2, 3], 1, p);
+subsets([1, 2, 3], 2, p);
+subsets([1, 2, 3], 3, p);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+block([res:[]], for i in (makelist((subsets([1, 2, 3], k)), k, 0, 3)) do print(i));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+listify(map(listify, powerset(setify([1, 2, 3]))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sort(listify(map(listify, powerset(setify([1, 2, 3])))), lambda([a,b], if(not(emptyp(b) and not(emptyp(a)))) then (length(a)) < length(b)));
+sort(listify(map(listify, powerset(setify([1, 2, 3])))), lambda([a,b], if(not(emptyp(b) and not(emptyp(a)))) then (length(a)) <= length(b)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sort(listify(map(listify, powerset(setify([1, 2, 3])))), lambda([a,b], if(not(emptyp(b) and not(emptyp(a)))) then (length(a)) > length(b)));
+sort(listify(map(listify, powerset(setify([1, 2, 3])))), lambda([a,b], if(not(emptyp(b) and not(emptyp(a)))) then (length(a)) >= length(b)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sort(listify(map(listify, powerset(setify([1, 2, 3])))), lambda([a,b], if(not(emptyp(b) and not(emptyp(a)))) then (length(a)) = length(b)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+listify(permutations([a, b, c, d]));
+random_permutation([a, b, c, d]);
+subsets([a, b, c, d]);
+map(length, map(listify ,map(permutations, subsets([a, b, c, d]))));
+lsum(i, i, map(length, map(listify ,map(permutations, subsets([a, b, c, d])))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+map(length, map(listify ,map(permutations, subsets([a, b, c, d]))));
+map(length, map(listify ,map(permutations, subsets([a, b, c, d, e]))));
+map(length, map(listify ,map(permutations, subsets([a, b, c, d, e, f]))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lsum(i, i, map(length, map(listify ,map(permutations, subsets([])))));
+lsum(i, i, map(length, map(listify ,map(permutations, subsets([a])))));
+lsum(i, i, map(length, map(listify ,map(permutations, subsets([a, b])))));
+lsum(i, i, map(length, map(listify ,map(permutations, subsets([a, b, c])))));
+lsum(i, i, map(length, map(listify ,map(permutations, subsets([a, b, c, d, e])))));
+lsum(i, i, map(length, map(listify ,map(permutations, subsets([a, b, c, d, e, f])))));
+lsum(i, i, map(length, map(listify ,map(permutations, subsets([a, b, c, d, e, f, g])))));
+lsum(i, i, map(length, map(listify ,map(permutations, subsets([a, b, c, d, e, f, g, h])))));
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

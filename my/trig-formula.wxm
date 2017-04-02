@@ -1,0 +1,289 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 14.09.0 ] */
+
+/* [wxMaxima: title   start ]
+Trigonometry
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: comment start ]
+Derivatives!
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix(
+[sin(x), [diff(sin(x), x)]], 
+[cos(x), [diff(cos(x), x)]],
+[tan(x), [diff(tan(x), x)]], 
+[cot(x), [diff(cot(x), x)]], 
+[sec(x), [diff(sec(x), x)]], 
+[csc(x), [diff(csc(x), x)]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix(
+[sin(x)^2, [diff(sin(x)^2, x)]], 
+[cos(x)^2, [diff(cos(x)^2, x)]],
+[tan(x)^2, [diff(tan(x)^2, x)]], 
+[cot(x)^2, [diff(cot(x)^2, x)]], 
+[sec(x)^2, [diff(sec(x)^2, x)]], 
+[csc(x)^2, [diff(csc(x)^2, x)]]), expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix(
+[sin(x)^3, [diff(sin(x)^3, x)]], 
+[cos(x)^3, [diff(cos(x)^3, x)]],
+[tan(x)^3, [diff(tan(x)^3, x)]], 
+[cot(x)^3, [diff(cot(x)^3, x)]], 
+[sec(x)^3, [diff(sec(x)^3, x)]], 
+[csc(x)^3, [diff(csc(x)^3, x)]]), expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Integrals!
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix(
+[sin(x), [integrate(sin(x), x)]], 
+[cos(x), [integrate(cos(x), x)]],
+[tan(x), [integrate(tan(x), x)]], 
+[cot(x), [integrate(cot(x), x)]], 
+[sec(x), [integrate(sec(x), x)]], 
+[csc(x), [integrate(csc(x), x)]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix(
+[sin(x)^2, [integrate(sin(x)^2, x)]], 
+[cos(x)^2, [integrate(cos(x)^2, x)]],
+[tan(x)^2, [integrate(tan(x)^2, x)]], 
+[cot(x)^2, [integrate(cot(x)^2, x)]], 
+[sec(x)^2, [integrate(sec(x)^2, x)]], 
+[csc(x)^2, [integrate(csc(x)^2, x)]]), expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix(
+[sin(x)^3, [integrate(sin(x)^3, x)]], 
+[cos(x)^3, [integrate(cos(x)^3, x)]],
+[tan(x)^3, [integrate(tan(x)^3, x)]], 
+[cot(x)^3, [integrate(cot(x)^3, x)]], 
+[sec(x)^3, [integrate(sec(x)^3, x)]], 
+[csc(x)^3, [integrate(csc(x)^3, x)]]), expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Addition Formulae!
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+powerdisp:false$
+matrix(
+[sin(z), [sin(x+y)]],
+[cos(z), [cos(x+y)]],
+[tan(z), [tan(x+y)]],
+[cot(z), [cot(x+y)]]), trigexpand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Double Angle Formulae!
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+transpose(matrix([sin(z), cos(z), tan(z), cot(z)],
+[
+[sin(2*x)],
+[cos(2*x)],
+[tan(2*x)],
+[cot(2*x)]])), trigexpand=true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+integrate(sin(x)^2, x), expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+integrate(cos(x)^2, x), expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+integrate(sin(x)^3, x), expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+integrate((cos(x)^2*sin(x)), x), expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+integrate(-(cos(x)^2*sin(x))+sin(x), x), expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+integrate(sin(x)^3, x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+integrate(sin(x), x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+integrate(sin(x)^3, x)*-cos(x), expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+integrate(sin(x)^4, x), expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+diff((cos(x)^3)/3-cos(x), x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+integrate(1-cos(x)^2, x), expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sin(2*x)/4, trigexpand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sin(2*x)/8, trigexpand;
+sin(2*x)/16, trigexpand;
+sin(3*x), trigexpand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+cos(4*x), trigexpand, expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sqrtdispflag:true$
+halfangles:true$
+sin((1/2)*x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+transpose(
+matrix(
+makelist(sin(n*x), n, 1, 8))), trigexpand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+transpose(
+matrix(
+makelist(cos(n*x), n, 1, 4))), trigexpand, expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+transpose(
+matrix(
+makelist((sin(n*x))/n, n, 1, 8))), trigexpand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+integrate(1-cos(x)^2, x)^2, expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+integrate((1-cos(x)^2)^2, x), expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+integrate(sin(x)^4, x), expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(3-4*cos(2*x)+cos(4*x))/8, expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+integrate((3-4*cos(2*x)+cos(4*x))/8, x), expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+integrate(1/2*cos(2*x), x), inverses;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+integrate(cos(2*x), x); integrate(sin(3*x), x);
+integrate(cos(3*x), x); integrate(sin(4*x), x);
+diff(cos(2*x), x); diff(cos(3*x), x);
+diff(sin(2*x), x); diff(sin(3*x), x)
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(inverses)$
+inverses([expr]):=block([result],
+result:map(lambda([expr],
+subst([csc(x)=1/sin(x), sec(x)=1/cos(x), cot(x)=1/tan(x)], expr)), expr),
+if(length(expr)<1) then result else first(result))$
+declare(inverses, evfun)$
+
+quotform([expr]):=block([result],
+result:map(lambda([expr],
+subst([tan(x)=sin(x)/cos(x), cot(x)=cos(x)/sin(x)], expr)), expr),
+if(length(expr)<1) then result else first(result))$
+declare(quotform, evfun)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+inverses(cot(x)); inverses([sec(x), csc(x)]);
+[sec(x), csc(x), cot(x)], inverses;
+1-sec(x)^2, inverses;
+1-tan(x)^2, quotform;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+limit(cos(x), x, 0, plus);
+limit(cos(x), x, 0, minus);
+limit(cos(x), x, 0); cos(0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+diff(sin(x)*-cos(x), x);
+diff(sin(x)*cos(x), x);
+diff(-sin(x)*cos(x), x);
+diff(-sin(x)*-cos(x), x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+diff(sin(x)*-sin(x)*cos(x), x);
+diff(sin(x)^2*-cos(x), x);
+diff(sin(x)*-sin(x)*-cos(x), x);
+diff(sin(x)^2*cos(x), x);
+diff(sin(x)^3*-cos(x), x);
+diff(-sin(x)^3*cos(x), x);
+diff(-sin(x)^3*-cos(x), x);
+diff(sin(x)^3*cos(x), x);
+diff(sin(x)^2*cos(x)^2,x);
+diff(sin(x)^2*(-cos(x))*cos(x), x);
+diff(sin(x)^2*(cos(x))*(-cos(x)), x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+integrate(sin(x)*-cos(x), x);
+integrate(sin(x)^2, x), expand, factor;
+integrate(sin(x)*(-sin(x)), x), expand, factor;
+integrate(sin(x)^2-sin(x)*cos(x), x), expand, factor;
+integrate(sin(x)^2-sin(x)*-cos(x), x), expand, factor;
+integrate(sin(x)*-sin(x)-sin(x)*cos(x), x), expand, factor;
+integrate(sin(x)*-sin(x)-sin(x)*-cos(x), x), expand, factor;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+integrate(sin(x)^2*cos(x), x);
+integrate(sin(x)^3, x), expand, factor;
+integrate(sin(x)^3-sin(x)^3*(cos(x)), x), expand, factor;
+integrate(sin(x)^3-sin(x)^3*(-cos(x)), x), expand, factor;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+integrate(sin(x)^3*cos(x), x);
+integrate(sin(x)^4, x), expand, factor;
+integrate(sin(x)^4-sin(x)^3*cos(x), x), expand, factor;
+integrate(sin(x)^4-sin(x)^3*-cos(x), x), expand, factor;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

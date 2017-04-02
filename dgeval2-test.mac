@@ -1,0 +1,165 @@
+/* test file dgeval2-test.mac */
+
+
+ econ (gmet[mu,mu],mu);
+ 4;
+
+ econ (gmet[n1,n1],n1);
+ 4;
+  
+ econ (gmet[mu,nu]*gmet[mu,nu],mu,nu);
+ 4;
+
+ econ (gmet[n1,n1]*gmet[n2,n2],n1,n2);
+ 16;
+ econ (gmet[n1,n1]*gmet[n2,n2],n2,n1);
+ 16;
+
+ econ (gmet[n1,n2]*gmet[n2,n3],n2);
+ gmet[n1,n3];
+
+ econ (gmet[n1,n2]*p[n1],n1);
+ p[n2];
+ econ (gmet[n2,n1]*p[n1],n1);
+ p[n2];
+
+ econ (gmet[n1,n2]*eps4[n2,n3,n4,n5],n2);
+ eps4[n1,n3,n4,n5];
+
+ econ (eps4[n1,n2,n3,n4]*p[n1],n1);
+ -p[3]*eps4[3,n2,n3,n4]-p[2]*eps4[2,n2,n3,n4]-p[1]*eps4[1,n2,n3,n4]
+                             +p[0]*eps4[0,n2,n3,n4];
+                             
+ econ (eps4[n1,a,b,c]*eps4[n1,d,e,f],n1);
+ -eps4[3,a,b,c]*eps4[3,d,e,f]-eps4[2,a,b,c]*eps4[2,d,e,f]
+                                   -eps4[1,a,b,c]*eps4[1,d,e,f]
+                                   +eps4[0,a,b,c]*eps4[0,d,e,f];
+                                   
+ /* product of identical eps4's, contraction of all four indices */
+                                   
+ econ(eps4[n1,n2,n3,n4]*eps4[n1,n2,n3,n4],n1,n2,n3,n4);
+ -24;
+
+ /*  product of eps4's, contraction of three indices */
+  
+ econ(eps4[n1,n2,n3,0]*eps4[n1,n2,n3,0],n1,n2,n3);
+ -6;
+ econ(eps4[n1,n2,n3,0]*eps4[n1,n2,n3,1],n1,n2,n3);
+ 0;
+ econ(eps4[n1,n2,n3,1]*eps4[n1,n2,n3,1],n1,n2,n3);
+ 6;
+ econ(eps4[n1,n2,n3,2]*eps4[n1,n2,n3,2],n1,n2,n3);
+ 6;
+ econ(eps4[n1,n2,n3,3]*eps4[n1,n2,n3,3],n1,n2,n3);
+ 6;
+
+
+   /* product of two eps4's, contraction of two indices:  */
+
+ econ(eps4[n1,n2,0,0]*eps4[n1,n2,0,0],n1,n2);
+ 0;
+ econ(eps4[n1,n2,0,1]*eps4[n1,n2,0,1],n1,n2);
+ 2;
+ econ11(eps4[n1,n2,0,1]*eps4[n1,n2,0,1],n1);
+ -eps4[0,1,3,n2]^2-eps4[0,1,2,n2]^2;
+ econ11(eps4[0,1,3,n2]*eps4[0,1,3,n2],n2);
+ -1;
+ econ11(eps4[0,1,2,n2]*eps4[0,1,2,n2],n2);
+ -1;
+ econ(eps4[n1,n2,0,1]*eps4[n1,n2,0,1],n2,n1);
+ 2;
+ econ(eps4[n1,n2,0,1]*eps4[n1,n2,1,0],n1,n2);
+ -2;
+ econ(eps4[n1,n2,0,1]*eps4[n1,n2,1,0],n2,n1);
+ -2;
+
+
+ aa : econ(2*Sp1[mu]*Sp2[nu]*E^2*Sp3[mu]*Sp4[nu]*M^2,mu);
+ -2*Sp1[3]*Sp3[3]*Sp2[nu]*Sp4[nu]*E^2*M^2
+       -2*Sp1[2]*Sp3[2]*Sp2[nu]*Sp4[nu]*E^2*M^2
+       -2*Sp1[1]*Sp3[1]*Sp2[nu]*Sp4[nu]*E^2*M^2
+       +2*Sp1[0]*Sp3[0]*Sp2[nu]*Sp4[nu]*E^2*M^2;
+       
+ econ (aa,nu);
+ 2*Sp1[3]*Sp2[3]*Sp3[3]*Sp4[3]*E^2*M^2
+       +2*Sp1[2]*Sp3[2]*Sp2[3]*Sp4[3]*E^2*M^2
+       +2*Sp1[1]*Sp3[1]*Sp2[3]*Sp4[3]*E^2*M^2
+       -2*Sp1[0]*Sp3[0]*Sp2[3]*Sp4[3]*E^2*M^2
+       +2*Sp2[2]*Sp4[2]*Sp1[3]*Sp3[3]*E^2*M^2
+       +2*Sp2[1]*Sp4[1]*Sp1[3]*Sp3[3]*E^2*M^2
+       -2*Sp2[0]*Sp4[0]*Sp1[3]*Sp3[3]*E^2*M^2
+       +2*Sp1[2]*Sp2[2]*Sp3[2]*Sp4[2]*E^2*M^2
+       +2*Sp1[1]*Sp3[1]*Sp2[2]*Sp4[2]*E^2*M^2
+       -2*Sp1[0]*Sp3[0]*Sp2[2]*Sp4[2]*E^2*M^2
+       +2*Sp2[1]*Sp4[1]*Sp1[2]*Sp3[2]*E^2*M^2
+       -2*Sp2[0]*Sp4[0]*Sp1[2]*Sp3[2]*E^2*M^2
+       +2*Sp1[1]*Sp2[1]*Sp3[1]*Sp4[1]*E^2*M^2
+       -2*Sp1[0]*Sp3[0]*Sp2[1]*Sp4[1]*E^2*M^2
+       -2*Sp2[0]*Sp4[0]*Sp1[1]*Sp3[1]*E^2*M^2
+       +2*Sp1[0]*Sp2[0]*Sp3[0]*Sp4[0]*E^2*M^2;
+       
+ 
+ econ(eps4[n1,n2,n3,n4]*eps4[n1,n2,n3,n4],n1,n2,n3,n4);
+ -24;
+
+    /* three dummy index summation: */
+
+ noncov(Eps(N1,N2,N3,0)*Eps(N1,N2,N3,0));
+ 6;
+
+ econ(eps4[n1,n2,n3,0]*eps4[n1,n2,n3,0],n1,n2,n3);
+ -6;
+
+ noncov(Eps(N1,N2,N3,1)*Eps(N1,N2,N3,1));
+ 6;
+ econ(eps4[n1,n2,n3,1]*eps4[n1,n2,n3,1],n1,n2,n3);
+ 6;
+
+ noncov(Eps(N1,N2,N3,0)*Eps(N1,N2,N3,1));
+ 0;
+ econ(eps4[n1,n2,n3,0]*eps4[n1,n2,n3,1],n1,n2,n3);
+ 0;
+
+ noncov(Eps(N1,N2,N3,0)*Eps(N1,N2,N3,2));
+ 0;
+ noncov(Eps(N1,N2,N3,0)*Eps(N1,N2,N3,3));
+ 0;
+ noncov(Eps(N1,N2,N3,1)*Eps(N1,N2,N3,0));
+ 0;
+ noncov(Eps(N1,N2,N3,2)*Eps(N1,N2,N3,0));
+ 0;
+ noncov(Eps(N1,N2,N3,3)*Eps(N1,N2,N3,0));
+ 0;
+
+   /* two dummy index summation: */
+
+ noncov(Eps(N1,N2,0,0)*Eps(N1,N2,0,0));
+ 0;
+ econ(eps4[n1,n2,0,0]*eps4[n1,n2,0,0],n1,n2);
+ 0;
+
+ noncov(Eps(N1,N2,0,1)*Eps(N1,N2,0,1));
+ 2;
+ econ(eps4[n1,n2,0,1]*eps4[n1,n2,0,1],n1,n2);
+ 2;
+
+ noncov(Eps(N1,N2,0,1)*Eps(N1,N2,1,0));
+ -2;
+ econ(eps4[n1,n2,0,1]*eps4[n1,n2,1,0],n1,n2);
+ -2;
+
+ noncov(Eps(N1,N2,0,2)*Eps(N1,N2,0,2));
+ 2;
+ econ(eps4[n1,n2,0,2]*eps4[n1,n2,0,2],n1,n2);
+ 2;
+
+ noncov(Eps(N1,N2,0,2)*Eps(N1,N2,2,0));
+ -2;
+ econ(eps4[n1,n2,0,2]*eps4[n1,n2,2,0],n1,n2);
+ -2;
+
+ noncov(Eps(N1,N2,1,0)*Eps(N1,N2,1,0));
+ 2;
+ econ(eps4[n1,n2,1,0]*eps4[n1,n2,1,0],n1,n2);
+ 2;
+

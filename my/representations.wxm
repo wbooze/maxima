@@ -1,0 +1,26 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 14.09.0 ] */
+
+/* [wxMaxima: input   start ] */
+simp:true;
+show(L)::=block(simp:false, buildq([L], map(lambda([x], 1/x) , L))), simp:false;
+show([1, 0]);
+simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+simp:true;
+show(L)::=
+block([simp:false], buildq([L], map(lambda([x], 1/x) , L))), simp:false;
+show([1, 0]);
+simp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+simp:true$
+(simp:true, (simp:false, (a:0, catch(throw(1/a)))), simp:false);
+simp;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

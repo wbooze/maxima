@@ -1,0 +1,54 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 13.04.2 ] */
+
+/* [wxMaxima: input   start ] */
+f(x):=sqrt(-(1+x^2));
+f(1);
+f(-1);
+is(equal(f(-x), f(x)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sqrtdispflag:true$
+m(x):=sqrt(x);
+sqrt(1), numer;
+sqrt(-1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot2d(cos(x), [x, 0, %pi]);
+wxplot2d(abs(cos(x)), [x, 0, %pi]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+integrate(abs(cos(x)), x, %pi/2, %pi);
+integrate(abs(cos(x)), x, 0, %pi/2);
+integrate(abs(cos(x)), x, 0, %pi);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+h(x):=x^2;
+is(equal(f(-x), f(x)));
+h(2); h(-2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sqrt(-1); sqrt(1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+g(x):=sqrt(x);
+wxplot2d(g(x), [x, 0, 10]);
+wxplot2d(-g(x), [x, 0, 10]);
+wxplot2d(g(-x), [x, -10, 0]), ratprint=false;
+wxplot2d(-g(-x), [x, -10, 0]);
+ratprint:false$ keepfloat:true$
+wxplot2d([g(x), g(-x), -g(x), -g(-x)], [x, -10, 10], [plot_realpart, true]);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

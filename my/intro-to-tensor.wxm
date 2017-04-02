@@ -1,0 +1,411 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.04.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all)$
+load(vect)$
+load(eigen)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+e[1]:[[1, 0, 0]];
+e[2]:[[0, 1, 0]];
+e[3]:[[0, 0, 1]];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+I:matrix([1, 0, 0], [0, 1, 0], [0, 0, 1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+covect([1, 0, 0]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+E[i]:=sum(S[i][j]*e[j], j, 1, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ẽ[i]:=sum(T[i][j]*e[j], j, 1, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+e[1].E[1]; e[2].E[2]; e[3].E[3];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix(ẽ[1].e[1], e[2].ẽ[2], e[3].ẽ[3]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix([a], [b], [c]); matrix([a, b, c]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix(makelist(transpose(matrix(e[i].ẽ[i])), i, 1, 3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+transpose(matrix(makelist(matrix(e[j].ẽ[j]), j, 1, 3)));
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+makelist(makelist((first(e[k]))[i], k, 1, 3)[i], i, 1, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??matrix;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist((e[k].ẽ[k])[i], k, 1, 3), i, 1, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix(makelist(i, i, 1, 3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+E[1];E[2];E[3];ẽ[1]; ẽ[2]; ẽ[3];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix([ẽ[1]], [ẽ[2]], [ẽ[3]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix([E[1]], [E[2]], [E[3]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix([ẽ[1]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+coeff(matrix([ẽ[1]]), e[1]);
+coeff(matrix([E[1]]), e[1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix([coeff(matrix([ẽ[1]], [ẽ[2]], [ẽ[3]]), e[1]),
+coeff(matrix([ẽ[1]], [ẽ[2]], [ẽ[3]]), e[2]),
+coeff(matrix([ẽ[1]], [ẽ[2]], [ẽ[3]]), e[3])]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix(makelist(coeff(matrix([ẽ[1]], [ẽ[2]], [ẽ[3]]), e[j]),j, 1, 3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+transpose(matrix(makelist(matrix([ẽ[i]]), i, 1, 3)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+transpose(matrix(makelist(coeff(makelist(matrix([ẽ[i]]), i, 1, 3), e[j]), j, 1, 3)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S:matrix(makelist(coeff(transpose(matrix(makelist(ẽ[i], i, 1, 3))), e[j]), j, 1, 3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T:matrix(makelist(coeff(transpose(matrix(makelist(ẽ[i], i, 1, 3))), e[j]), j, 1, 3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+E[1]*T;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix([coeff(ẽ[1], e[1])]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+coeff(ẽ[1], e[1])*S*T;express(%);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+coeff(ẽ[1], e[1]).S.T; express(%); ẽ[1]; e[1];E[1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+coeff(ẽ[1], e[1]).S~T; express(%);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+coeff(ẽ[1], e[1]).S~T;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+coeff(ẽ[1], e[1])*S*T; express(%);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+coeff(ẽ[1], e[1])*S~T;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S~T; 
+T~S; 
+S.T; 
+T.S; 
+S~T.S; 
+T~S.T;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+coeff(ẽ[1], e[1])~S~T;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S*ẽ[1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T*ẽ[1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T*E[1]*S;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix(makelist(coeff(transpose(matrix(makelist(ẽ[i], i, 1, 3))), e[j]), j, 1, 3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix([E[1]], [E[2]], [E[3]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix([e[1]], [e[2]], [e[3]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix([ẽ[1]], [ẽ[2]], [ẽ[3]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(1, 1, 1)*e[1]; (1, 1, 1)*ẽ[1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(1, 1, 1).e[1]; (1, 1, 1).ẽ[1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+e[1]*ẽ[1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+e[1].ẽ[1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+coeff(ẽ[1], e[1]); coeff(e[1], E[1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix([e[1]], [e[2]], [e[3]] );
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+%*matrix([ẽ[1]], [ẽ[2]], [ẽ[3]] );
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix([a, b], [c, d]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+covect([e[1]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+E[1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+coeff(a^2*x+b, x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+coeff(e[1], E[1]); coeff(ẽ[1], e[1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+transpose(matrix(makelist(makelist(coeff(e[i], E[j]), i, 1, 3), j, 1, 3)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(covect(makelist(coeff(e[i], E[j]), i, 1, 3)), j, 1, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T:matrix(makelist(covect(makelist(coeff(e[i], E[j]), i, 1, 3)), j, 1, 3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T:transpose(makelist(matrix(makelist(coeff(e[i], E[j]), i, 1, 3)), j, 1, 3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix(makelist(coeff(transpose(matrix(makelist(ẽ[i], i, 1, 3))), e[j]), j, 1, 3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S:matrix(makelist(covect(makelist(coeff(ẽ[i], e[j]), i, 1, 3)), j, 1, 3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S:transpose(makelist(matrix(makelist(coeff(ẽ[i], e[j]), i, 1, 3)), j, 1, 3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+transpose(matrix(makelist(coeff(matrix(makelist(ẽ[i], i, 1, 3)), e[j]), j, 1, 3)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(matrix(makelist(coeff(ẽ[i], e[j]), i, 1, 3)), j, 1, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(covect(makelist(coeff(ẽ[i], e[j]), i, 1, 3)), j, 1, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+e[1]*S; e[1]*T;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[e[1]].S;[ẽ[1]];
+[ẽ[1]].T;[e[1]];
+transpose(matrix([e[1], e[2], e[3]]));
+
+matrix([e[1], e[2], e[3]]).S;
+S.matrix([e[1], e[2], e[3]]);
+matrix([ẽ[1], ẽ[2], ẽ[3]]).T;
+T.matrix([ẽ[1], ẽ[2], ẽ[3]]);
+
+
+is(equal(matrix([e[1], e[2], e[3]]).S, matrix([ẽ[1], ẽ[2], ẽ[3]]).T));
+is(equal(matrix([e[1], e[2], e[3]])*S, matrix([ẽ[1], ẽ[2], ẽ[3]])*T));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??invert;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix([e[1], e[2], e[3]]).S;
+matrix([e[1], e[2], e[3]]).T;
+matrix([e[1], e[2]]).invert(S);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(matrix([coeff(ẽ[i], e[j])] ), i, 1, 3), j, 1, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist(covect([coeff(ẽ[i], e[j])] ), i, 1, 3), j, 1, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+transpose(makelist(makelist(matrix([coeff(ẽ[i], e[j])] ), i, 1, 3), j, 1, 3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+transpose(makelist(makelist(covect([coeff(ẽ[i], e[j])] ), i, 1, 3), j, 1, 3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+transpose(makelist(transpose(matrix([coeff(ẽ[i], e[i])] )), i, 1, 3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix(makelist(coeff(e[i], E[i]), i, 1, 3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix(makelist(coeff(ẽ[i], e[i]), i, 1, 3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ẽ[1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ẽ[2];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+coeff(ẽ[1], e[1]); coeff(ẽ[2], e[1]);coeff(ẽ[3], e[1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix(makelist(matrix(makelist(coeff(ẽ[j], e[i]), j, 1, 3)), i, 1, 3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix(makelist(covect(makelist(coeff(ẽ[j], e[i]), j, 1, 3)), i, 1, 3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+transpose(matrix(makelist(makelist(coeff(ẽ[j], e[i]), j, 1, 3), i, 1, 3)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+covect(makelist(makelist(coeff(ẽ[j], e[i]), j, 1, 3), i, 1, 3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(coeff(ẽ[j], e[j]), j, 1, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix([ẽ[1]], [ẽ[2]], [ẽ[3]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ishow(g([a, b]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ishow(g([a, b], [], c));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+imetric(g); decsym(g,2,0,[sym(all)],[]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ishow(g([b, c])*B([a, b]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ishow(contract(%));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ishow(contract(g([d, c])*%));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ishow(g([a, b], [], c, d));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ishow(g([a, b], [d], c));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ishow(g([a, b], [d, c]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ishow(g([a, b], [d, c], c, d));
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

@@ -1,0 +1,75 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 13.04.2 ] */
+
+/* [wxMaxima: input   start ] */
+x^(log(x-2))=10^3;
+
+logx(x^log(x-2))=log(x-2)
+
+log(x-2)=logx(10^3)
+
+log(x-2)=log(3)/log(x)+log(log10)/log(x)
+log(x-2)=log(3*log10)/log(x)
+log(x-2)*log(x)=log(3*log10)
+log(x-2)*log(x)=log(3)+log(10)
+
+logx(3*log(10)) = logx(3) + logx(log(10))
+logx(3*log(10)) = log(3)/log(x)+log(log10)/log(x)
+logx(log(10))=log(log(10))/log(x)
+
+log(x-2)=log(10^3)/log(x)
+log(x-2)*log(x) = log(10^3)
+log(x-2)*log(x) = 3*log(10)
+(log(x-2)*log(x))/log(10) = 3
+
+log(10^3)=3*log(10)
+
+log10(x)=log(x)/log(10)
+log10(x)*log(10)=log(x)
+
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+log(8)/log(2), numer; log(10^3)/log(10), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+10^(log(10-2)/log(2)), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+log(3)+log(10), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+log(3)/log(x)+log(log10)/log(x), logcontract;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+3*log(10), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(log(a)*log(b))/log(c), expand;
+(log(x-2)*log(x))/log(10), expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+%e^(log(10^3)/log(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+log(10^3)/log(2), numer;
+logb(1000, 2), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+%e^(log(x-2)*(log(x)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+%e^(log(10^3));
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

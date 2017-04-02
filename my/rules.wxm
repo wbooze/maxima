@@ -1,0 +1,73 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 13.04.2 ] */
+
+/* [wxMaxima: input   start ] */
+clear_rules()$
+matchdeclare(a, true)$
+tellsimpafter(tan(a), sin(a)/cos(a))$
+tellsimpafter(sin(a)^2, 1-cos(a)^2)$
+tellsimpafter(cot(a), cos(a)/sin(a))$
+tellsimpafter(csc(a), 1/sin(a))$
+tellsimpafter(sec(a), 1/cos(a))$
+tan(x);
+cot(x);
+csc(x);
+sec(x);
+sin(x)^2;
+rules;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+csc(x); cot(x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+clear_rules()$
+defrule(secrule1, csc(a), 1/sin(a));
+declare(secrule1, evfun)$
+defrule(cscrule1, sec(a), 1/cos(a));
+declare(cscrule1, evfun)$
+defrule(cotrule1, cot(a), 1/tan(a));
+declare(cotrule1, evfun);
+cot(x), cotrule1;
+rules;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(inverses)$
+inverses([expr]):=block([result, x],
+matchdeclare(a, true),
+result:
+map(
+lambda([expr],
+subst([csc(x)=1/sin(x), sec(x)=1/cos(x), cot(x)=1/tan(x)], expr)), expr),
+if (length(expr)>1) then result else first(result))$
+declare(inverses, evfun)$
+declare(trigsimp, evfun)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+[sec(x), csc(x), cot(x)], inverses;
+[sec(x)^2, csc(x)^2, tan(x)^2*csc(x)^2], trigreduce;
+tan(x)^2*csc(x), trigreduce;
+1/(tan(x)^2*csc(x)), trigreduce;
+tan(x)^2*csc(x), trigreduce, inverses;
+tan(x)^2*csc(x), inverses, trigreduce;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sec(x); tan(x); cot(x); cotrule1(cot(x));
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+sin(x);
+cos(x), trigsimp;
+tan(x); 
+cot(x); 
+csc(x); 
+sec(x);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

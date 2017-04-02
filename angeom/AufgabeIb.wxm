@@ -1,0 +1,88 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load("angeom")$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: title   start ]
+Abstand paraller Geraden
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: comment start ]
+Gegeben sind die Punkte A, B
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+A:[-3,1,3];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+B:[2,5,3];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+und die Gerade g1
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+g1:A+t*[1,0,0]$ show(g1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+und g2:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+g2:B+s*[1,0,0]$ show(g2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+SpurPunkte zum Bestimmen der Plott-Scene
+Aufnehmen der Punkte in die PLOTT-Scene
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+O:append([[0,0,0]],[A],[B],spurPunkteGerade(g1),spurPunkteGerade(g2));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Die Gerade g1 und die Punkte der Ortsvektoren g1(0)-g2(0) spannen eine Ebene auf:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_S("","",z,"",g1,g2,-10,10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Bestimme eine Hilfsebene NFE1 die durch den Ortsvektor von g1 (g2) geht und senkrecht zu g1 steht  
+mit dem Normalenvektor aus dem Richtungsvektor g1 (g2):
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+RV:GRV(g1)$ NFE1:RV.[x,y,z]-RV.GOV(g1)$ NFE1;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Berechne die Schnittpunkte F1/F2 von g1/g2 mit der Ebene NFE1
+Der Betrag, Länge, des Vektors F1F2 ist der Abstand:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+F(NFE1,[g1[1],g1[2],g1[3]]); solve(%,t); F1:F(g1,[t aus %]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F(NFE1,[g2[1],g2[2],g2[3]]); solve(%,s); F2:ev(g2, %);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PlottVektor:[F1,F2-F1]$ PLOTT_S(NFE1,"","","",g2,g1,-8,8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Abstand:((F1-F2).(F1-F2))/sqrt((F1-F2).(F1-F2));
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

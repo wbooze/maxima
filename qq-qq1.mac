@@ -1,0 +1,400 @@
+/* qq-qq1.mac 
+
+   April 30, 2011
+   Edwin L. Woollett
+   woollett@charter.net
+   http://www.csulb.edu/~woollett
+
+   needs ch. 12 dirac package (version2) with addition of
+   qcd1.mac (easiest to insert load(qcd1) into the
+   load section of dirac2.mac).
+
+   QUARK-QUARK ELASTIC SCATTERING,
+   in first order dominated by a single gluon exchange.
+
+   CASE 1: quark-quark scattering of different flavored
+   quarks, like u d --> u d.
+   
+   CASE 2: quark-quark scattering of same flavor quarks,
+    such as u u --> u u.
+   
+   Context: sub-parton hard scattering processes
+   where we can ignore the mass of the quarks.
+   
+   In first order, we only include gluon exchange.
+   We interpret the Feynman rules as defining -%i*M.
+   Our notation and conventions agree generally with
+   Peskin and Schroeder, unless otherwise indicated.
+   
+   References:
+   1. Leader, Elliot and Predazzzi, Enrico, An Introduction to Gauge
+           Theories and the New Physics, Cambridge Univ. Press, 1983,
+           pp. 460-463
+           
+   2. Peskin, Michael and Schroeder, Daniel, An Introduction to
+        Quantum Field Theory, Addison-Wesley, 1995
+        Feynman rules: pp. 507-515, pp.802-803
+        note: g^2 = 4*%pi*alpha_s
+        sub-parton hard scatt: pp. 568-573
+        
+   3. Griffiths, David, Introduction to Elementary Particles,
+        Harper & Row, 1987 (there are later editions),
+        Chapter 9.
+        
+   4. Chyla, Jiri, Quarks, Partons and Quantum Chromodynamics,
+          210 pp lecture notes, available at
+          http://www-hep2.fzu.cz/~chyla/lectures/text.pdf,
+          Feynman rules, etc., pp 201-204
+          cross sections: pp. 120 - 123.
+          
+   5. Cutler, Roger, and Sivers, Dennis, Quantum-chromodynamic
+       gluon contributions to large-p_T reactions,
+       Physical Review D, Vol. 17, 198-211, Jan. 1, 1978,
+       Appendix A: Evaluation of QCD Graphs.
+       
+    */
+   
+  " ======================================================"$
+ "  file qq-qq1.mac "$
+ "  Maxima by Example, Ch. 13 "$
+ "  Quark Gluon Hard Scattering Processes "$
+ "  Edwin L Woollett, woollett@charter.net "$
+ "  http://www.csulb.edu/~woollett  "$
+    print ("      ver: ",_binfo%,"  date: ",mydate )$
+ 
+ " ======================================================"$  
+ "  QUARK-QUARK ELASTIC SCATTERING "$
+   
+   " Case: different flavor quark-quark elastic scattering "$
+   " such as u d --> u d "$
+   " Let alpha and beta denote the quark flavor."$
+   " Here we assume alpha # beta "$
+   " We only include gluon exchange in our first example "$
+   " dirac2.mac should load qcd1.mac to define the "$
+   " SU(3) 3 x 3 color matrices T[a], a = 1,2,...,8 "$
+   " and the antisymmetric gauge group structure contstants"$
+   " f[a,b,c] "$
+   
+" HIGH ENERGY LIMIT, CENTER OF MOMENTUM FRAME, NEGLECT MASSES "$
+" Let i,j,k,l (taking values 1,2,3) be  the specified quark color assignments "$
+"  q(p1,s1,i,alpha) + q(p2,s2,j,beta) --> q(p3,s3,k,alpha) + q(p4,s4,l,beta) "$
+
+" ma and mb, quark masses, set to zero."$
+" ------------------------------------------ "$
+  
+  
+  "NON-POLARIZED DIFFERENTIAL CROSS SECTION: SYMBOLIC METHODS"$
+  
+  " POPULATE THE LIST invarR OF 4-VEC DOT PRODUCT VALUES, "$
+  " Using p1 + p2 = p3 + p4, s = (p1+p2)^2 = (p3+p4)^2 ,"$
+  "      t = (p1-p3)^2 = (p2-p4)^2,"$
+  "      and u = (p1-p4)^2 = (p2-p3)^2 "$
+  
+  " CASE HIGH ENERGY (HE) LIMIT E >> ( ma,mb)  "$
+  " ---------------------------------------------"$
+  invar (D(p1,p1) = 0,
+         D(p1,p2) = s/2,
+         D(p1,p3) =  - t/2,
+         D(p1,p4) =  - u/2,
+         D(p2,p2) = 0,
+         D(p2,p3) =  - u/2,
+         D(p2,p4) =  - t/2,
+         D(p3,p3) = 0,
+         D(p3,p4) = s/2,
+         D(p4,p4) = 0)$
+  "------------------------------------------------------"$
+  
+  " Mt = At * Ct = dirac amplitude times a color amplitude "$
+  
+  
+  "Atsq is < |At|^2 > which includes (1/4)*(sum over all helicities)"$
+  " multiply by g^4/(4*t^2) later "$
+  
+  Atsq : factor (scon ( tr (p3,mu,p1,nu)*tr (p4,mu,p2,nu), mu,nu));  
+  
+  Atsq : (g^4/(4*t^2))*Atsq;
+  
+  " Ctsq is < |Ct|^2 > which incudes (1/9)*(sum over all quark colors"$
+  
+  Ctsq : sum (sum ( mat_trace (T[a] . T[b])^2,b,1,8),a,1,8)/9;
+  
+  Mtsq : Atsq*Ctsq;
+  
+  dsigdt : Mtsq/(16*%pi*s^2)$
+  
+  (display2d:true,display (dsigdt),display2d:false)$
+  
+ " CONVERSION TO EXPLICIT FUNCTION OF SCATTERING ANGLE "$
+
+ assume ( p > 0, th >= 0, th <= %pi )$
+   
+ comp_def ( p1( E,0,0,E),
+            p2( E,0,0,-E),
+            p3 (E,E*sin(th),0,E*cos(th)),
+            p4 (E,-E*sin(th),0,-E*cos(th)) )$
+             
+  s_th : VP (p1+p2,p1+p2);
+  
+  t_th : factor (VP (p1-p3,p1-p3));
+  
+  u_th : factor (VP (p1-p4,p1-p4));
+  
+   
+  " sub_stu replaces s by s_th, t by t_th  "$
+  "  and u by u_th "$
+  
+  MtSQ : sub_stu (Mtsq);
+  
+  " convert to (th/2) form "$
+  
+  MtSQ2 : factor (trigsimp (to_ao2 (MtSQ,th)));
+  
+  dsigdo_CM : MtSQ2/(64*%pi^2*s)$
+  
+  (display2d:true,display (dsigdo_CM),display2d:false)$
+  
+  "============================================="$
+  " CASE ELASTIC SCATTERING OF SAME FLAVOR QUARKS"$
+  " need to include u channel crossed diagram "$
+  " including an extra minus sign compared with t channel."$
+  " Total Unpolarized cross section will now include four "$
+  " terms: Mtsq + Musq + Mt*conj(Mu) + Mu*conj(Mt)  "$
+  " coming from < (Mt + Mu)*conj(Mt + Mu) > "$
+  
+  " Mu = Au * Cu = dirac amplitude times a color amplitude "$
+  
+  
+  "Ausq is < |Au|^2 > which includes (1/4)*(sum over all helicities)"$
+  " multiply by g^4/(4*u^2) later "$
+  
+  Ausq : factor (scon ( tr (p4,mu,p1,nu)*tr (p3,mu,p2,nu), mu,nu));  
+  
+  Ausq : (g^4/(4*u^2))*Ausq;
+  
+  " Cusq is < |Cu|^2 > which incudes (1/9)*(sum over all quark colors"$
+  " and which is the same numerical value as Ctsq "$
+  
+  Cusq : Ctsq;
+  
+  Musq : Ausq*Cusq;
+  
+  " cross term Mtu = Atub*Ctub "$
+  
+  Ctub : sum (sum ( mat_trace (T[a] . T[b] . T[a] . T[b]),b,1,8),a,1,8)/9;
+  
+  Atub : tr(p3,mu,p1,nu,p4,mu,p2,nu);
+  
+  Atub : -(g^4/(4*t*u)) * Atub;
+  
+  Mtu : Atub*Ctub;
+  
+  
+  " second cross term Mut = <Mu*conj(Mt)> = < Aut*Cut> = Mtu "$
+  
+  " Autb = <Aut> "$
+  
+  Autb : tr(p4,nu,p1,mu,p3,nu,p2,mu);
+  
+  Autb : -(g^4/(4*t*u)) * Autb;
+  
+  Cutb : Ctub;
+  
+  Mut : Autb*Cutb;
+  
+  " total averaged squared amplitude = <|M|^2> "$
+  
+  Msq : Mtsq + Musq +2*Mtu;
+  
+  Msq : pullfac (Msq,2*g^4/9);
+  
+  dsigdt : Msq/(16*%pi*s^2)$
+  
+  (display2d:true,display (dsigdt),display2d:false)$
+  
+  " CONVERSION TO EXPLICIT FUNCTION OF SCATTERING ANGLE "$
+  
+  " sub_stu replaces s by s_th, t by t_th  "$
+  "  and u by u_th "$
+  
+  MSQ : sub_stu (Msq);
+  
+  " convert to (th/2) form "$
+  
+  MSQ2 : factor (trigsimp (to_ao2 (MSQ,th)));
+  
+  dsigdo_CM : MSQ2/(64*%pi^2*s)$
+  
+  (display2d:true,display (dsigdo_CM),display2d:false)$
+  
+  "============================================="$
+  
+  
+  
+  /*
+  
+(%i2) batch("qq-qq1.mac");
+read and interpret file: #pc:/work5/qq-qq1.mac
+(%i3) " ======================================================"
+(%i4) "  file qq-qq1.mac "
+(%i5) "  Maxima by Example, Ch. 13 "
+(%i6) "  Quark Gluon Hard Scattering Processes "
+(%i7) "  Edwin L Woollett, woollett@charter.net "
+(%i8) "  http://www.csulb.edu/~woollett  "
+(%i9) print("      ver: ",_binfo%,"  date: ",mydate)
+      ver:  Maxima 5.24.0   date:  2011-04-30 
+(%i10) " ======================================================"
+(%i11) "  QUARK-QUARK ELASTIC SCATTERING "
+(%i12) " Case: different flavor quark-quark elastic scattering "
+(%i13) " such as u d --> u d "
+(%i14) " Let alpha and beta denote the quark flavor."
+(%i15) " Here we assume alpha # beta "
+(%i16) " We only include gluon exchange in our first example "
+(%i17) " dirac2.mac should load qcd1.mac to define the "
+(%i18) " SU(3) 3 x 3 color matrices T[a], a = 1,2,...,8 "
+(%i19) " and the antisymmetric gauge group structure contstants"
+(%i20) " f[a,b,c] "
+(%i21) " HIGH ENERGY LIMIT, CENTER OF MOMENTUM FRAME, NEGLECT MASSES "
+(%i22) " Let i,j,k,l (taking values 1,2,3) be  the specified quark color assignments "
+(%i23) "  q(p1,s1,i,alpha) + q(p2,s2,j,beta) --> q(p3,s3,k,alpha) + q(p4,s4,l,beta) "
+(%i24) " ma and mb, quark masses, set to zero."
+(%i25) " ------------------------------------------ "
+(%i26) "NON-POLARIZED DIFFERENTIAL CROSS SECTION: SYMBOLIC METHODS"
+(%i27) " POPULATE THE LIST invarR OF 4-VEC DOT PRODUCT VALUES, "
+(%i28) " Using p1 + p2 = p3 + p4, s = (p1+p2)^2 = (p3+p4)^2 ,"
+(%i29) "      t = (p1-p3)^2 = (p2-p4)^2,"
+(%i30) "      and u = (p1-p4)^2 = (p2-p3)^2 "
+(%i31) " CASE HIGH ENERGY (HE) LIMIT E >> ( ma,mb)  "
+(%i32) " ---------------------------------------------"
+(%i33) invar(D(p1,p1) = 0,D(p1,p2) = s/2,D(p1,p3) = (-t)/2,D(p1,p4) = (-u)/2,
+             D(p2,p2) = 0,D(p2,p3) = (-u)/2,D(p2,p4) = (-t)/2,D(p3,p3) = 0,
+             D(p3,p4) = s/2,D(p4,p4) = 0)
+(%i34) "------------------------------------------------------"
+(%i35) " Mt = At * Ct = dirac amplitude times a color amplitude "
+(%i36) "Atsq is < |At|^2 > which includes (1/4)*(sum over all helicities)"
+(%i37) " multiply by g^4/(4*t^2) later "
+(%i38) Atsq:factor(scon(tr(p3,mu,p1,nu)*tr(p4,mu,p2,nu),mu,nu))
+(%o38) 8*(u^2+s^2)
+(%i39) Atsq:g^4*Atsq/(4*t^2)
+(%o39) 2*g^4*(u^2+s^2)/t^2
+(%i40) " Ctsq is < |Ct|^2 > which incudes (1/9)*(sum over all quark colors"
+(%i41) Ctsq:sum(sum(mat_trace(T[a] . T[b])^2,b,1,8),a,1,8)/9
+(%o41) 2/9
+(%i42) Mtsq:Atsq*Ctsq
+(%o42) 4*g^4*(u^2+s^2)/(9*t^2)
+(%i43) dsigdt:Mtsq/(16*%pi*s^2)
+(%i44) (display2d:true,display(dsigdt),display2d:false)
+                                       4   2    2
+                                      g  (u  + s )
+                             dsigdt = ------------
+                                              2  2
+                                      36 %pi s  t
+
+(%i45) " CONVERSION TO EXPLICIT FUNCTION OF SCATTERING ANGLE "
+(%i46) assume(p > 0,th >= 0,th <= %pi)
+(%i47) comp_def(p1(E,0,0,E),p2(E,0,0,-E),p3(E,E*sin(th),0,E*cos(th)),
+                p4(E,-E*sin(th),0,-E*cos(th)))
+(%i48) s_th:VP(p2+p1,p2+p1)
+(%o48) 4*E^2
+(%i49) t_th:factor(VP(p1-p3,p1-p3))
+(%o49) 2*(cos(th)-1)*E^2
+(%i50) u_th:factor(VP(p1-p4,p1-p4))
+(%o50) -2*(cos(th)+1)*E^2
+(%i51) " sub_stu replaces s by s_th, t by t_th  "
+(%i52) "  and u by u_th "
+(%i53) MtSQ:sub_stu(Mtsq)
+(%o53) -4*g^4*sin(th)^2/(9*cos(th)^2-18*cos(th)+9)
+        +8*g^4*cos(th)/(9*cos(th)^2-18*cos(th)+9)
+        +24*g^4/(9*cos(th)^2-18*cos(th)+9)
+(%i54) " convert to (th/2) form "
+(%i55) MtSQ2:factor(trigsimp(to_ao2(MtSQ,th)))
+(%o55) 4*g^4*(cos(th/2)^4+1)/(9*sin(th/2)^4)
+(%i56) dsigdo_CM:MtSQ2/(64*%pi^2*s)
+(%i57) (display2d:true,display(dsigdo_CM),display2d:false)
+                                      4     4 th
+                                     g  (cos (--) + 1)
+                                              2
+                        dsigdo_CM = -------------------
+                                           2      4 th
+                                    144 %pi  s sin (--)
+                                                    2
+
+(%i58) "============================================="
+(%i59) " CASE ELASTIC SCATTERING OF SAME FLAVOR QUARKS"
+(%i60) " need to include u channel crossed diagram "
+(%i61) " including an extra minus sign compared with t channel."
+(%i62) " Total Unpolarized cross section will now include four "
+(%i63) " terms: Mtsq + Musq + Mt*conj(Mu) + Mu*conj(Mt)  "
+(%i64) " coming from < (Mt + Mu)*conj(Mt + Mu) > "
+(%i65) " Mu = Au * Cu = dirac amplitude times a color amplitude "
+(%i66) "Ausq is < |Au|^2 > which includes (1/4)*(sum over all helicities)"
+(%i67) " multiply by g^4/(4*u^2) later "
+(%i68) Ausq:factor(scon(tr(p4,mu,p1,nu)*tr(p3,mu,p2,nu),mu,nu))
+(%o68) 8*(t^2+s^2)
+(%i69) Ausq:g^4*Ausq/(4*u^2)
+(%o69) 2*g^4*(t^2+s^2)/u^2
+(%i70) " Cusq is < |Cu|^2 > which incudes (1/9)*(sum over all quark colors"
+(%i71) " and which is the same numerical value as Ctsq "
+(%i72) Cusq:Ctsq
+(%o72) 2/9
+(%i73) Musq:Ausq*Cusq
+(%o73) 4*g^4*(t^2+s^2)/(9*u^2)
+(%i74) " cross term Mtu = Atub*Ctub "
+(%i75) Ctub:sum(sum(mat_trace(T[a] . T[b] . T[a] . T[b]),b,1,8),a,1,8)/9
+(%o75) -2/27
+(%i76) Atub:tr(p3,mu,p1,nu,p4,mu,p2,nu)
+(%o76) -8*s^2
+(%i77) Atub:-g^4*Atub/(4*t*u)
+(%o77) 2*g^4*s^2/(t*u)
+(%i78) Mtu:Atub*Ctub
+(%o78) -4*g^4*s^2/(27*t*u)
+(%i79) " second cross term Mut = <Mu*conj(Mt)> = < Aut*Cut> = Mtu "
+(%i80) " Autb = <Aut> "
+(%i81) Autb:tr(p4,nu,p1,mu,p3,nu,p2,mu)
+(%o81) -8*s^2
+(%i82) Autb:-g^4*Autb/(4*t*u)
+(%o82) 2*g^4*s^2/(t*u)
+(%i83) Cutb:Ctub
+(%o83) -2/27
+(%i84) Mut:Autb*Cutb
+(%o84) -4*g^4*s^2/(27*t*u)
+(%i85) " total averaged squared amplitude = <|M|^2> "
+(%i86) Msq:2*Mtu+Musq+Mtsq
+(%o86) 4*g^4*(u^2+s^2)/(9*t^2)-8*g^4*s^2/(27*t*u)+4*g^4*(t^2+s^2)/(9*u^2)
+(%i87) Msq:pullfac(Msq,2*g^4/9)
+(%o87) 2*g^4*(2*(u^2+s^2)/t^2-4*s^2/(3*t*u)+2*(t^2+s^2)/u^2)/9
+(%i88) dsigdt:Msq/(16*%pi*s^2)
+(%i89) (display2d:true,display(dsigdt),display2d:false)
+                                 2    2       2        2    2
+                          4  2 (u  + s )   4 s     2 (t  + s )
+                         g  (----------- - ----- + -----------)
+                                  2        3 t u        2
+                                 t                     u
+                dsigdt = --------------------------------------
+                                               2
+                                       72 %pi s
+
+(%i90) " CONVERSION TO EXPLICIT FUNCTION OF SCATTERING ANGLE "
+(%i91) " sub_stu replaces s by s_th, t by t_th  "
+(%i92) "  and u by u_th "
+(%i93) MSQ:sub_stu(Msq)
+(%o93) -320*g^4/(27*sin(th)^2)+128*g^4/(9*sin(th)^4)+8*g^4/9
+(%i94) " convert to (th/2) form "
+(%i95) MSQ2:factor(trigsimp(to_ao2(MSQ,th)))
+(%o95) 8*g^4*(cos(th/2)^2*sin(th/2)^2-3)*(3*cos(th/2)^2*sin(th/2)^2-1)
+        /(27*cos(th/2)^4*sin(th/2)^4)
+(%i96) dsigdo_CM:MSQ2/(64*%pi^2*s)
+(%i97) (display2d:true,display(dsigdo_CM),display2d:false)
+                    4     2 th     2 th             2 th     2 th
+                   g  (cos (--) sin (--) - 3) (3 cos (--) sin (--) - 1)
+                            2        2                2        2
+       dsigdo_CM = ----------------------------------------------------
+                                      2      4 th     4 th
+                               216 %pi  s cos (--) sin (--)
+                                               2        2
+
+(%i98) "============================================="
+(%o99) "qq-qq1.mac"
+
+ */
+ 
+ 

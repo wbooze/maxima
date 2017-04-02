@@ -1,0 +1,133 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load("angeom.mac")$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: title   start ]
+Ebene und paralle Gerade
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: comment start ]
+Gegeben sind die Punkte A, B
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+A:[2,1,3];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+B:[2,5,3];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+und eine Gerade g1
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+g1:[5,1,1]+t*[1,2,0]$ show(g1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Die Ebene E1 enthält die Punkte A,B und verläuft parallel zu g1.
+Bestimmen Sie die Gleichung von E1:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+E1:[-2,-5,1]+r*[-3,-6,3]+s*[1,2,0]$ show(E1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+1. Bestimme NF der Ebene E1:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+NFE1:normalForm(E1)$ NFE1;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[[0,0,0],[-1,0,0],[6,0,0]];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_S(NFE1,"","",g1,"","",-2,7);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Bestimme den Normalenvektor von E1
+n steht dann senkrecht auf der Ebene:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+n:(ERV1(E1)-EOV(E1))><(ERV2(E1)-EOV(E1));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Zur Abstandsbestimmung gehe ich zu einem Punkt der Ebene E1(r,s) 
+dann senkrecht t*n bis zu einem Punkt der Geraden g1(0):
+E1(r,s) + t*n = g1(0)
+Es ist jeder Punkt der Geraden, also auch z.B: der Orstvektor, geeignet.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+lsg:solve(E1+t*n-GOV(g1),[r,s,t]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+F1: Fusspunkt auf der Ebene
+r und s in E1 einsetzen
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+F1:F(E1,[r aus lsg , s aus lsg]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+F2: Lotpunkt auf die Gerade
+0 in g1 einsetzen
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+F2:GOV(g1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Der Abstand ist der Betrag des Vektors t*n
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+(t aus lsg)*n; sqrt(%.%);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Punkte in Plott-Scene übernehmen
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+O:append([[0,0,0]],[F1],[F2],spurPunkteGerade(g1),spurPunkteEbene(NFE1));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_S(NFE1,"","",g1,"","",-5,8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Zur Kontrolle erstellen wir die Hess'che Normalform HNFE1
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+HNFE1:NFE1/-sqrt(n.n)$ HNFE1;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Und setzen einen Punkt der Geraden (Ortsvektor) ein und 
+berechnen den Abstand mit der HNF 
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+F(HNFE1,[GOV(g1)[1],GOV(g1)[2],GOV(g1)[3]]);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

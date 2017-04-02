@@ -1,0 +1,40 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 14.09.0 ] */
+
+/* [wxMaxima: input   start ] */
+interval(a, x, b):=block([x:x, ans:[]],
+for x:a thru b do (ans:append(ans, [x])), return(setify(ans)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+interval(2, x, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+is(interval(2, x, 3)<interval(2, x, 2));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subset(interval(2, x, 10), evenp);
+subset(interval(2, x, 10), oddp);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+interval(2, m, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+set(x<10);
+for i in interval(2, x, 10) do (print(i));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for i in {x<10} do print(i);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??subset;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

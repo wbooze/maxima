@@ -1,0 +1,465 @@
+/* test file dgcon2-test.mac */
+
+
+  /* Eps_post examples */
+
+ Eps_post(LI(n1,n2)*Gm(n3,n4)*Eps(n1,n2,n3,n4));
+ LI(n1,n2)*Eps(n1,n2,n3,n4)*Gm(n3,n4);
+ Eps_post(LI(n1,n2)*Gm(n3,n4)*Eps(n1,n1,n3,n4));
+ 0;
+ Eps_post(-2*LI(n1,n2)*Gm(n3,n4)*Eps(n1,n2,n3,n4));
+ -2*LI(n1,n2)*Eps(n1,n2,n3,n4)*Gm(n3,n4);
+ Eps_post(-2*c1*LI(n1,n2)*Gm(n3,n4)*Eps(n1,n2,n3,n4));
+ -2*c1*LI(n1,n2)*Eps(n1,n2,n3,n4)*Gm(n3,n4);
+ 
+   /* UIGm_con examples  */
+ 
+ UIGm_con(16 + D(a,b));
+ D(a,b)+16;
+
+ UIGm_con (Gm(n1,n2)*Gm(n2,n3));
+ Gm(n1,n3);
+
+ UIGm_con (2*Gm(n1,n2)*Gm(n2,n3)/7);
+ 2*Gm(n1,n3)/7;
+
+ UIGm_con (-2*Gm(n1,n2)*Gm(n2,n3)/m^2);
+ -2*Gm(n1,n3)/m^2;
+
+ UIGm_con (Gm (n1,n1));
+ 4;
+
+ UIGm_con (2*Gm (n1,n1)/7);
+ 8/7;
+
+ UIGm_con (-3*%i*Gm (n1,n1)/M^2);
+ -12*%i/M^2;
+
+ UIGm_con (c1*Gm (n1,n1)/c2);
+ 4*c1/c2;
+
+ UIGm_con (Gm(n1,n2)*Gm(n2,n1));
+ 4;
+
+ UIGm_con (-2*Gm(n1,n2)*Gm(n2,n1)/(7*m^2));
+ -8/(7*m^2);
+
+ UIGm_con (UI(p,n2)*Gm(n2,n1));
+ UI(p,n1);
+
+ UIGm_con (-2*UI(p,n2)*Gm(n2,n1)/(7*m^2));
+ -2*UI(p,n1)/(7*m^2);
+
+ UIGm_con (UI(p,n2)*UI(q,n2));
+ D(p,q);
+
+ UIGm_con (-2*UI(p,n2)*UI(q,n2)/(7*m^2));
+ -2*D(p,q)/(7*m^2);
+ 
+ /* Eps1_con and Eps_post examples */
+ 
+ 
+ 
+ Eps1_con (Eps1(n1,n2,n3,N1)*Gm(n4,n5)*Gm(n6,N1));
+ Eps(n1,n2,n3,n6)*Gm(n4,n5);
+
+ Eps1_con (-2*Eps1(n1,n2,n3,N1)*Gm(n4,n5)*Gm(n6,N1)/(7*m^2));
+ -2*Eps(n1,n2,n3,n6)*Gm(n4,n5)/(7*m^2);
+
+
+ Eps1_con (m*Eps1(n1,n2,n3,N1)*Gm(n4,n5)*Gm(n6,N1));
+ m*Eps(n1,n2,n3,n6)*Gm(n4,n5);
+
+ Eps1_con (-2*m*Eps1(n1,n2,n3,N1)*Gm(n4,n5)*Gm(n6,N1)/(7*M^2));
+ -2*m*Eps(n1,n2,n3,n6)*Gm(n4,n5)/(7*M^2);
+
+ Eps1_con (m^2*Eps1(n1,n2,n3,N1)*Gm(n4,n5)*Gm(n6,N1));
+ m^2*Eps(n1,n2,n3,n6)*Gm(n4,n5);
+ Eps1_con (-m^2*Eps1(n1,n2,n3,N1)*Gm(n4,n5)*Gm(n6,N1));
+ -m^2*Eps(n1,n2,n3,n6)*Gm(n4,n5);
+ Eps1_con (-m^2*Eps1(n1,n2,n3,N1)*Gm(n4,n5)*Gm(n6,N1)/c1);
+ -m^2*Eps(n1,n2,n3,n6)*Gm(n4,n5)/c1;
+
+
+ Eps1_con (Gm(n4,n5)*Gm(n6,N3)*LI(p1,N2)*Eps1(N2,n2,n3,N3));
+ Gm(n4,n5)*LI(p1,N2)*Eps(N2,n2,n3,n6);
+
+ Eps1_con (-2*Gm(n4,n5)*Gm(n6,N3)*LI(p1,N2)*Eps1(N2,n2,n3,N3)/(7*m^2));
+ -2*Gm(n4,n5)*LI(p1,N2)*Eps(N2,n2,n3,n6)/(7*m^2);
+
+ Eps1_con (Gm(n3,N4)*LI(p1,N4)*LI(p2,N5)*Eps(N5,n4,n5,n6));
+ UI(p1,n3)*LI(p2,N5)*Eps(N5,n4,n5,n6);
+
+ Eps1_con (Gm(n4,n5)*Gm(n6,N6)*LI(p1,N4)*LI(p2,N5)*Eps1(N4,N5,n3,N6));
+ Gm(n4,n5)*LI(p1,N4)*LI(p2,N5)*Eps(N4,N5,n3,n6);
+
+ Eps1_con (Eps(n3,n4,n5,n6)*LI(p1,N4)*LI(p2,N5)*Gm(N4,N5));
+ Eps(n3,n4,n5,n6)*D(p1,p2);
+ Eps1_con (-m^2*Eps(n3,n4,n5,n6)*LI(p1,N4)*LI(p2,N5)*Gm(N4,N5)/c1);
+ -m^2*Eps(n3,n4,n5,n6)*D(p1,p2)/c1;
+
+ Eps1_con (Eps1(n1,n2,n3,N1)*Gm(n4,n5)*Gm(n6,N1));
+ Eps(n1,n2,n3,n6)*Gm(n4,n5);
+
+ Eps1_con (Gm(n4,n5)*Gm(n6,N3)*LI(p1,N2)*Eps1(N2,n2,n3,N3));
+ Gm(n4,n5)*LI(p1,N2)*Eps(N2,n2,n3,n6);
+
+ Eps1_con (Gm(n3,N4)*LI(p1,N4)*LI(p2,N5)*Eps(N5,n4,n5,n6));
+ UI(p1,n3)*LI(p2,N5)*Eps(N5,n4,n5,n6);
+ Eps1_con (-m^2*Gm(n3,N4)*LI(p1,N4)*LI(p2,N5)*Eps(N5,n4,n5,n6)/c1);
+ -m^2*UI(p1,n3)*LI(p2,N5)*Eps(N5,n4,n5,n6)/c1;
+
+ Eps1_con (Gm(n4,n5)*Gm(n6,N6)*LI(p1,N4)*LI(p2,N5)*Eps1(N4,N5,n3,N6));
+ Gm(n4,n5)*LI(p1,N4)*LI(p2,N5)*Eps(N4,N5,n3,n6);
+
+ Eps1_con (Eps(n3,n4,n5,n6)*LI(p1,N4)*LI(p2,N5)*Gm(N4,N5));
+ Eps(n3,n4,n5,n6)*D(p1,p2);
+ Eps1_con (-m^2*Eps(n3,n4,n5,n6)*LI(p1,N4)*LI(p2,N5)*Gm(N4,N5)/c1);
+ -m^2*Eps(n3,n4,n5,n6)*D(p1,p2)/c1;
+
+ Eps1_con (LI(p1,N7)*LI(p2,N8)*LI(p3,N9)*Gm(N7,N8)*Eps(N9,n4,n5,n6));
+ D(p1,p2)*LI(p3,N9)*Eps(N9,n4,n5,n6);
+ Eps_post(%);
+ D(p1,p2)*LI(p3,N9)*Eps(N9,n4,n5,n6);
+
+ Eps1_con (-2*LI(p1,N7)*LI(p2,N8)*LI(p3,N9)
+                 *Gm(N7,N8)*Eps(N9,n4,n5,n6)/(7*m^2));
+ -2*D(p1,p2)*LI(p3,N9)*Eps(N9,n4,n5,n6)/(7*m^2);
+ 
+ 
+ /* pullpsL examples */
+
+
+ (Nlast:0, pullpsL ([a,b,c,d]));
+ [[a,N1,b,N2,c,N3,d,N4],[N1,N2,N3,N4]];
+ pullpsL ([n1,n2,n3,n4]);
+ [[],[n1,n2,n3,n4]];
+ pullpsL ([p,n2,n3,n4]);
+ [[p,N5],[N5,n2,n3,n4]];
+ 
+ /* NDfac examples  */
+
+
+ NDfac(-2*k*p3[mu]*Sp4[nu]*E/M);
+ [-2/M,k*p3[mu]*Sp4[nu]*E];
+ NDfac (2*p3[mu]*p4[nu]*E^2/M^2);
+ [2/M^2,p3[mu]*p4[nu]*E^2];
+ NDfac (-4*k*p1[mu]*p3[mu]*p2[nu]*Sp4[nu]*E^3/(m^2*M));
+ [-4/(m^2*M),k*p1[mu]*p3[mu]*p2[nu]*Sp4[nu]*E^3];
+ NDfac (4*k*p1[mu]*p3[mu]*Sp2[nu]*Sp4[nu]*p*E^2/(m*M));
+ [4/(m*M),k*p1[mu]*p3[mu]*Sp2[nu]*Sp4[nu]*p*E^2];
+ NDfac (+4*p1[mu]*p3[mu]*p2[nu]*p4[nu]*E^4/(m^2*M^2));
+ [4/(m^2*M^2),p1[mu]*p3[mu]*p2[nu]*p4[nu]*E^4];
+ 
+ 
+ /* examples of scon */
+ 
+ scon(G(mu,nu,nu,mu),mu);
+ 4*G(1)*Gm(nu,nu);
+ scon(G(mu,nu,nu,mu),nu);
+ 4*G(mu,mu);
+ scon(G(mu,p,q,mu));
+ 4*G(1)*D(p,q);
+ scon(G(p,mu,mu,q));
+ 4*G(p,q);
+ scon(G(p,mu,mu,p));
+ 4*G(1)*D(p,p);
+ scon(UI(p,mu)*UI(q,mu));
+ D(p,q);
+ scon(UI(p,mu)*Gm(mu,nu));
+ UI(p,nu);
+ scon(G(a,mu,b,c,mu,a));
+ 4*G(1)*D(a,a)*D(b,c);
+ scon(G(G5,mu,nu,nu,mu));
+ 16*G(G5);
+
+ 
+ scon (Gm (n1,n2)*Eps (n1,n3,n4,n5));
+ Eps(n2,n3,n4,n5);
+ 
+ scon (UI(p,n1)*UI(q,n1),n1);
+ D(p,q);
+ scon (UI(p,n1)*UI(q,n1));
+ D(p,q);
+
+ scon (UI(p,n1)*Gm(n1,n2),n1);
+ UI(p,n2);
+ scon (UI(p,n1)*Gm(n1,n2));
+ UI(p,n2);
+
+ scon (UI(p,n1)*UI(q,n1) + UI(p,n1)*Gm(n1,n2),n1);
+ D(p,q)+UI(p,n2);
+ scon (UI(p,n1)*UI(q,n1) + UI(p,n1)*Gm(n1,n2));
+ D(p,q)+UI(p,n2);
+
+ scon (UI(r,n2)*UI(s,n2)*UI(p,n1)*UI(q,n1),n1,n2);
+ D(p,q)*D(r,s);
+ scon (UI(r,n2)*UI(s,n2)*UI(p,n1)*UI(q,n1));
+ D(p,q)*D(r,s);
+
+ scon (Gm(n1,n2)*Gm(n1,n2),n1,n2);
+ 4;
+ scon (Gm(n1,n2)*Gm(n1,n2));
+ 4;
+
+ scon (Gm(n1,n2)*G(n2,n3));
+ G(n1,n3);
+
+ scon (Gm(n1,n3)*Gm(n2,n4)*G(n1,n2),n1,n2);
+ G(n3,n4);
+ scon (Gm(n1,n3)*Gm(n2,n4)*G(n1,n2));
+ G(n3,n4);
+
+ scon (G(n1,n2,n2,n1),n1,n2);
+ 16*G(1);
+ scon (G(n1,n2,n2,n1));
+ 16*G(1);
+
+ scon (G(n1,p,n2,n1),n1);
+ 4*G(1)*UI(p,n2);
+ scon (G(n1,p,n2,n1));
+ 4*G(1)*UI(p,n2);
+
+ scon (Gm(n2,n3)*G(n1,p,n2,n1),n1,n2);
+ 4*G(1)*UI(p,n3);
+ scon (Gm(n2,n3)*G(n1,p,n2,n1));
+ 4*G(1)*UI(p,n3);
+ 
+ scon (G(n1,a,b,n1),n1);
+ 4*G(1)*D(a,b);
+ scon (G(n1,a,b,n1));
+ 4*G(1)*D(a,b);
+
+ scon (G(n1,n2,n3,n3,n2,n1),n1,n2,n3);
+ 64*G(1);
+ scon (G(n1,n2,n3,n3,n2,n1));
+ 64*G(1);
+
+ scon (G(n1,n2,n3,n1,n2,n3),n1,n2,n3);
+ 16*G(1);
+ scon (G(n1,n2,n3,n1,n2,n3));
+ 16*G(1);
+
+ scon (G(n1,n2,n3,n2,n1,n3),n1,n2,n3);
+ 16*G(1);
+ scon (G(n1,n2,n3,n2,n1,n3));
+ 16*G(1);
+
+ scon (G(p1,n1,p2,n1),n1);
+ -2*G(p1,p2);
+ scon (G(p1,n1,p2,n1));
+ -2*G(p1,p2);
+
+ scon (G(n1,n2,p1,p2,n2,n1),n1,n2);
+ 8*G(p2,p1)+8*G(p1,p2);
+ scon (G(n1,n2,p1,p2,n2,n1));
+ 8*G(p2,p1)+8*G(p1,p2);
+
+ scon (G(n1,n2,n3,p1,p2,n3,n2,n1),n1,n2,n3);
+ 64*G(1)*D(p1,p2);
+ scon (G(n1,n2,n3,p1,p2,n3,n2,n1));
+ 64*G(1)*D(p1,p2);
+
+ scon (G(n1,n2,n3,p1,p2,n1,n2,n3),n1,n2,n3);
+ 8*G(p2,p1)+8*G(p1,p2);
+ scon (G(n1,n2,n3,p1,p2,n1,n2,n3));
+ 8*G(p2,p1)+8*G(p1,p2);
+
+ scon (G(n1,n2,n3,p1,p2,n2,n1,n3),n1,n2,n3);
+ 16*G(1)*D(p1,p2);
+ scon (G(n1,n2,n3,p1,p2,n2,n1,n3));
+ 16*G(1)*D(p1,p2);
+
+ scon (G(n1,p1,p2,n2,n3,n1,n2,n3),n1,n2,n3);
+ 16*G(1)*D(p1,p2);
+ scon (G(n1,p1,p2,n2,n3,n1,n2,n3));
+ 16*G(1)*D(p1,p2);
+
+ scon (G(n1,p1,p2,n2,n3,n3,n2,n1),n1,n2,n3);
+ 64*G(1)*D(p1,p2);
+ scon (G(n1,p1,p2,n2,n3,n3,n2,n1));
+ 64*G(1)*D(p1,p2);
+
+ scon (G(n1,p1,n2,p2,n3,n1,n2,n3),n1,n2,n3);
+ 8*G(p2,p1)-16*G(1)*D(p1,p2);
+ scon (G(n1,p1,n2,p2,n3,n1,n2,n3));
+ 8*G(p2,p1)-16*G(1)*D(p1,p2);
+
+ scon (G(n1,p1,n2,n3,p2,n1,n2,n3),n1,n2,n3);
+ 32*G(1)*D(p1,p2)-16*G(p2,p1);
+
+ scon (G(n1,p1,n2,n3,n2,p2,n1,n3),n1,n2,n3);
+ -8*G(p2,p1);
+
+ scon (G(n1,p1,n2,n3,n2,p2,n3,n1),n1,n2,n3);
+ 8*G(p2,p1)+8*G(p1,p2);
+
+ scon (G(p1,n3,n2,n1,p2,n1,n2,n3),n1,n2,n3);
+ -8*G(p1,p2);
+
+ scon (G(n1,n2,p1,p2,n3,n1,n2,n3),n1,n2,n3);
+ 32*G(1)*D(p1,p2)-16*G(p2,p1);
+
+ scon (G(p1,n3,n2,n1,n3,n2,n1,p2),n1,n2,n3);
+ 16*G(p1,p2);
+
+ scon (G(p1,n3,n2,n1,n2,n1,n3,p2),n1,n2,n3);
+ -32*G(p1,p2);
+
+ scon (G(p1,n3,n2,n1,n3,n1,n2,p2),n1,n2,n3);
+ 16*G(p1,p2);
+
+ scon (G(p1,n3,n2,n1,n1,n3,n2,p2),n1,n2,n3);
+ -32*G(p1,p2);
+
+ scon (G(p1,n1,p2,n2,p1,n3,p2,n2,n3,n1),n1,n2,n3);
+ -8*G(1)*D(p1,p1)*D(p2,p2);
+
+ scon (G(n1,n2,n3,n4,n4,n3,n2,n1),n1,n2,n3,n4);
+ 256*G(1);
+ scon (G(n1,n2,n3,n4,n4,n3,n2,n1));
+ 256*G(1);
+
+ scon (G(n1,n2,n3,n4,n1,n2,n3,n4),n1,n2,n3,n4);
+ -128*G(1);
+
+ scon (G(n1,n2,n3,n4,n3,n2,n1,n4),n1,n2,n3,n4);
+ -32*G(1);
+
+ scon (G(n4,n3,n2,n1,n4,n3,n2,n1),n1,n2,n3,n4);
+ -128*G(1);
+
+ scon (G(n4,n3,n2,n1,n2,n1,n3,n4),n1,n2,n3,n4);
+ -128*G(1);
+
+ scon (G(n1,n2,n3,n4,p1,p2,n4,n3,n2,n1),n1,n2,n3,n4);
+ 128*G(p2,p1)+128*G(p1,p2);
+
+ scon (G(n1,n2,n3,n4,p1,p2,n1,n2,n3,n4),n1,n2,n3,n4);
+ -128*G(p2,p1);
+
+ scon (G(p1,n4,n3,n2,n1,n4,n3,n2,n1,p2),n1,n2,n3,n4);
+ -128*G(p1,p2);
+
+ scon (G(p1,n4,n3,n2,n1,n4,n3,n1,n2,p2),n1,n2,n3,n4);
+ 64*G(p1,p2);
+
+ scon (G(p1,n4,n3,n2,n1,n4,n2,n3,n1,p2),n1,n2,n3,n4);
+ 64*G(p1,p2);
+
+ scon (G(p1,n4,n3,n2,n1,n4,n2,n1,n3,p2),n1,n2,n3,n4);
+ -32*G(p1,p2);
+
+ scon (G(p1,n4,n3,n2,n1,n4,n2,n1,n3,p2));
+ -32*G(p1,p2);
+
+ scon (G(n5,n4,n3,n2,n1,n5,n1,n4,n3,n2),n1,n2,n3,n4,n5);
+ 256*G(1);
+ scon (G(n5,n4,n3,n2,n1,n5,n1,n4,n3,n2));
+ 256*G(1);
+
+ scon (G(n1,n2,p1,p2,p3,p4,n2,n1),n1,n2);
+ 8*G(p4,p3,p2,p1)+8*G(p1,p2,p3,p4);
+
+ scon (G(n1,p,p2,p3,p,n1),n1);
+ 2*D(p,p)*G(p3,p2)+2*D(p,p)*G(p2,p3);
+
+ scon (G(n1,p,p,p3,p4,n1),n1);
+ 2*D(p,p)*G(p4,p3)+2*D(p,p)*G(p3,p4);
+
+ scon (G(p4,n1,p1,p2,p3,p4,n1,p5),n1);
+ 2*G(p1,p2,p3,p5)*D(p4,p4)+2*G(p4,p3,p2,p1,p4,p5);
+
+ scon (G(p4,n1,p1,p1,p3,p4,n1,p3),n1);
+ 2*G(1)*D(p1,p1)*D(p3,p3)*D(p4,p4)+2*D(p1,p1)*G(p4,p3,p4,p3);
+
+ scon (G(p3,n1,p1,p1,p3,p4,n1,p3),n1);
+ 2*D(p1,p1)*D(p3,p3)*G(p4,p3)+2*D(p1,p1)*D(p3,p3)*G(p3,p4);
+
+ scon(G(p3,n1,p1,p1,p3,p3,n1,p3),n1);
+ 4*G(1)*D(p1,p1)*D(p3,p3)^2;
+
+ scon(G(p3,n1,p1,p2,p3,n1),n1);
+ -2*G(p2,p1)*D(p3,p3);
+
+ scon(G(n1,p1,p2,p3,n1,p1),n1);
+ -2*D(p1,p1)*G(p3,p2);
+
+ scon(G(n1,a+b,c+d,n1),n1);
+ 4*G(1)*D(b,d)+4*G(1)*D(b,c)+4*G(1)*D(a,d)+4*G(1)*D(a,c);
+
+ scon(G(n1,a+b,c+d,n1));
+ 4*G(1)*D(b,d)+4*G(1)*D(b,c)+4*G(1)*D(a,d)+4*G(1)*D(a,c);
+
+ scon(G(n5,n1+n2,n3+n4,n5),n5);
+ 4*G(1)*Gm(n2,n4)+4*G(1)*Gm(n2,n3)+4*G(1)*Gm(n1,n4)+4*G(1)*Gm(n1,n3);
+
+ scon(G(n3,p1+p2,n1+n2,n3),n3);
+ 4*G(1)*UI(p2,n2)+4*G(1)*UI(p2,n1)+4*G(1)*UI(p1,n2)+4*G(1)*UI(p1,n1);
+
+ scon (G(n1,a,b,n1),n1);
+ 4*G(1)*D(a,b);
+
+ scon(G(n1,2*a,b,n1),n1);
+ 8*G(1)*D(a,b);
+
+ scon(G(n1,2*a,3*b,n1),n1);
+ 24*G(1)*D(a,b);
+
+ scon(G(n1,2*a,b/3,n1),n1);
+ 8*G(1)*D(a,b)/3;
+
+ scon(G(n1,-2*a,b/3,n1),n1);
+ -8*G(1)*D(a,b)/3;
+
+ scon(G(n1,p,m,n1),n1);
+ -2*m*G(p);
+
+ scon(G(n1,p,m,q,M,n1),n1);
+ 4*G(1)*m*D(p,q)*M;
+
+ scon(G(n1,p+m,q,n1),n1);
+ 4*G(1)*D(p,q)-2*m*G(q);
+ 
+ 
+/* scon11 examples */
+ 
+ 
+ scon11(UI(p,n1)*UI(q,n1),n1);
+ D(p,q);
+ scon11 (UI(p,n1)*Gm(n1,n2),n1);
+ UI(p,n2);
+
+ scon11 (Gm(n1,n1),n1);
+ 4;
+ scon11 (G(n1,n1),n1);
+ 4*G(1);
+
+ scon11 (Gm(n1,n2)*Gm(n1,n2),n1);
+ Gm(n2,n2);
+ scon11 (Gm(n1,n2)*G(n1,a),n1);
+ G(n2,a);
+
+ scon11 (G(n1,a,n1),n1);
+ -2*G(a);
+ scon11 (-3*G(n1,a,n1)/7,n1);
+ 6*G(a)/7;
+
+ scon11 (UI(p,n3)*Gm(n2,n4)*G(n1,a,n1),n1);
+ -2*G(a)*Gm(n2,n4)*UI(p,n3);
+ scon11 (-4*UI(p,n3)*Gm(n2,n4)*G(n1,a,n1),n1);
+ 8*G(a)*Gm(n2,n4)*UI(p,n3);
+ scon11 (UI(r,n2)*UI(s,n2)*UI(p,n1)*UI(q,n1),n1);
+ D(p,q)*UI(r,n2)*UI(s,n2);
+ scon11 (%,n2);
+ D(p,q)*D(r,s);
+
+ scon11(G(n1,n2,n2,n1),n1);
+ 4*G(1)*Gm(n2,n2);
+
+ scon11 (Gm (n1,n2)*Eps (n1,n3,n4,n5),n1);
+ Eps(n2,n3,n4,n5);
+ 
+ 
+
+

@@ -1,0 +1,514 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+4^x+5^x;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+e^(4*log(x))+e^(5*log(x)),logsimp=true, logcontract;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??log;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+solve((9^x-5^x-4^x-2)*sqrt(20^x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f(x):=5^x+4^x;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(f(x), x, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(start,stop,stepping,[shift]) := block([
+                                            n, y:[],
+                                             shift: (if (not(emptyp(shift))) 
+                                                        then float(first(shift))
+                                                            else (0.0))
+                                            ],
+            (n:floor((float(stop-start)/float(stepping)))),
+            (if (start < stop)
+            then
+            (y:flatten(append([y], 
+                                        makelist(float(start+shift+(stepping*(i-start))), 
+                                        i, start, n+start))))
+            else
+            (y:flatten(append([y], 
+                                        makelist(-(float(stop-shift-(stepping*(i-stop)))), 
+                                        i, -(n+stop), stop)))))
+            (if (n>1.0)
+                then return(y)
+                else return([])))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+map(f, seq(0, 10, 0.5));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+5^2-4^2;
+5^3-4^3;
+5^4-4^4;
+5^5-4^5;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+k(x):=(a^x)-((a-1)^x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(a=0, map(k, seq(0, 10, 1)));
+subst(a=1, map(k, seq(0, 10, 1)));
+subst(a=2, map(k, seq(0, 10, 1)));
+subst(a=3, map(k, seq(0, 10, 1)));
+subst(a=4, map(k, seq(0, 10, 1)));
+subst(a=5, map(k, seq(0, 10, 1)));
+subst(a=6, map(k, seq(0, 10, 1)));
+subst(a=7, map(k, seq(0, 10, 1)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(subst(a=x, map(k, seq(0, 10, 1))), x, 0, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(a=seq(0, 5, 1), map(k, seq(0, 10, 1)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+map(f, [0,10]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+limit(sqrt(x^2+x+1)-sqrt(x^2+2), x, inf);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+limit(sqrt(x^2+x+1), x, inf);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+limit(sqrt(x^2+2), x, inf);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+limit(sqrt(x^2+2), x, 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+limit(sqrt(x^2+x+1), x, 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sqrt(x^2+x+1-x^2-2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+limit(sqrt(x^2+x+1-x^2-2), x, inf);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f(x):=x^2+x+1; g(x):=x^2+2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+limit(f(x)-g(x), x, inf);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+limit(sqrt(f-g), x, inf);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+limit(sqrt(f(x)-g(x)), x, inf);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f(x):=sqrt(x^2+x+1); g(x):=sqrt(x^2+2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+freeof(operator(sqrt), ev(f(x)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+freeof(x, f(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sqrtdispflag:false; f(x);ratsimpexpons:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f(x); freeof(operator(log), f(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+exptisolate:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??expon;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+freeof(operator(exp), ev(f(x)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f(x)-g(x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f(x); part(f(x), 1); part(f(x), 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+freeof(part(f(x), 0), operator(sqrt));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+part(f(x)-g(x), 0); part(f(x)-g(x), 1); part(f(x)-g(x), 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(part(f(x)-g(x), k), k, 0, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+list:makelist(part(f(x)-g(x), k), k, 0, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+freeof(part(second(list), 0), operator(sqrt));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+part(second(list), 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+atom(first(list));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+listp(first(list));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+condense(expr):=
+    if (atom(expr) and not(freeof(part(expr, 0), operator(sqrt))))
+    then square(expr)
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+freeof(part(sqrt(2), 0), operator(sqrt));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+expr:sqrt(2)+sqrt(3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+length(expr);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(2, 3, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(start,stop,stepping,[shift]) := block([
+                                            n, y:[],
+                                             shift: (if (not(emptyp(shift))) 
+                                                        then float(first(shift))
+                                                            else (0.0))
+                                            ],
+            (n:floor((float(stop-start)/float(stepping)))),
+            (if (start < stop)
+            then
+            (y:flatten(append([y], 
+                                        makelist(float(start+shift+(stepping*(i-start))), 
+                                        i, start, n+start))))
+            else
+            (y:flatten(append([y], 
+                                        makelist(-(float(stop-shift-(stepping*(i-stop)))), 
+                                        i, -(n+stop), stop)))))
+            (if (n>1.0)
+                then return(y)
+                else return([])))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(part(expr, n), n, 1, length(expr));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+expr:sqrt(3)+sqrt(2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+expr;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+op(expr);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+square(k):=block(apply(part(k, 0), [part(k, 1)^2, part(k, 2)^2]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+string(op(a+b));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+string(op(expr));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+expr:sqrt(3)-sqrt(2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(expr);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+op(expr); part(expr, 0); inpart(expr, 0); inflag:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+l:op(expr);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+l;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+string(l(expr));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+apply(l, [part(expr, 1)^2, part(expr, 2)^2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+apply(string(+), [a, b]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+string(a);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+alphacharp("+");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+charp("+");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+op(+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+simplode(["+"]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+parse_string("+");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??string;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??+;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+square(expr), ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+condense(expr);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+condense(expr):=(sqrt(square(expr)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+condense(sqrt(2)-sqrt(3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+limit(f(x)-g(x), x, inf);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sqrtdispflag:true; rootsconmode:true; f(x)-g(x), rootscontract=true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+simp;radexpand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+expand(f(x)-g(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+condense(f(x)-g(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+expand(f(x)^2-g(x)^2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: hide output   ] */
+/* [wxMaxima: input   start ] */
+load(sqdnst);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: hide output   ] */
+/* [wxMaxima: input   start ] */
+load(rncomb);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+map(factorsum, f(x)-g(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+factorsum(f(x)-g(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+radcan(f(x)-g(x)), algebraic;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ratsimp(f(x)-g(x)), algebraic;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+combine(f(x)-g(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+rncombine(f(x)-g(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+multthru(f(x)-g(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+xthru(f(x)-g(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+facsum(f(x)-g(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+collectterms(f(x)-g(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+h(x):=x^2+x+1; k(x):=x^2+2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sqrt(h(x)-k(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: hide output   ] */
+/* [wxMaxima: input   start ] */
+??facexp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+load(facexp);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: hide output   ] */
+/* [wxMaxima: input   start ] */
+demo(facexp);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sqrt(x)+sqrt(2*x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sqrt(x)+sqrt(2*x), rootscontract;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sqrt(x)+sqrt(2*x), rootscontract, factor;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+map(factor, f(x)-g(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+expon:0; radcan(sqrt(x)+sqrt(2*x)), rootscontract;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sqrtdispflag:true, expon:10; radcan(sqrt(x)+sqrt(2*x)), rootscontract, factor;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sqrtdispflag:false, expon:10; radcan(sqrt(x)+sqrt(2*x)), rootscontract, factor;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sqrtdispflag:true, expon:0$ radcan(sqrt(x)+sqrt(2*x)), rootscontract;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sqrtdispflag:true, expon:5$ radcan(sqrt(x)+sqrt(2*x)), rootscontract;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+rootsconmode:true;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sqrtdispflag:false; ratsimpexpons:true;
+sqrt(2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??combine;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??sq;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??expon;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+expon:5;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

@@ -1,0 +1,189 @@
+  file mbe11code.txt  has Maxima code
+   for Maxima by Example, Chapter 11,
+   Fast Fourier Transform Tools.
+   This file has been modified to use
+   the fft.lisp functions effective with
+   Maxima v. 5.19.0
+
+    Edwin L Woollett, last edit: Aug. 13, 2009
+    woollett@charter.net
+    http://www.csulb.edu/~woollett
+
+
+11.1 Examples of the Use of the Fast Fourier Transform Functions fft and inverse_fft
+
+11.1.1 Example 1: FFT Spectrum of a Monochromatic Signal
+
+(%i1) load(fft);
+(%i2) load(qfft);
+(%i3) e : cos ( 6*%pi*t )$
+(%i4) ( ns : 8, fs : 8 )$
+(%i5) dt : first (nyquist (ns,fs));
+(%i6) flist : sample (e,t,ns,dt);
+(%i7) tflist : vf (flist,dt);
+(%i8) tmax : ns*dt;
+(%i9) plot2d([e ,[discrete,tflist]], [t,0,tmax],
+             [style,[lines,3],[points,3,2,1]],
+              [legend,false])$
+(%i10) glist : fft (flist);
+(%i11) fchop (%);
+(%i12) current_small()$
+(%i13) kglist : kg (glist);
+(%i14) plot2d ( [discrete, kglist],[x,0,5],[y,0,0.8],
+                  [style,[points,5,1,1]],[xlabel,"k"],
+                  [ylabel," "],[gnuplot_preamble,"set grid;"])$
+(%i15) vbars : makelist ( [discrete,
+                  [[kglist[i][1],0],[kglist[i][1],kglist[i][2]]]] ,
+                      i,1,length(kglist) );
+(%i16) plot2d ( vbars,[y,0,0.8],[style,[lines,5,1]],
+               [ylabel," "],[xlabel," k "],[legend,false],
+                [gnuplot_preamble,"set grid;"] )$
+(%i17) spectrum (glist, 5, 0.8 )$
+(%i18) flist1 : inverse_fft(glist);
+(%i19) fchop(%);
+(%i20) fchop( flist);
+(%i21) lmax ( abs (flist1 - flist));
+
+
+
+11.1.2 Example 2: FFT Spectrum of a Sum of Two Monochromatic Signals
+
+(%i1) ( load(fft), load(qfft) )$
+(%i2) e : cos(2*%pi*t) + sin(4*%pi*t)$
+(%i3) (ns : 16, fs : 16/3)$
+(%i4) dt : first (nyquist (ns,fs));
+(%i5) flist : sample (e,t,ns,dt)$
+(%i6) %,fll;
+(%i7) tmax: ns*dt;
+(%i8) tflist : vf (flist,dt)$
+(%i9) %,fll;
+(%i10) plot2d([e ,[discrete,tflist]], [t,0,tmax],
+             [style,[lines,3],[points,3,2,1]],
+              [legend,false])$
+(%i11) glist : fft (flist)$
+(%i12) %,fll;
+(%i13) spectrum (glist,5,0.6)$
+
+
+11.1.3 Example 3: FFT Spectrum of a Rectangular Wave
+
+(%i1) rwave(t):= 2*mod(floor(t/32),2) -1 $
+(%i2) [floor(0),mod(0,2),rwave(0)];
+(%i3) [floor(1),mod(1,2),rwave(32)];
+(%i4) [floor(2),mod(2,2),rwave(64)];
+(%i5) plot2d(rwave(t),[t,0,128],[y,-1.5,1.5],
+         [ylabel," "],[style,[lines,5]],
+         [gnuplot_preamble,"set grid;set zeroaxis lw 2;"])$
+(%i6) (ns:256, fs:1)$
+(%i7) (load(fft),load(qfft) )$
+(%i8) dt:first(nyquist(ns,fs));
+(%i9) flist : sample(rwave(t),t,ns,dt)$
+(%i10) fll (flist);
+(%i11) makelist (flist[i],i,1,10);
+(%i12) tmax: ns*dt;
+(%i13) tflist : vf (flist,dt)$
+(%i14) fll (tflist);
+(%i15) plot2d([rwave(t) ,[discrete,tflist]], [t,0,tmax],
+              [y,-1.5,1.5],[ylabel," "],
+             [style,[lines,3],[points,1,0,1]],
+              [legend,false])$
+(%i16) glist : fft (flist)$
+(%i17) %,fll;
+(%i18) spectrum (glist,3,0.7)$
+
+
+
+
+11.1.4 Example 4: FFT Spectrum Sidebands of a Tone Burst Before and After Filtering
+
+(%i1) sig(t) := if t < 45 then sin(2*%pi*t/5.0)  else 0$
+(%i2) load (qfft)$
+(%i3) (ns:512,fs:2.048)$
+(%i4) dt : first(nyquist(ns,fs));
+(%i5) tmax : ns*dt;
+(%i6) plot2d ( sig(t),[t,0,tmax],[y,-1.5,1.5],
+         [style,[lines,1,0]],[ylabel," "],[nticks,100],
+          [legend,false],[gnuplot_preamble,"set grid;"])$
+(%i7) flist : sample (sig(t),t,ns,dt)$
+(%i8) fll (flist);
+(%i9) flist : ev (flist)$
+(%i10) fll (flist);
+(%i11) makelist(flist[i],i,1,10);
+(%i12) tflist : vf (flist,dt)$
+(%i13) fll (tflist);
+(%i14) plot2d([sig(t) ,[discrete,tflist]], [t,0,tmax],
+              [y,-1.5,1.5],[ylabel," "],
+             [style,[lines,1,0],[points,1,0,1]],
+              [legend,false])$
+(%i15) load (fft)$
+(%i16) glist : fft (flist)$
+(%i17) fll (glist);
+(%i18) spectrum (glist, 2, 0.1 )$
+(%i19) hannw(x,m) := sin(%pi*(x-1)/(m-1))^2$
+(%i20) sig_w(t) := hannw(t,45)*sig(t)$
+(%i21) plot2d ( sig_w(t),[t,0,tmax],[y,-1.5,1.5],
+         [style,[lines,1,0]],[ylabel," "],[nticks,100],
+          [legend,false],[gnuplot_preamble,"set grid;"])$
+(%i22) flist_w : sample (sig_w(t),t,ns,dt)$
+(%i23) fll (flist_w);
+(%i24) flist_w : ev (flist_w)$
+(%i25) fll (flist_w);
+(%i26) makelist (flist_w[i],i,1,5);
+(%i27) glist_w : fft (flist_w)$
+(%i28) makelist (glist_w[i],i,1,5);
+(%i29) spectrum (glist_w, 2, 0.1)$
+
+
+11.1.5 Example 5: Cleaning a Noisy Signal using FFT Methods
+
+(%i1) e : cos(2*%pi*t) + sin(4*%pi*t)$
+(%i2) (load(fft), load(qfft))$
+(%i3) [ns:512,fs:256]$
+(%i4) dt : first(nyquist(ns,fs));
+(%i5) flist : sample(e,t,ns,dt)$
+(%i6) %,fll;
+(%i7) flist_noise : makelist(flist[j]+0.3*(-1.0+random(2.0)),j,1,ns)$
+(%i8) %,fll;
+(%i9) tflist_noise : vf (flist_noise,dt)$
+(%i10) %,fll;
+(%i11) plot2d ([discrete,tflist_noise],[y,-2,2],
+                 [style,[lines,1]],[ylabel," "])$
+(%i12) glist_noise : fft (flist_noise)$
+(%i13) %,fll;
+(%i14) spectrum (glist_noise,2,0.6)$
+(%i15) spectrum (glist_noise,4,0.6,0,10)$
+(%i16) glist_noise_chop : fchop1(glist_noise,0.2)$
+(%i17) %,fll;
+(%i18) spectrum (glist_noise_chop,2,0.6)$
+(%i19) flist_clean : inverse_fft ( glist_noise_chop )$
+(%i20) %,fll;
+(%i21) flist_clean : realpart(flist_clean)$
+(%i22) %,fll;
+(%i23) tflist_clean : vf ( flist_clean, dt )$
+(%i24) %,fll;
+(%i25) plot2d ([discrete,tflist_clean],[y,-2,2],
+                 [style,[lines,1]],[ylabel," "])$
+(%i26) plot2d([e ,[discrete,tflist_clean]], [t,0,2],
+             [style,[lines,1],[points,1,0,1]],
+              [legend,false])$
+
+
+
+11.2 Our Notation for the Discrete Fourier Transform and its Inverse
+
+
+11.3 Syntax of qfft.mac Functions
+
+
+
+11.4 The Discrete Fourier Transform Viewed as a Numerical Integral Approximation
+
+(%i1) declare([k,l,N],integer)$
+(%i2) s:sum(exp(2*%pi*%i*k*l/N),k,0,N-1),simpsum;
+(%i3) s1:demoivre(s);
+
+
+11.5 Fast Fourier Transform References
+
+
+

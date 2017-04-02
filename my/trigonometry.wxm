@@ -1,0 +1,48 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 13.04.2 ] */
+
+/* [wxMaxima: input   start ] */
+4^2+(3+x)^2=y^2
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sqrt(16+(3+x)^2), expand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sec(theta)=3/x
+cos(60)=x/3
+3*cos(60)=x
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+cos(90), numer;
+cos(0.001)*180/%pi, numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+cos(180*%pi/180), numer;
+cos(0), numer;
+cos(%pi), numer;
+cos(2*%pi), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+acos(0.5)*180/%pi, numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+cos(60*%pi/180), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+acos(2/3), numer;
+acos(2/3)*180/%pi, numer;
+(360-acos(2/3)*180/%pi), numer;
+360-(360+acos(2/3)*180/%pi), numer;
+1-(1+acos(2/3)*180/%pi), numer;
+/* [wxMaxima: input   end   ] */
+
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

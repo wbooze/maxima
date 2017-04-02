@@ -1,0 +1,410 @@
+/* dgfunctions2.txt
+
+   April 15, 2011
+
+   Maxima by Example, Ch. 12
+   Dirac Algebra and Quantum Electrodynamics,
+   Edwin L. Woollett,
+   woollett@charter.net
+   
+   functions and flags defined in the
+   package files dirac2.mac
+   dgtrace2.mac, dgcon2.mac,
+   dgeval2.mac, dgmatrix2.mac.
+   
+    */
+
+acomm  dgmatrix2.mac
+
+Avsq  dgmatrix2.mac
+
+butlast   dgtrace2.mac
+
+cdouble  dgmatrix2.mac
+
+Chi  dgmatrix2.mac
+
+ClearIndexR    dgeval2.mac
+
+clist_pair    dgcon2.mac
+
+clist_rem   dgcon2.mac
+
+
+
+comm  dgmatrix2.mac
+
+comp_def1,  comp_def    dgeval2.mac
+
+ Con  dgcon2.mac  if Con(e,mu,nu,...) detects any Eps factors, then econ( noncov(e),mu,nu,...) is returned.
+ 
+ conj  dirac2.mac
+ 
+ CZ2  dgmatrix2.mac
+ 
+ CZ4  dgmatrix2.mac
+ 
+ Dexpand, dgtrace2.mac, calls Dexpand1 (controlled by simp_Dexpand1)
+ 
+ divout  dirac2.mac
+ 
+ div_tb  dirac2.mac
+ 
+ do_con     dgcon2.mac automatic contraction
+              on repeated index symbols, called
+                 by simp_tr1
+ 
+ D_sub  dgeval2.mac   
+
+dummyp   dirac2.mac
+
+econ  dgeval2.mac 
+
+econ11 dgeval2.mac
+
+Eps1_con    dgcon2.mac
+           (called by tr, used to be post_tr1)
+           
+ eps4    dirac2.mac
+           
+Eps_facp  dgcon2.mac, called by Con to detect any Eps factors
+           
+Eps_post  dgcon2.mac  called by tr (if G568 is true) for post trace
+              simplifications.
+              
+ev_Ds  dgtrace2.mac
+
+ev_invar    dgeval2.mac 
+
+fr_ao2  dirac2.mac
+
+G5p    dgtrace2.mac
+
+G5prep   dgtrace2.mac
+
+Gam  dgmatrix2.mac
+
+Gcon     dgcon2.mac    
+             called by scon11 for contraction
+              of G(a,n1,b,c,n1,d) for example
+
+gmatch     dgcon2.mac
+ 
+ gmet  dirac2.mac
+ 
+ get_matches  dgeval2.mac
+ 
+ getpair    dgcon2.mac
+ 
+getppos1   dgtrace2.mac   finds first arg of form a+b
+
+getSpos1   dgtrace2.mac
+
+get_rind    dgcon2.mac
+
+Gexpand, dgtrace2.mac, calls Gexpand1 (controlled by simp_Gexpand1)
+            
+Gtr   dgtrace2.mac
+
+Gtr1   dgtrace2.mac
+
+hc  dgmatrix2.mac
+
+I2  dgmatrix2.mac
+
+I4  dgmatrix2.mac
+
+indeq    dgcon2.mac
+
+indexp   dgtrace2.mac
+
+indexR    dgeval2.mac
+
+indexRS    dgeval2.mac
+ 
+indexL   dgtrace2.mac
+ 
+index_rep   dgcon2.mac
+    
+index_pos   dgcon2.mac    
+             
+inlist dgeval2.mac
+
+ipm  dgmatrix2.mac
+
+ipv    dgeval2.mac
+
+ invar  dgeval2.mac
+ 
+ invar_flag  dgeval2.mac
+ 
+ invarR  dgeval2.mac
+ 
+ invarRS  dgeval2.mac
+
+listToProd    dgcon2.mac   
+
+massL   dgtrace2.mac
+
+massp   dgtrace2.mac
+
+mbar  dgmatrix2.mac
+
+mcon  dgmatrix2.mac
+
+mDfac    dgcon2.mac
+
+mdivp  dgmatrix2.mac
+
+mdouble  dgmatrix2.mac
+
+mEpsfac  dgcon2.mac
+
+mexptp   dgcon2.mac
+
+mGmfac    dgcon2.mac
+
+Mindex   dgtrace2.mac 
+
+mLIfac    dgcon2.mac 
+
+Mmass   dgtrace2.mac
+
+mncexptp  dgmatrix2.mac
+
+mnctimesp  dgmatrix2.mac
+
+mplusp   dgtrace2.mac
+
+momRS   dgeval2.mac
+
+more_index  dgtrace2.mac
+
+move  dgeval2.mac
+
+mp_split  dgmatrix2.mac
+
+mrindL    dgcon2.mac
+
+Mscalar  dgtrace2.mac
+
+mtimesp   dgtrace2.mac
+
+m_tr  dgmatrix2.mac
+
+mUIfac   dgcon2.mac
+
+nc_tr   dgeval2.mac
+        example:  nc_tr(mu,p,q,mu) should give the  same result as
+                           noncov (tr (mu,p,q,mu)),
+                           but use of noncov is term by term
+                           and nc_tr function organizes the calculation all by
+                           itself in a more efficient manner.
+                   
+
+ NDfac (e), dgcon2.mac,  removes numerical factors and divisors
+
+Nlast  dirac2.mac        
+
+noncov1 dgeval2.mac  called by noncov.
+
+noncov dgeval2.mac
+     sums over all repeated dummy indices (N1,N2,...) in expression,
+     replaces Eps(n1,n2,n3,n4) with eps4[n1,n2,n3,n4],
+      replaces Gm(n1,n2) with gmet[n1,n2],
+      replaces D(p,q) with explicit 4-vector product in terms of
+        array components p[mu], q[nu],
+      replaces UI(p,mu) with p[mu],
+      replaces LI(p,mu) with +/- p[mu] depending on value of mu,
+      note that mu = 0,1,2,3.
+      
+
+nu_loc (UIargs,Gmargs,Gargs,Epsargs,mu)    dgcon2.mac
+   Looks for instances of a purported repeated index symbol mu.
+   returns list [l1,l2], with l=0 for not found, 1 for UIargs,
+     2 for Gmargs, 3 for Gargs, 4 for Epsargs.
+     example: [1,2] ==> one mu in UIargs and one mu in Gmargs.
+     called by scon11 and scon2 
+
+numtrue     dgcon2.mac
+   
+opList    dgcon2.mac
+
+P  dgmatrix2.mac
+
+pair   dgtrace2.mac
+
+pair_inlist  dgeval2.mac
+
+pfactor  dirac2.mac
+
+pos   dgcon2.mac
+
+prodToList   dgcon2.mac  ignores atoms
+
+prodToList2 dgeval2.mac includes atoms
+
+pullfac  dirac2.mac
+
+pullpsL   dgcon2.mac
+
+reduce   dgtrace2.mac
+
+remL1   dgtrace2.mac
+
+remL2  dgeval2.mac
+
+rootcrunch  dgmatrix2.mac
+
+rpl    dgcon2.mac
+
+RZ4  dgmatrix2.mac
+
+Sargp   dgtrace2.mac
+
+sbar  dgmatrix2.mac
+
+scalarL  dgtrace2.mac
+
+scalar_part    dgcon2.mac
+
+   called by Eps_post, UIGm_con, Eps1_con, simp_scon1, get_rind, scon11
+     (all dgcon2.mac code )
+
+scon11    dgcon2.mac
+    
+            one term and one contraction index
+    
+scon1 and simp_scon1   dgcon2.mac
+    
+           performs expansions and calls scon11 finally
+    
+scon    dgcon2.mac
+    
+            multiple terms and multiple contraction index symbols
+                  calls get_rind and then scon1 (recursive),
+                   controlled by simp_scon1,
+                   which finally calls scon11
+                   
+scon2    dgcon2.mac
+
+          post trace contraction on products of
+                 LI, UI, Gm
+                 
+Sig  dgmatrix2.mac
+
+Sig_comm  dgmatrix2.mac
+
+simp_Dexpand1, dgtrace2.mac, controls calls to Dexpand1, called
+                by Dexpand
+                
+simp_Gexpand1, dgtrace2.mac, controls calls to Gexpand1,
+                called by Gexpand.
+                
+simpGL     dgcon2.mac
+
+simp_tr1   dgtrace2.mac , simp_tr1 controls calls to tr1,
+            called by TR1
+
+simp_VP1  dgeval2.mac controls call to VP1, called by VP.
+
+sL  dgmatrix2.mac
+
+sL2  dgmatrix2.mac
+
+--------------------------------
+
+strip_ops    dgcon2.mac
+
+strip_ops2  dgcon2.mac
+--------------------------------
+strip_ops ignores atoms
+  
+(%i73) strip_ops(LI(n1,n2)*Gm(n3,n4),LI);
+(%o73) [[LI(n1,n2)],Gm(n3,n4)]
+
+(%i74) strip_ops(m^2*LI(n1,n2)*Gm(n3,n4),LI);
+(%o74) [[LI(n1,n2)],Gm(n3,n4)]
+
+ remove scalar part before calling
+   strip_ops:
+   
+(%i78) strip_ops(-m^2*LI(n1,n2)*Gm(n3,n4),LI);
+(%o78) [[],m^2*LI(n1,n2)*Gm(n3,n4)]
+
+strip_ops2 keeps atoms
+
+(%i75) strip_ops2(LI(n1,n2)*Gm(n3,n4),LI);
+(%o75) [[LI(n1,n2)],Gm(n3,n4)]
+
+
+(%i77) strip_ops2(m^2*LI(n1,n2)*Gm(n3,n4),LI);
+(%o77) [[LI(n1,n2)],m^2*Gm(n3,n4)]
+
+ remove scalar part before calling
+   strip_ops2:
+
+(%i79) strip_ops2(-m^2*LI(n1,n2)*Gm(n3,n4),LI);
+(%o79) [[],%aadumb*m^2*LI(n1,n2)*Gm(n3,n4)]
+
+%aadumb comes from prodToList2 in dgeval2.
+
+----------------------------------
+
+ str_to_int  dirac2.mac
+
+stu_flag  dgeval2.mac  default is false. noncov then doesn't replace s by s_th, etc.
+
+sub_stu  dgeval2.mac
+
+sum_eps1  dgeval2.mac
+
+sum_eps  dgeval2.mac
+
+sumToList  dgtrace2.mac
+
+takeparts  dirac2.mac
+
+to_ao2  dirac2.mac
+
+to_half_angle   dirac2.mac
+
+tr   dgtrace2.mac, calls TR1
+    
+    
+tr1 is controlled by  simp_tr1 in  dgtrace2.mac
+
+TR1, dgtrace2.mac, calls tr1 and is called
+        by both tr and nc_tr.
+
+trigcrunch  dgmatrix2.mac
+
+ts  dirac2.mac
+
+UIGm_con   dgcon2.mac  
+        (called by tr for post trace contractions,
+             calls scon2)                  
+             
+UImatch     dgcon2.mac
+             
+uncomp_def    dgeval2.mac
+
+unindex  dgtrace2.mac
+
+unscalar  dgtrace2.mac
+
+unsub_stu  dgeval2.mac
+
+UU  dgmatrix2.mac
+
+vecp    dgcon2.mac
+
+VP, VP1, simp_VP1    dgeval2.mac
+
+VV  dgmatrix2.mac
+
+Z2  dgmatrix2.mac
+
+Z4  dgmatrix2.mac
+
+

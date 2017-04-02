@@ -1,0 +1,144 @@
+Dump of file qd.dll
+
+File Type: DLL
+
+  Section contains the following exports for qd.dll
+
+           0 characteristics
+    43E26018 time date stamp Thu Feb 02 11:40:08 2006
+        0.00 version
+           1 ordinal base
+         121 number of functions
+         121 number of names
+
+    ordinal hint RVA      name
+
+          1    0 00003D90 c_dd_abs
+          2    1 00004730 c_dd_acos
+          3    2 00004C10 c_dd_acosh
+          4    3 000032B0 c_dd_add
+          5    4 00003430 c_dd_add_d_dd
+          6    5 00003370 c_dd_add_dd_d
+          7    6 00004050 c_dd_aint
+          8    7 00004680 c_dd_asin
+          9    8 00004B60 c_dd_asinh
+         10    9 000047E0 c_dd_atan
+         11    A 00004890 c_dd_atan2
+         12    B 00004CC0 c_dd_atanh
+         13    C 000041B0 c_dd_ceil
+         14    D 00005110 c_dd_comp
+         15    E 000052C0 c_dd_comp_d_dd
+         16    F 000051E0 c_dd_comp_dd_d
+         17   10 00003BB0 c_dd_copy
+         18   11 00003BF0 c_dd_copy_d
+         19   12 00004520 c_dd_cos
+         20   13 00004A00 c_dd_cosh
+         21   14 00003970 c_dd_div
+         22   15 00003AF0 c_dd_div_d_dd
+         23   16 00003A30 c_dd_div_dd_d
+         24   17 000043C0 c_dd_exp
+         25   18 00004100 c_dd_floor
+         26   19 00004260 c_dd_log
+         27   1A 00004310 c_dd_log10
+         28   1B 00003730 c_dd_mul
+         29   1C 000038B0 c_dd_mul_d_dd
+         30   1D 000037F0 c_dd_mul_dd_d
+         31   1E 00005030 c_dd_neg
+         32   1F 00003FA0 c_dd_nint
+         33   20 00003E40 c_dd_npwr
+         34   21 00003EF0 c_dd_nroot
+         35   22 000053A0 c_dd_pi
+         36   23 00005070 c_dd_rand
+         37   24 00004EF0 c_dd_read
+         38   25 00004470 c_dd_sin
+         39   26 00004D70 c_dd_sincos
+         40   27 00004E30 c_dd_sincosh
+         41   28 00004950 c_dd_sinh
+         42   29 00003CE0 c_dd_sqr
+         43   2A 00003C30 c_dd_sqrt
+         44   2B 000034F0 c_dd_sub
+         45   2C 00003670 c_dd_sub_d_dd
+         46   2D 000035B0 c_dd_sub_dd_d
+         47   2E 00004F70 c_dd_swrite
+         48   2F 000045D0 c_dd_tan
+         49   30 00004AB0 c_dd_tanh
+         50   31 00004FD0 c_dd_write
+         51   32 000083C0 c_qd_abs
+         52   33 00008D80 c_qd_acos
+         53   34 00009260 c_qd_acosh
+         54   35 00006A40 c_qd_add
+         55   36 00006D40 c_qd_add_d_qd
+         56   37 00006BC0 c_qd_add_dd_qd
+         57   38 00006C80 c_qd_add_qd_d
+         58   39 00006B00 c_qd_add_qd_dd
+         59   3A 000086A0 c_qd_aint
+         60   3B 00008CD0 c_qd_asin
+         61   3C 000091B0 c_qd_asinh
+         62   3D 00008E30 c_qd_atan
+         63   3E 00008EE0 c_qd_atan2
+         64   3F 00009310 c_qd_atanh
+         65   40 00008800 c_qd_ceil
+         66   41 000097F0 c_qd_comp
+         67   42 00009980 c_qd_comp_d_qd
+         68   43 000098C0 c_qd_comp_qd_d
+         69   44 00008140 c_qd_copy
+         70   45 00008200 c_qd_copy_d
+         71   46 000081A0 c_qd_copy_dd
+         72   47 00008B70 c_qd_cos
+         73   48 00009050 c_qd_cosh
+         74   49 00007580 c_qd_div
+         75   4A 00007880 c_qd_div_d_qd
+         76   4B 00007700 c_qd_div_dd_qd
+         77   4C 000077C0 c_qd_div_qd_d
+         78   4D 00007640 c_qd_div_qd_dd
+         79   4E 00008A10 c_qd_exp
+         80   4F 00008750 c_qd_floor
+         81   50 000088B0 c_qd_log
+         82   51 00008960 c_qd_log10
+         83   52 000071C0 c_qd_mul
+         84   53 000074C0 c_qd_mul_d_qd
+         85   54 00007340 c_qd_mul_dd_qd
+         86   55 00007400 c_qd_mul_qd_d
+         87   56 00007280 c_qd_mul_qd_dd
+         88   57 000096F0 c_qd_neg
+         89   58 000085F0 c_qd_nint
+         90   59 00008470 c_qd_npwr
+         91   5A 00008530 c_qd_nroot
+         92   5B 00009A40 c_qd_pi
+         93   5C 00009750 c_qd_rand
+         94   5D 00009580 c_qd_read
+         95   5E 00007940 c_qd_selfadd
+         96   5F 00007AA0 c_qd_selfadd_d
+         97   60 000079F0 c_qd_selfadd_dd
+         98   61 00007F40 c_qd_selfdiv
+         99   62 000080A0 c_qd_selfdiv_d
+        100   63 00007FF0 c_qd_selfdiv_dd
+        101   64 00007D40 c_qd_selfmul
+        102   65 00007EA0 c_qd_selfmul_d
+        103   66 00007DF0 c_qd_selfmul_dd
+        104   67 00007B40 c_qd_selfsub
+        105   68 00007CA0 c_qd_selfsub_d
+        106   69 00007BF0 c_qd_selfsub_dd
+        107   6A 00008AC0 c_qd_sin
+        108   6B 000093C0 c_qd_sincos
+        109   6C 000094A0 c_qd_sincosh
+        110   6D 00008FA0 c_qd_sinh
+        111   6E 00008310 c_qd_sqr
+        112   6F 00008260 c_qd_sqrt
+        113   70 00006E00 c_qd_sub
+        114   71 00007100 c_qd_sub_d_qd
+        115   72 00006F80 c_qd_sub_dd_qd
+        116   73 00007040 c_qd_sub_qd_d
+        117   74 00006EC0 c_qd_sub_qd_dd
+        118   75 00009610 c_qd_swrite
+        119   76 00008C20 c_qd_tan
+        120   77 00009100 c_qd_tanh
+        121   78 00009690 c_qd_write
+
+  Summary
+
+        8000 .data
+        F000 .rdata
+        5000 .reloc
+       3F000 .text
+

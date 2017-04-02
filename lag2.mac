@@ -1,0 +1,64 @@
+/************************************************************************
+    lag2.mac is a package of Maxima functions which 
+    contains code for constructing a list of lagrange
+    equations of motion (second order differential
+    equations) for the generalized coordinates
+    in the list qL = [q1,q2,...] say. The lagrangian
+    should be an expression in terms of the qj's and
+    the generalized velocities, which should be
+    denoted by q1d, q2d, ... (q1-dot, etc).
+    
+    See batch file lag1.mac for example of use.
+    
+    Copyright (C) 2010  Edwin L. Woollett  <woollett@charter.net>       
+    http://www.csulb.edu/~woollett
+    
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU GENERAL PUBLIC LICENSE, Version 2, June 1991,
+    as published by the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details. You should have received a
+    copy of the GNU General Public License along with this program.
+    If not, see http://www.fsf.org/licensing/.
+************************************************************************/
+
+/* syntax:  leN (qL, myLagr)  */
+
+    
+  _le% (_q%,_lag%) := expand (diff (diff (_lag%, diff (_q%,t)),t) - diff (_lag%,_q%)) = 0$
+  
+ /*****************************/
+
+leN (_qL%,_Lag%) :=
+
+  block ([qdL,qLdiff,_Lag2%,eqnL ],
+  
+          
+    qdL : map ('lambda ([x],concat (x,d)), _qL%),    
+        
+    display (qdL),
+    
+    depends (_qL%,t),
+    
+    qLdiff : diff (_qL%,t),
+    
+    display (qLdiff),
+    
+    qLR : map ("=",qdL, qLdiff),
+    
+    display (qLR),
+    
+    _Lag2% : subst (qLR, _Lag%),
+    
+    display (_Lag2%),
+    
+    map ('lambda ([x],_le% (x,_Lag2%)),_qL%))$
+    
+    /*************************************/
+    
+    disp (" leN (qL,Lag) ")$
+    
+    

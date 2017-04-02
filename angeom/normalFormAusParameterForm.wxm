@@ -1,0 +1,76 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load(angeom);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: title   start ]
+Programmierübung maxima Lisp
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: comment start ]
+Erzeuge aus normalForm einer Ebene die Parameterform
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+NFE1:2*x-1/5*y+3*z+4;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Besetze Koeffizienten s und t
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+_d:listofvars(NFE1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+_dr:map("=",delete(_d[1],[x,y,z]),[s,t]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+_gls:solve(NFE1,_d[1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ev(ev([x,y,z],_gls),_dr); show(%);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Zusammengefasst:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+E1:ev(ev([x,y,z],solve(NFE1,first(listofvars(NFE1)))),map("=",delete(first(listofvars(NFE1)),[x,y,z]),[s,t]))$ show(E1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ E:EOV(E1)+s*(ERV1(E1)*apply(denom,ERV1(E1)))+t*(ERV2(E1)*apply(denom,ERV2(E1)))$ show(E) ;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+load ("functs");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+apply(denom,ERV1(E1)); apply(denom,ERV2(E1)); apply(lcm,delete(0,ERV1(E1))); apply(lcm,delete(0,ERV2(E1)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+paramForm(NF,s,t):=block(
+ev(ev([x,y,z],solve(NF,first(listofvars(NF)))),map("=",delete(first(listofvars(NF)),[x,y,z]),[s,t])),
+%%*apply(denom,%%)
+)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+E1:paramForm(NFE1,u,v); show(E1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ERV1(E1)*apply(denom,ERV1(E1));
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

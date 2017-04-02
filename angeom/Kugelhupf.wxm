@@ -1,0 +1,75 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load(angeom);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Torusformeln
+
+f(x, y, z) = 0 = x² + y² - (sqrt(r[1]²-z²)+r[2])²
+
+f(x, y, z) = 0 = (sqrt(x²+y²)-r[2])² + z² - r[1]²
+
+f(x, y, z) = 0 = x^4 + y^4 + z^4 + 2x²y² + 2x²z² + 2y²z² - 2(r[1]²+r[2]²)x² - 2(r[1]²+r[2]²)y² - 2(r[1]²-r[2]²)z² + (r[1]²-r[2]²)²
+
+
+EDIT:
+r[1] ist der Neben- und r[2] der Haupt-Radius
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+r:[2.5,5];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+E1:[-3*r[1], r[1]/r[2]+r[2]*sin(%pi/2), -r[2]*cos(%pi/2)]+u*[1,0,0]+s*[0, -sin(%pi), cos(%pi)];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T1:(sqrt(x^2+y^2)-r[2])^2 + z^2 - r[1]^2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_L([T1,normalForm(E1)],[],-10,10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+solve(T1-normalForm(E1),[x,y,z]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+XT:z-(sqrt(2)*sqrt(20*sqrt(y^2+x^2)-2*y^2-2*x^2-37)-1)/2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_L([0.15*z+(sqrt(2)*sqrt(20*sqrt(y^2+x^2)-2*y^2-2*x^2-37)-1)/2],[],-10,10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+XS:z-sqrt(40*sqrt(y^2+x^2)-4*y^2+4*y-4*x^2-97)/2$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_L([XS],[],-10,10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T2:(x^2 + y^2 + z^2 + 5^2 - 3^2)^2 - 4*5^2*(x^2 + y^2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_L([T2],[],-10,10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+K1:-(x - 5)^2 + 1/4*y*z - 3^2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S_Qvox:20; PLOTT_L([T2],[],-10,10);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

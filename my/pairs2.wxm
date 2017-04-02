@@ -1,0 +1,27 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 13.04.2 ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (defun $pairs (items)
+  (let ((cons
+         (cond ((null items) nil)
+               ((listp items) (cons (list (car items) (cadr items)) 
+                                                       ($pairs (cddr items)))))))
+    cons))
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (pairs '(1 2 3 4))
+:lisp (pairs '(1 2 3 4 5));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+maxima::pairs([1, 2, 3]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

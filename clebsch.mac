@@ -1,0 +1,93 @@
+/* file clebsch.mac 
+    Edwin L. (Ted) Woollett
+    woollett@charter.net
+    http://www.csulb.edu/~woollett
+    
+    
+
+    1. clebsch-gordan (wigner vector coupling) coefficients
+    
+       cj(j1,j2,j3,m1,m2,m3) and
+    
+    2.  wigner threej coefficients
+    
+      threej (j1,j2,j3,m1,m2,m3)
+      
+      for numerical args only (integers
+      and half integers, j1,j2,j3 non-negative).
+      
+   very  inefficient code using Abramowitz
+    and Stegun, formula (27.9.1) with 
+    conditions following.
+    
+    code does not check for inappropriate args.
+    
+   See also Albert Messiah, Quantum Mechanics,
+    Vol. II, page 1054 who uses the 
+    mis-spelling :'clebsch-gordon' .
+    
+    A good contribution to Maxima would be efficient code
+      for 3j, 6j, and 9j Wigner coefficients.
+      
+ */
+  
+  /* syntax:   cj(j1,j2,j3,m1,m2,m3) for numerical args only   */
+  
+ /* examples:
+ 
+(%i1) display2d:false$
+(%i2) load(clebsch);
+(%o2) "c:/work5/clebsch.mac"
+(%i3) cj(3/2,1/2,2,3/2,1/2,2);
+(%o3) 1
+(%i4) cj(3/2,1/2,1,3/2,-1/2,1);
+(%o4) sqrt(3)/2
+(%i5) cj(3/2,1/2,1,-1/2,1/2,0);
+(%o5) -1/sqrt(2)
+(%i6) threej (1/2,1/2,1,1/2,-1/2,0);
+(%o6) 1/sqrt(6)
+(%i7) threej(2,6,4,0,0,0);
+(%o7) sqrt(5)/sqrt(143)
+(%i8) threej (2,6,4,0,0,1);
+(%o8) 0
+
+*/
+
+  
+
+    
+  
+  
+ /* In _f1%, the max and min prevent the arguments of 
+    factorial (!) from becoming negative when the sum 
+   over k is performed. */
+  
+  
+_f1%(C,A,B,a,b) := block ([k],
+	sum ( (-1)^k* (k! * (A+B-C-k)! * (A-a-k)! * (B+b-k)! * 						
+	  (C-B+a+k)! * (C-A-b+k)!)^(-1), 
+	 k, max (0,B-C-a,A-C+b), min (A+B-C,A-a,B+b) ))$
+				   
+
+_f2% (C,A,B) := (-C + A + B)! * (C - A + B)! *
+                   (C + A - B)! /(1 + C + A + B)! $
+
+_f3% (C, A, B, c, a, b) :=
+    	(1 + 2*C) * (C-c)! * (C+c)! * (A-a)! * 
+    	    (A+a)! * (B-b)! * (B+b)! $
+    	
+ 
+    	
+ cj (j1,j2,j3,m1,m2,m3) := 
+  
+    ( if	(m3 # m1+m2) or ( j3 < abs(j1 - j2)) or (j3 > j1 + j2) or 
+			(abs(m1) > j1)  or (abs(m2) > j2) or (abs(m3) > j3) then 0
+	else 				
+	 _f1% (j3,j1,j2,m1,m2) * sqrt( _f2% (j3,j1,j2)* _f3% (j3,j1,j2,m3,m1,m2) )) $
+    	
+    	
+ 
+  threej (A,B,C,a,b,c) := 
+            rootscontract( (-1)^(B - A + c)*cj (A,B,C,a,b,-c)/sqrt (2*C + 1))$
+              
+              

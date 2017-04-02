@@ -1,0 +1,197 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load("angeom");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Klausur aus GM_A0318 www.mathe-physik-aufgaben.de
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: comment start ]
+angeom.mac hw::lemitec.de 
+
+1. Gegeben sind die Punkte P und Q sowie die Gerade gt und eine Ebene NFE1
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+P:[1,5,8]; Q:[3,2,0];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gt:P+t*[2,3,6]$ show(gt);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+NFE1:2*x-3*y-2*z+12;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+1.1 Berechnen Sie den Schnittpunkt S
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+S:schnittNFEbeneGerade(NFE1,gt);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[P,S]$ wx_Vrot:77$ wx_Hrot:93$ wx_Breite:460$ PLOTT_wx(NFE1,"",z,gt,"","",-5,10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Unter welchem Winkel schneidet die Gerade gt die Ebene NFE1
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+schnittwinkelEbeneGerade(NFE1,gt);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Berechnen Sie die Koordinaten des Punktes PP der sich ergibt, wenn P an
+der Ebene NFE1 gespiegelt wird.
+
+>>> Berechne eine Gerade gs durch P in Richtung Normalenvektor NFE1
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+nE1:normalVektorNF(NFE1)$ °nE1;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gs:P+s*nE1$ show(gs);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Gebe den Schnittpunkt PS von gs mit NFE1 an und verdopple den
+Betrag des Laufparameters zum Spiegelpunkt PP
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+gls:solve(nE1.gs+12,s);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PS:ev(gs,gls);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PP:F(gs,[2*(s aus gls)]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Betrag/Strecke von P-PS muss halb so groß sein wie der Betrag/Strecke P-PP
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+2*betragLaenge(P-PS)=betragLaenge(P-PP);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[P,PS,PP]$ wx_Vrot:80$ wx_Hrot:100$ PLOTT_wx(NFE1,"","",gt,gs,"",-5,10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Stellen Sie die Gleichung einer Ebene auf, die die Punkte S und Q enthält 
+und senkrecht zu NFE1 steht
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+EFuv:S+u*(Q-S)+v*nE1$ show(EFuv);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+NFE2:ratsimp(normalForm(EFuv)/2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[P,Q,S]$ wx_Vrot:87$ wx_Hrot:100$ 
+PLOTT_wx(NFE1,NFE2,"",gt,"","",-5,10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Geben Sie die Koordinaten eines Punktes A1 von NFE1 und eines Punkes A2 auf
+NFE2 an, so dass das Viereck SA1PA2 ein Rechteck ist.
+
+>>>Im Punkt S muss ein Vektor aus NFE2 senkrecht zur Geraden gt als Seite
+des Rechtecks ansetzen:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+gls:solve(GRV(gt).(EFuv),[u,v]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gls:ev(gls[1],%rnum_list[1]=0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+RV:ev(EFuv,gls)$ °RV;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+An P wird der Richtungsvektor RV angesetzt und der Schnittpunkt dieser 
+Geraden mit der Ebene NFE1 ist der Punkt A1
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+A1:schnittNFEbeneGerade(NFE1,P+o*RV);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+An A1 wird der Richtungsvektor der Geraden gt angesetzt und der Schnittpunkt
+dieser Geraden mit NFE2 ist der Punkt A2
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+A2:schnittNFEbeneGerade(NFE2,A1+k*GRV(gt));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wx_ScVon:0$ wx_ScBis:4$ 
+ PlottVektor:[A2,(S-A2)*if wx_Scene>0 then 1 else 0]$ 
+ PlottVektor1:[P,(A1-P)*if wx_Scene>1 then 1 else 0]$ 
+ PlottVektor2:[A1,(A2-A1)*if wx_Scene>2 then 1 else 0]$ 
+ PlottVektor3:[S,(A1-S)*if wx_Scene>3 then 1 else 0]$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[P,S,A1,A2]$ wx_Vrot:78$ wx_Hrot:95$ wx_AO:true$   
+PLOTT_wx(NFE1,NFE2,"",gt,"","",-4,10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Geben Sie die Koordinaten eines Punktes B auf der x-Achse an, der von NFE2 den 
+Abstand 4 LE besesitzt
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+HNFE2:NFE2/betragLaenge(normalVektorNF(NFE2));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gls:solve(F(HNFE2,[x,0,0])=4,x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+B:[(x aus gls),0,0];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+BS:schnittNFEbeneGerade(NFE2,B+a*normalVektorNF(NFE2));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PlottVektor:[B,BS-B]$ 
+ PlottVektor1:[[0,0,0],[0,0,0]]$ 
+ PlottVektor2:[[0,0,0],[0,0,0]]$ 
+ PlottVektor3:[[0,0,0],[0,0,0]]$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[B,BS]$ wx_Vrot:81$ wx_Hrot:325$ wx_AO:true$ wx_ScVon:1$ wx_ScBis:1$   
+PLOTT_wx(z,NFE2,"","","","",-9,5);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

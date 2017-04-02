@@ -1,0 +1,380 @@
+/* file calc1code.txt
+
+    Edwin L Woollett, 2010,
+    woollett@charter.net
+    http://www.csulb.edu/~woollett
+*/
+
+6.  Differential Calculus
+6.1  Differentiation of Explicit Functions
+6.1.1 All About diff
+
+(%i1) diff(x^n,x);
+(%i2) diff(x^n,x,3);
+(%i3) diff(x^2 + y^2,x);
+(%i4) diff( x[1]^2 + x[2]^2, x[1] );
+(%i5) grind(%)$
+(%i6) display2d;
+(%i7) diff(x^2*y^3,x,1,y,2);
+
+6.1.2  The Total Differential
+
+(%i1) diff(x^2);
+(%i2) diff(x^2*y^3);
+(%i3) diff(a*x^2*y^3);
+(%i4) subst(del(x) = dx, %o1);
+(%i5) subst([del(x)= dx, del(y) = dy, del(a) = da],%o3 );
+(%i6) declare (a, constant)$
+(%i7) diff(a*x^2*y^3);
+(%i8) declare([b,c],constant)$
+(%i9) diff( a*x^3 + b*x^2 + c*x );
+(%i10) properties(a);
+(%i11) propvars(constant);
+(%i12) kill(a,b,c)$
+(%i13) propvars(constant);
+(%i14) diff(a*x);
+(%i15) map('diff,[sin(x),cos(x),tan(x) ] )/del(x);
+(%i16) map('diff,%)/del(x);
+
+6.1.3 Controlling the Form of a Derivative with gradef(..)
+
+(%i1) map('diff,[sin(x),cos(x),tan(x)] )/del(x);
+(%i2) trigsimp( 1 + tan(x)^2 );
+(%i3) ( trigsimp( 2*tan(x/2)/(1 + tan(x/2)^2) ), trigreduce(%%) );
+(%i4) trigsimp( (1-tan(x/2)^2)/(1 + tan(x/2)^2) );
+(%i5) gradef(tan(x), 1 + tan(x)^2 )$
+(%i6) gradef(sin(x),(1-tan(x/2)^2 )/(1 + tan(x/2)^2 ) )$
+(%i7) gradef(cos(x), -2*tan(x/2)/(1 + tan(x/2)^2 ) )$
+(%i8) map('diff,[sin(x),cos(x),tan(x)] )/del(x);
+
+6.2 Critical and Inflection Points of a Curve Defined by an Explicit Function
+
+6.2.1 Example 1: A Polynomial
+
+(%i1) load(draw)$
+(%i2) load(qdraw);
+(%i3) g : 2*x^3 - 3*x^2 - 12*x + 13$
+(%i4) gf : factor(g);
+(%i5) gp : diff(g,x);
+(%i6) gpf : factor(gp);
+(%i7) gpp : diff(gp,x);
+(%i8) qdraw( ex(g,x,-4,4), key(bottom)  )$
+(%i9) solve(gp=0);
+(%i10) [g,gpp],x=-1;
+(%i11) [g,gpp],x=2;
+(%i12) solve(gpp=0);
+(%i13) g,x=0.5;
+(%i14) qdraw2( ex([g,gp,gpp],x,-3,3), key(bottom),
+                pts([[-1,20]],ps(2),pc(magenta),pk("MAX") ),
+             pts([[2,-7]],ps(2),pc(green),pk("MIN") ),
+            pts([[0.5, 6.5]],ps(2),pk("INFLECTION POINT") ) )$
+
+6.2.2 Automating Derivative Plots with plotderiv(..)
+
+(%i15) load(vcalc)$
+(%i16) plotderiv(u^3,u,-3,3,-27,27,4)$
+
+6.2.3 Example 2: Another Polynomial
+
+(%i17) plotderiv(3*x^4 - 4*x^3,x,-1,3,-5,5,2)$
+(%i18) g:3*x^4 - 4*x^3$
+(%i19) g1: diff(g,x)$
+(%i20) g2 : diff(g,x,2)$
+(%i21) g3 : diff(g,x,3)$
+(%i22) x1 : solve(g1=0);
+(%i23) gcrit : makelist(subst(x1[i],g),i,1,2);
+(%i24) x2 : solve(g2=0);
+(%i25) ginflec : makelist( subst(x2[i],g ),i,1,2 );
+(%i26) g3inflec : makelist( subst(x2[i],g3),i,1,2 );
+
+6.2.4 Example 3: x^(2/3), Singular Derivative, Use of limit(..)
+
+(%i27) plotderiv(x^(2/3),x,-2,2,-2,2,1);
+(%i28) gp : diff(x^(2/3),x);
+(%i29) limit(gp,x,0,plus);
+(%i30) limit(gp,x,0,minus);
+(%i31) limit(gp,x,0);
+
+6.3  Tangent and Normal of a Point of a Curve Defined by an Explicit Function
+
+(%i1) tvec : [tx,ty];
+(%i2) nvec : [nx, ny];
+(%i3) ivec : [1,0]$
+(%i4) jvec : [0,1]$
+(%i5) ivec . jvec;
+(%i6) eqn : nvec . tvec = 0;
+(%i7) eqn : ( eqn/(nx*ty), expand(%%) );
+
+6.3.1 Example 1:  x^2
+
+(%i8) qdraw( ex([x^2,2*x-1,-x/2+3/2],x,-1.4,2.8), yr(-1,2) ,
+               pts( [ [1,1]],ps(2) ) )$
+
+6.3.2  Example 2:  ln(x)
+
+(%i9) diff(log(x),x);
+(%i10) qdraw(key(bottom), yr(-1,1.786),
+          ex([log(x), x/2 - 0.307, -2*x + 4.693],x,0.1,4),
+          pts( [ [2,0.693]],ps(2) )  );
+
+6.4 Maxima and Minima of a Function of Two Variables
+
+6.4.1  Example 1: Minimize the Area of a Rectangular Box of Fixed Volume
+
+(%i1) eq1 : v = x*y*z;
+(%i2) solz : solve(eq1,z);
+(%i3) s : ( subst(solz,2*(x*y  + y*z + z*x) ), expand(%%) );
+(%i4) eq2 : diff(s,x)=0;
+(%i5) eq3 : diff(s,y) = 0;
+(%i6) solxyz: solve([eq1,eq2,eq3],[x,y,z]);
+(%i7) soly : solve(eq2,y);
+(%i8) eq3x : ( subst(soly, eq3),factor(%%) );
+(%i9) solx : x = v^(1/3);
+(%i10) soly : subst(solx, soly);
+(%i11) subst( [solx,soly[1] ], solz );
+(%i12) delta : ( diff(s,x,2)*diff(s,y,2) - diff(s,x,1,y,1), expand(%%) );
+(%i13) delta : subst([x^3=v,y^3=v], delta );
+(%i14) dsdx2 : diff(s,x,2);
+(%i15) dsdy2 : diff(s,y,2);
+
+6.4.2 Example 2: Maximize the Cross Sectional Area of a Trough
+
+(%i1) s : L*x*sin(th) - 2*x^2*sin(th) + x^2*sin(th)*cos(th);
+(%i2) dsdx : ( diff(s,x), factor(%%) );
+(%i3) eq1 : dsdx/sin(th) = 0;
+(%i4) solx : solve(eq1,x);
+(%i5) dsdth : ( diff(s,th), factor(%%) );
+(%i6) eq2 : dsdth/x = 0;
+(%i7) eq2 : ( subst(solx,eq2), ratsimp(%%) );
+(%i8) eq2 : num(lhs(eq2) )/L = 0;
+(%i9) eq2 : trigsimp(eq2);
+(%i10) solcos : solve( eq2, cos(th) );
+(%i11) solx : subst(solcos, solx);
+(%i12) solth : solve(solcos,th);
+
+6.5 Tangent and Normal of a Point of a Curve Defined by an Implicit Function
+
+(%i1) diff(x^2 + y^2,x);
+(%i2) diff(x^2 + y(x)^2,x);
+(%i3) depends(y,x);
+(%i4) g : diff(x^2 + y^2, x);
+(%i5) grind(g)$
+(%i6) gs1 : subst('diff(y,x) = x^3, g );
+(%i7) ev(g,y=x^4/4,diff);
+(%i8) ev(g,y=x^4/4,nouns);
+(%i9) y;
+(%i10) g;
+(%i11) dependencies;
+(%i12) remove(y, dependency);
+(%i13) dependencies;
+(%i14) diff(x^2 + y^2,x);
+(%i15) depends(y,x);
+(%i16) dependencies;
+(%i17) kill(y);
+(%i18) dependencies;
+(%i19) diff(x^2+y^2,x);
+
+(%i1) infolists;
+(%i2) functions;
+
+6.5.1 Tangent of a Point of a Curve Defined by f(x,y) = 0
+
+(%i1) depends(y,x);
+(%i2) diff(f(x,y),x);
+(%i3) gradef(f(x,y), dfdx, dfdy );
+(%i4) g : diff( f(x,y), x );
+(%i5) grind(g)$
+(%i6) g1 : subst('diff(y,x) = dydx, g);
+(%i7) solns : solve(g1=0, dydx);
+
+(%i1) dydx(expr,x,y) := -diff(expr,x)/diff(expr,y);
+(%i2) dydx( x^3+y^3-1,x,y);
+(%i3) r1 : dydx( cos(x^2 - y^2) - y*cos(x),x,y );
+(%i4) r2 : (-num(r1))/(-denom(r1));
+(%i5) dydx(3*y^4 +4*x -x^2*sin(y) - 4, x, y );
+
+6.5.2 Example 1: Tangent and Normal of a Point of a Circle
+
+(%i1) dydx(expr,x,y) := -diff(expr,x)/diff(expr,y)$
+(%i2) f:x^2 + y^2-1$
+(%i3) m : dydx(f,x,y);
+(%i4) fpprintprec:8$
+(%i5) [x0,y0] : [0.5,0.866];
+(%i6) m : subst([x=x0,y=y0],m );
+(%i7) tangent : y = m*(x-x0) + y0;
+(%i8) normal : y = -(x-x0)/m + y0;
+(%i9) load(draw);
+(%i10) load(qdraw);
+(%i11) ratprint:false$
+(%i12) qdraw(key(bottom),ipgrid(15),
+          imp([ f = 0,tangent,normal],x,-2.8,2.8,y,-2,2 ),
+           pts([ [0.5,0.866]],ps(2) ) )$
+
+6.5.3 Example 2: Tangent and Normal of a Point of the Curve sin(2*x)*cos(y) = 0.5
+
+(%i13) f : sin(2*x)*cos(y) - 0.5$
+(%i14) m : dydx(f,x,y);
+(%i15) s1 : solve(subst(x=1,f),y);
+(%i16) fpprintprec:8$
+(%i17) s1 : float(s1);
+(%i18) m : subst([ x=1, s1[1] ], m);
+(%i19) m : float(m);
+(%i20) mnorm : -1/m;
+(%i21) y0 : rhs( s1[1] );
+(%i22) qdraw( imp([f = 0, y - y0 = m*(x - 1), 
+               y - y0 = mnorm*(x - 1) ],x,0,2,y,0,1.429),
+              pts( [ [1,y0] ], ps(2) ), ipgrid(15))$
+
+6.5.4 Example 4: Tangent and Normal of a Point of the Curve: x = sin(t), y = sin(2*t)
+
+(%i23) m : diff(sin(2*t))/diff(sin(t));
+(%i24) x0 : 0.8;
+(%i25) tsoln : solve(x0 = sin(t), t);
+(%i26) tsoln : float(tsoln);
+(%i27) t0 : rhs( tsoln[1] );
+(%i28) m : subst( t = t0, m);
+(%i29) mnorm : -1/m;
+(%i30) y0 : sin(2*t0);
+(%i31) qdraw( xr(0, 2.1), yr(0,1.5), ipgrid(15),nticks(200),
+              para(sin(t),sin(2*t),t,0,%pi/2, lc(brown) ),                 
+             ex([y0+m*(x-x0),y0+mnorm*(x-x0)],x,0,2.1 ),
+            pts( [ [0.8, 0.96]],ps(2) ) )$
+
+6.5.5 Example 5: Polar Plot: x = r(t)*cos(t), y = r(t)*sin(t)
+
+(%i32) r : 10/t;
+(%i33) xx : r * cos(t);
+(%i34) yy : r * sin(t);
+(%i35) m : diff(yy)/diff(xx);
+(%i36) m : ratsimp(m);
+(%i37) m : subst(t = 2.0, m);
+(%i38) mnorm : -1/m;
+(%i39) x0 : subst(t = 2.0, xx);
+(%i40) y0 : subst(t = 2.0, yy);
+(%i41) qdraw(polar(10/t,t,1,3*%pi,lc(brown) ),
+           xr(-6.8,10),yr(-3,9),
+           ex([y0 + m*(x-x0),y0 + mnorm*(x-x0)],x,-6.8,10 ),
+           pts( [ [x0,y0] ], ps(2),pk("t = 2 rad") ) );
+
+6.6 Limit Examples Using Maxima's limit(..) Function
+
+(%i1) example(limit)$
+
+(%i6) [lhospitallim,tlimswitch,limsubst];
+(%i7) limit(inf - 1);
+(%i8) limit( ( (x+eps)^3 - x^3 )/eps, eps, 0 );
+(%i9) limit( (log(x+eps) - log(x))/eps, eps,0 );
+(%i10) limit((sin(x+eps)-sin(x))/eps, eps,0 );
+
+6.6.1 Discontinuous Functions
+
+(%i11)  load(draw)$
+(%i12)  load(qdraw)$
+(%i13) qdraw( yr(-2,2),lw(8),ex(abs(x)/x,x,-1,1 ) )$
+(%i14) limit(abs(x)/x,x,0,plus);
+(%i15) limit(abs(x)/x,x,0,minus);
+(%i16) limit(abs(x)/x,x,0);
+(%i17) g : diff(abs(x)/x,x);
+(%i18) g, x = 0.5;
+(%i19) g, x = - 0.5;
+(%i20) g,x=0;
+(%i21) limit(g,x,0,plus);
+(%i22) limit(g,x,0,minus);
+(%i23) load(vcalc)$
+(%i24) plotderiv(abs(x)/x,x,-2,2,-2,2,1)$
+(%i25) mystep : ( (1 + abs(x)/x)/2 , ratsimp(%%) );
+(%i26) qdraw(yr(-1,2),lw(5),ex(mystep,x,-1,1) )$
+(%i27) load(orthopoly)$
+(%i28) map(unit_step,[-1/10,0,1/10] );
+(%i29) diff(unit_step(x),x);
+(%i30) gradef(unit_step(x),0);
+(%i31) diff(unit_step(x),x);
+(%i32) upulse(x,x0,w) := unit_step(x-x0) - unit_step(x - (x0+w))$
+(%i33) qdraw(yr(-1,2), xr(-3,3), 
+           ex1( upulse(x,-3,0.5),x,-3,-2.49,lw(5)),  
+          ex1( upulse(x,-1,0.5),x,-1,-.49,lw(5)),
+           ex1( upulse(x,1,0.5),x,1,1.51,lw(5)) )$
+
+6.6.2  Indefinite Limits
+
+(%i34) qdraw(lw(1),ex(sin(1/x),x,0.001,0.01));
+(%i35) limit(sin(1/x),x,0,plus);
+(%i36) g : x^2*sin(1/x)$
+(%i37) limit(g,x,0);
+(%i38) dgdx : diff(g,x);
+(%i39) limit(dgdx,x,0);
+(%i40) qdraw( yr(-1.5,1.5),ex1(2*x*sin(1/x)-cos(1/x),x,-1,1,lw(1),lc(blue)),
+               ex1(x^2*sin(1/x),x,-1,1,lc(red) ) )$
+
+6.7  Taylor Series Expansions using taylor(..)
+
+(%i1) t1 : taylor(sqrt(1+x),x,0,5);
+(%i2) [ at( t1, x=1 ),subst(x=1, t1 ) ];
+(%i3) float(%);
+(%i4) t2: taylor (cos(x) - sec(x), x, 0, 5);
+(%i5) [ at( t2, x=1 ),subst(x=1, t2 ) ];
+(%i6) t3 : taylor(cos(x),x,%pi/4,4);
+(%i7) ( at(t3, x = %pi/3), factor(%%) );
+(%i8) t4 : taylor(sin(x+y),[x,y],0,3);
+(%i9) (subst( [x=%pi/2, y=%pi/2], t4), ratsimp(%%) );
+(%i10) ( at( t4, [x=%pi/2,y=%pi/2]), ratsimp(%%) );
+(%i11) t5 : taylor(sin(x+y),[x,0,3],[y,0,3] );
+(%i12) (subst([x=%pi/2,y=%pi/2],t5),ratsimp(%%) );
+(%i13) t6 : taylor(sin(x),x,0,7 );
+(%i14) diff(t6,x);
+(%i15) integrate(%,x);
+(%i16) integrate(t6,x);
+
+6.8  Vector Calculus Calculations and Derivations using vcalc.mac
+
+(%i1) load(vcalc);
+(%i2) batch(vcalcdem);
+
+
+6.9  Maxima Derivation of Vector Calculus Formulas in Cylindrical Coordinates
+
+6.9.1  The Calculus Chain Rule in Maxima
+
+(%i1) depends(g,[u,v,w]);
+(%i2) diff(g,x);
+(%i3) depends([u,v,w],[x,y,z]);
+(%i4) diff(g,x);
+(%i5) (gradef(u,x,dudx),gradef(u,y,dudy),gradef(u,z,dudz),
+        gradef(v,x,dvdx),gradef(v,y,dvdy),gradef(v,z,dvdz),
+         gradef(w,x,dwdx),gradef(w,y,dwdy),gradef(w,z,dwdz) )$
+(%i6) diff(g,x);
+(%i7) grind(%)$
+
+(%i1) batch(cylinder);
+
+6.9.2  Laplacian  del^2 f(rho,phi,z)
+
+(%i1) cylaplacian(expr,rho,phi,z) :=                
+             (diff(expr,rho)/rho + diff(expr,phi,2)/rho^2 +
+                diff(expr,rho,2) + diff(expr,z,2)) $
+(%i2) ( cylaplacian(rh^n*cos(n*p),rh,p,z), factor(%%) );
+(%i3) ( cylaplacian(rh^n*sin(n*p),rh,p,z), factor(%%) );
+(%i4) ( cylaplacian(rh^(-n)*cos(n*p),rh,p,z), factor(%%) );
+(%i5) ( cylaplacian(rh^(-n)*sin(n*p),rh,p,z), factor(%%) );
+(%i6) cylaplacian(log(rh),rh,p,z);
+(%i7) u : 2*(rh - 1/rh)*sin(p)/3$
+(%i8) (cylaplacian(u,rh,p,z), ratsimp(%%) );
+(%i9) [subst(rh=1,u),subst(rh=2,u) ];
+
+6.9.3  Gradient  del f(rho,phi,z)
+
+6.9.4  Divergence  del dot B(rho,phi,z)
+
+6.9.5  Curl  del cross B(rho,phi,z)
+
+6.10  Maxima Derivation of Vector Calculus Formulas in Spherical Polar Coordinates
+
+(%i1) batch(sphere);
+
+                
+
+                                   
+           
+           
+
+

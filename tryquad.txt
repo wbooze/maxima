@@ -1,0 +1,31 @@
+Explaining the use of multi-precision quadrature using MPFR / lisp
+on windows, Allegro CL 8.0 (perhaps the free "Express" version), and generic arithmetic.
+
+First, make a directory somewhere.  call it generic. Download all the
+files that are mentioned below.  For the case of fasl files, they
+should probably be produced locally to correspond to the exact version
+of Lisp that you are using. 
+produce it: in Lisp, assuming the directory is c:\generic...
+
+:cd c:/generic      
+:cf ga.lisp
+:cf mpfr.lisp
+:cf quad-fast.lisp
+
+Next, here's what to do for running quadrature. Load the program and set the package to mpfr
+:cd c:/generic
+:ld mysysquad.lisp
+:pa :mpfr
+
+(int_gs_l5bf #'exp 10)  ;; use gaussian 10-point integration for -1 to 1 of exp(x). 53 bits
+
+(set-prec 600)  ;; set precision to 600 bits
+
+(int_gs_l5bf #'exp 10) ;; try again
+(int_gs_l5bf #'exp 80) ;; try again
+
+(time (int_gs_l5bf #'exp 80))
+
+This should be exp(1)-exp(-1), approx.
+
+

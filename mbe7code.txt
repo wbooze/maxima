@@ -1,0 +1,307 @@
+  file mbe7code.txt  has Maxima code
+   for Maxima by Example, Chapter 7,
+   Symbolic Integration.
+
+    Edwin L Woollett, 2009
+    woollett@charter.net
+    http://www.csulb.edu/~woollett
+
+
+
+
+Chapter 7: Symbolic Integration
+
+7.1 Symbolic Integration with integrate
+7.2 Integration Examples and also defint, ldefint, beta, gamma, erf, and logabs
+
+Example 1
+(%i1) integrate (sin(x)^3, x);                 
+(%i2) ( diff (%,x), trigsimp(%%) );
+
+Example 2
+(%i3) integrate (x/ sqrt (b^2 - x^2), x);
+(%i4) diff(%,x);
+
+Example 3
+(%i5) i3 : integrate (cos(x)^2 * exp(x), x, 0, %pi);
+(%i6) ldefint (cos(x)^2 * exp(x), x, 0, %pi);
+(%i7) defint (cos(x)^2 * exp(x), x, 0, %pi);
+
+Example 4
+(%i8) integrate (x^2 * exp(-x^2), x, minf, inf);
+(%i9) i1 : integrate(x^2*exp(-x^2),x );
+(%i10) diff(i1,x);
+(%i11) ( load(draw),load(qdraw) )$
+(%i12) qdraw(yr(-2,2),ex1(erf(x),x,-5,5,lw(5),lc(red),lk("erf(x)") ) )$
+(%i13) [limit(erf(x),x, inf), limit(erf(x),x, minf)];
+(%i14) diff(erf(x),x);
+
+Example 5
+(%i1) (assume(a>1),facts());
+(%i2) integrate (x^a/(x+1)^(5/2), x, 0, inf );
+(%i3) ( forget(a>1), facts() );
+(%i4) is( a>1 );
+(%i5) integrate (x^a/(x+1)^(5/2), x, 0, inf );
+(%i6) [is( a>1 ), facts() ];
+(%i7) integrate(x^a/(x+1)^(5/2), x );
+(%i8) grind(i1)$
+(%i9) i1 : integrate(x^a/(x+1)^(5/2), x ), risch;
+(%i10) float(beta(1/4,9/4));
+(%i11) quad_qagi(x^(5/4)/(x+1)^(5/2),x, 0, inf);
+
+Example 6
+(%i1) gradef(q(u),sin(u^2) )$
+(%i2) integrand : sin(r(x)^2)* 'diff(r(x),x ) /q( r(x) ) ;
+(%i3) integrate(integrand,x);
+(%i4) diff(%,x);
+(%i5) depends(r,x,q,r);
+(%i6) integrand : sin(r^2)* 'diff(r,x) / q;
+(%i7) integrate(integrand,x);
+(%i8) diff(q,x);
+
+Example 7
+(%i1) e1 : x^2 + 3*x -2/(3*x)+110/(3*(x-3)) + 12;
+(%i2) e11 : ratsimp(e1);
+(%i3) e12 : partfrac(e11,x);
+(%i4) integrate(e11,x);
+(%i5) integrate(e12,x);
+
+Example 8
+(%i6) e2: 1/(x^4 - 4*x^3 + 2*x^2 - 7*x - 4);
+(%i7) integrate(e2,x);
+(%i8) grind(%)$
+(%i9) factor(e2);
+(%i10) partfrac(e2,x);
+
+Example 9
+(%i11) logabs;
+(%i12) integrate(1/x,x);
+(%i13) diff(%,x);
+(%i14) logabs:true$
+(%i15) integrate(1/x,x);
+(%i16) diff(%,x);
+(%i17) log(-1);
+(%i18) float(%);
+
+7.3 Piecewise Defined Functions and integrate
+
+(%i1) u(x) := if x >= 1 and x <= 3 then 1 else 0$
+(%i2) map('u,[0.5,1,2,3,3.5]);
+(%i3) (load(draw),load(qdraw))$
+(%i4) qdraw( yr(-1,2),ex1(u(x),x,0,4,lw(5),lc(blue)) )$
+(%i5) g(x):= if x >= 1 and x < 2 then (x-1)
+              elseif x >= 2 and x <= 3 then (6 - 2*x) else 0$
+(%i6) map('g,[1/2,1,3/2,2,5/2,3,7/2]);
+(%i7) qdraw( yr(-1,3),ex1(g(x),x,0,4,lw(5),lc(blue)) )$
+(%i8) block([small :1.0e-6],
+         qdraw( yr(-1,3),ex1(g(x),x,0,2-small,lw(5),lc(blue)),
+                  ex1(g(x),x,2+small,4,lw(5),lc(blue)) ) )$
+(%i9) integrate(g(x),x,0,4);
+(%i10) integrate(x-1,x,1,2) + integrate(6-2*x,x,2,3);
+
+7.4 Area Between Curves Examples
+
+Example 1
+(%i1) (load(draw),load(qdraw) )$
+(%i2) f1(x) := sqrt(x)$
+(%i3) f2(x) := x^(3/2)$
+(%i4) qdraw(   xr(-.5,1.5), yr(-.5,1.5),
+         ex1(f1(x),x,0,1.5,lw(5),lc(blue) ),
+         ex1(f2(x),x,0,1.5,lw(5),lc(red) ) )$
+(%i5) qdlist : [xr(-.5,1.5), yr(-.5,1.5),
+         ex1(f1(x),x,0,1.5,lw(5),lc(blue) ) ,
+         ex1(f2(x),x,0,1.5,lw(5),lc(red) ) ]$
+(%i6) xv:float(makelist(i,i,1,99)/100)$
+(%i7) (vv:[],for x in xv do
+        vv:cons(line(x,f2(x),x,f1(x),lw(1),lc(khaki) ),vv),
+        vv:reverse(vv) )$
+(%i8) qdlist : append(vv,qdlist)$
+(%i9) apply('qdraw, qdlist)$
+(%i10) solve( f1(x) = f2(x),x );
+(%i11) integrate(f1(x) - f2(x),x,0,1);
+
+Example 2
+(%i1) f1(x) := (3/10)*x^5 -3*x^4 + 11*x^3 -18*x^2 + 12*x + 1$
+(%i2) f2(x) := -4*x^3 + 28*x^2 -56*x + 32$
+(%i3) (load(draw),load(qdraw) )$
+(%i4) qdraw(yr(-20,20),ex1(f1(x),x,-1,5,lc(blue) ),
+               ex1(f2(x),x,-1,5,lc(red)))$
+(%i5) solve(f1(x) = f2(x),x);
+(%i6) grind(%)$
+(%i7) p(x) := 3*x^5-30*x^4+150*x^3-460*x^2+680*x-310$
+(%i8) x1 : find_root(p(x),x,.7,1);
+(%i9) x2 : find_root(p(x),x,2.2,2.4);
+(%i10) x3 : find_root(p(x),x,3.7,3.9);
+(%i11) map('p, [x1,x2,x3] );
+(%i12) [y1,y2,y3] : map('f1, [x1,x2,x3] );
+(%i13) ratprint:false$
+(%i14) i1 : integrate(f1(x) - f2(x),x,x1,x2);
+(%i15) i2 : integrate(f2(x)-f1(x),x,x2,x3);
+(%i16) area : i1 + i2;
+(%i17) area : float(area);
+
+7.5 Arc Length of an Ellipse
+
+(%i1) assume(a>0,b>0,a>b,e>0,e<1 )$
+(%i2) y:b*sqrt(1 - (x/a)^2)$
+(%i3) dydx : diff(y,x)$
+(%i4) e1 : 1 + dydx^2;
+(%i5) e2 : ( subst( [x = a*z,b = a*sqrt(1-e^2)],e1 ),ratsimp(%%) );
+(%i6) e3 : (-num(e2))/(-denom(e2));
+(%i7) e4 : dz*sqrt(num(e3))/sqrt(denom(e3));
+(%i8) e5 : subst( [z = sin(u), dz = cos(u)*du ],e4 );
+(%i9) assume(cos(u)>0, sin(u) >0)$
+(%i10) e6 : trigsimp(e5);
+(%i11) float(12*elliptic_ec(5/9));
+(%i12) first( quad_qags(12*sqrt(1 - (5/9)*sin(u)^2),u,0,%pi/2) );
+
+7.6 Double Integrals and the Area of an Ellipse
+
+Example 1: Area of a Unit Square
+(%i1) integrate( integrate(1,y,0,1), x,0,1 );
+
+Example 2: Area of an Ellipse
+(%i1) facts();
+(%i2) assume(a > 0, b > 0, x > 0, x < a, y > 0,y < b )$
+(%i3) facts();
+(%i4) [xmax : (a/b)*sqrt(b^2 - y^2),ymax : (b/a)*sqrt(a^2-x^2)]$
+(%i5) integrate( integrate( 1,x,0,xmax), y,0,b );
+(%i6) integrate( integrate( 1,y,0,ymax), x,0,a ); 
+
+Example 3: Moment of Inertia for Rotation about the x-axis
+(%i7) sigma : m/(%pi*a*b)$
+(%i8) 4*sigma*integrate( integrate(y^2,x,0,xmax),y,0,b );
+(%i9) forget(a > 0, b > 0, x > 0, x < a, y > 0,y < b )$
+(%i10) facts();
+(%i11) integrate( integrate(1,x,0,xmax),y,0,b);
+(%i12) assume(b>0)$
+(%i13) integrate( integrate(1,x,0,xmax),y,0,b);
+
+7.7 Triple Integrals: Volume and Moment of Inertia of a Solid Ellipsoid
+
+Volume
+
+(%i1) assume(a>0,b>0,c>0,a>b,a>c,b>c)$
+(%i2) assume(x>0,x<a,y>0,y<b,z>0,z<c)$
+(%i3) zmax:c*sqrt(1-x^2/a^2-y^2/b^2)$
+(%i4) ymax:b*sqrt(1-x^2/a^2)$
+(%i5) integrate( integrate( integrate(1,z,0,zmax),y,0,ymax),x,0,a );
+(%i6) vol : 8*%;
+(%i7) [zmin:-zmax,ymin:-ymax]$
+(%i8) integrate( integrate( integrate(1,z,zmin,zmax),y,ymin,ymax),x,-a,a );
+
+Moment of Inertia
+
+(%i9) rho:m/vol;
+(%i10) i3:rho*integrate(integrate(integrate(x^2+y^2,z,zmin,zmax),
+                       y,ymin,ymax),x,-a,a );
+(%i11) ratsimp(i3);
+
+7.8  Derivative of a Definite Integral with Respect to a Parameter                       
+
+(%i1) expr : 'integrate(f(x,y),x,a(y),b(y) );
+(%i2) diff(expr,y);
+(%i3) expr : 'integrate(x^2 + 2*x*y, x,a,b);
+(%i4) diff(expr,y);
+(%i5) (ev(%,nouns), ratsimp(%%) );
+(%i6) ev(expr,nouns);
+(%i7) diff(%,y);
+
+Example 2
+
+(%i1) expr : 'integrate(x^2 + 2*x*y, x,a,b(y) );
+(%i2) diff(expr,y);
+(%i3) ( ev(%,nouns,b(y)=y^2 ), expand(%%) );
+(%i4) ev(expr,nouns);
+(%i5) diff(%,y);
+(%i6) ( ev(%,nouns,b(y)=y^2), (expand(%%) );
+
+Example 3
+
+(%i7) expr : 'integrate(2*x + t,x,t,t^2);
+(%i8) (diff(expr,t),expand(%%) );
+
+Example 4
+
+(%i1) assume( a > 0, w > 0 )$
+(%i2) integrate(x*exp(-a*x)*cos(w*x),x,0,inf);
+(%i3) i1 : 'integrate(exp(-a*x)*cos(w*x),x,0,inf)$
+(%i4) i2 : ev(i1,nouns);
+(%i5) di2 : (diff(i2,a), ratsimp(%%) );
+(%i6) result : (-1)*(diff(i1,a) = di2 );
+
+7.9  Integration by Parts
+
+(%i1) iparts(f,h,var):= block([g ],
+         g : integrate(h,var),
+         f*g - 'integrate(g*diff(f,var),var ) )$
+               
+(%i2) iparts(x^2,sin(x),x);
+(%i3) (ev(%,nouns),expand(%%) );
+(%i4) collectterms(%,cos(x) );
+(%i5) integrate(x^2*sin(x),x);
+(%i6) idefparts(f,h,var,v1,v2):= block([g ],
+         g : integrate(h,var),
+           'subst(v2,var, f*g)  - 'subst(v1,var, f*g ) -
+               'integrate(g*diff(f,var),var,v1,v2 ) );
+(%i7) idefparts(x^2,sin(x),x,0,1);
+(%i8) (ev(%,nouns),expand(%%) );
+(%i9) integrate(x^2*sin(x),x,0,1);
+
+7.10  Change of Variable and changevar
+
+(%i1) expr : 'integrate(2*x*(x^2+1)^3,x);
+(%i2) changevar(expr,x^2+1-u,u,x);
+(%i3) ev(%, nouns);
+(%i4) ratsubst(x^2+1,u,%);
+(%i5) subst(x^2+1,u,%o3);
+(%i6) subst(u=(x^2+1),%o3);
+
+Example 2
+
+(%i7) expr : 'integrate( (x+2)/sqrt(x+1),x);
+(%i8) changevar(expr,u - sqrt(x+1),u,x);
+(%i9) ev(%, nouns);
+(%i10) subst(u = sqrt(x+1),%);
+(%i11) integrate((x+2)/sqrt(x+1),x);
+
+Example 3
+
+(%i12) expr : 'integrate( (x+2)/sqrt(x+1),x,0,1);
+(%i13) changevar(expr,u - sqrt(x+1),u,x);
+(%i14) ev(%, nouns);
+
+Example 4
+
+(%i1) fpprintprec:8$
+(%i2) i1:integrate (exp (y^2),y,0,1);
+(%i3) float(i1);
+(%i17) fpprec:100$
+(%i4) erf(1.0*%i);
+(%i5) float(subst(1.0*%i,%i,i1));
+(%i6) quad_qags(exp(y^2),y,0,1);
+(%i7) expr : 'integrate(exp(y^2),y,0,1);
+(%i8) changevar(expr,y^2-u,u,y);
+(%i9) ev(%, nouns);
+(%i10) float(subst(1.0*%i,%i,%));
+(%i11) changevar(expr,y-sqrt(u),u,y);
+(%i12) ev(%, nouns);
+(%i13) float(subst(1.0*%i,%i,%));
+
+Example 5 
+
+(%i1) integrate(x/sqrt(x^2-4),x);
+(%i2) assume(x > 2, t > 0, t < 1.5, cos(t) > 0, sin(t) > 0 );
+(%i3) nix : 'integrate(x/sqrt(x^2-4),x);
+(%i4) nixt : changevar(nix,x-2/cos(t), t, x) ;
+(%i5) nixt : rootscontract(nixt);
+(%i6) nixt : scanmap('trigsimp,nixt);
+(%i7) ev(nixt,nouns);
+(%i8) ix : subst(x=2/cos(t),x/sqrt(x^2 - 4) )* diff(2/cos(t));
+(%i9) ix : trigsimp(ix);
+(%i10) ix : ratsubst(1,cos(t)^2+sin(t)^2,ix);
+(%i11) integrate(coeff(ix,del(t) ) ,t);
+(%i12) subst(tan(t)= sqrt(sec(t)^2-1),2*tan(t) );
+(%i13) subst(sec(t)=1/cos(t),%);
+(%i14) subst(cos(t)=2/x,%);
+(%i15) ratsimp(%);

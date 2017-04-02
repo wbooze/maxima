@@ -1,0 +1,80 @@
+/* file commutators.mac
+   from Robert Dodier's mailing list
+    message nov. 22, 8:15 am  */
+
+/* elw: 11-23-10, FOO --> comm_simp
+ *  include expand in def.
+ */
+
+/* copyright 2010 by Robert Dodier.
+ * I release this work under terms of the GNU General Public License.
+ */
+
+
+declare (bilinear, feature);
+bilinearp (e) := featurep (e, bilinear);
+declare (comm, bilinear);
+
+matchdeclare (xx, bilinearp);
+matchdeclare ([aa, bb, cc], all);
+defrule (rbilineara1, xx (aa + bb, cc), map (lambda ([u], xx (u, cc)), bb));
+defrule (rbilineara2, xx (cc, aa + bb), map (lambda ([u], xx (cc, u)), bb));
+
+matchdeclare (xx, bilinearp);
+matchdeclare (aa, scalarp);
+matchdeclare (bb, nonscalarp);
+matchdeclare (cc, all);
+defrule (rbilinearm1, xx (aa * bb, cc), aa * xx (bb, cc));
+defrule (rbilinearm2, xx (cc, aa * bb), aa * xx (cc, bb));
+
+nctimesp (e) := not atom(e) and op(e) = ".";
+matchdeclare (aa, nctimesp);
+matchdeclare (cc, all);
+
+defrule (rcommp1, comm (aa, cc), first (aa) . comm (rest (aa), cc) +
+          comm (first (aa), cc) . rest (aa));
+defrule (rcommp2, comm (cc, aa), first (aa) . comm (cc, rest (aa)) +
+         comm (cc, first (aa)) . rest (aa));
+
+matchdeclare (aa, nonscalarp);
+matchdeclare (nn, integerp);
+defrule (rncexpt, aa^^nn, apply (".", makelist (aa, i, 1, nn)));
+
+/* put antisymmetric declaration here so built-in rules don't
+interfere w/ rule definitions */
+declare (comm, antisymmetric); 
+
+comm_simp (e) :=
+   (e : apply1 (e, rbilineara1, rbilineara2, rbilinearm1, rbilinearm2),
+    block ([dotexptsimp : false],
+        apply1 (applyb1 (e, rncexpt), rcommp1, rcommp2),
+        expand (%%)));
+
+/* example:
+ *
+(%i1) load(commutators);
+(%o1) "c:/work5/commutators.mac"
+(%i2) declare ([s1, s2, s3, s4], scalar)$
+(%i3) declare ([a, b, c], nonscalar)$
+(%i4) comm (a,b);
+(%o4) comm(a,b)
+(%i5) comm (b,a);
+(%o5) -comm(a,b)
+(%i6) comm (a^^2,b);
+(%o6) comm(a^^2,b)
+(%i7) comm_simp (%);
+(%o7) comm(a,b) . a+a . comm(a,b)
+
+(%i9) comm_simp (comm (a,b^^2));
+(%o9) b . comm(a,b)+comm(a,b) . b
+(%i10) comm_simp (comm (%i*a/5,s1*b^^2));
+(%o10) %i*s1*b . comm(a,b)/5+%i*s1*comm(a,b) . b/5
+(%i11) comm_simp (comm (a,b^^2 + c));
+(%o11) b . comm(a,b)+comm(a,b) . b+comm(a,c)
+ *
+ */
+
+
+
+ 
+ 

@@ -1,0 +1,454 @@
+Some notes on the interval arithmetic and its implementation,
+accompanying a package written for lisp.
+
+1. There are several ways of thinking about an interval I = [low,high].
+
+ a. This represents a single (unknown) number in that interval.
+ b. This represents a collection of all possible numbers in that interval.
+ c. A distinct interpretation of some kind of limit set.
+As an example, lim(sin(x)) as x goes to
+infinity, is [-1,1]. This answer is used by Mathematica and Maple.
+It is cute, but does not conform to any conventional
+mathematical definition of limit. (e.g. the usual
+epsilon-delta version: the difference between a specific
+value and that interval must be at least 1, and it is not a limit.)
+ d. Intervals can be ``extended'' in various ways, e.g. exterior
+intervals [a,b] where b<a, means  all x such that x<a or x>b.
+ e. variations on open and closed endpoints.
+ f. encodings of  empty or undefined intervals. e.g. real solution to $x^2=-1$ is empty,
+
+
+2.Interval arithmetic
+operations tend to enlarge the interval's uncertainty.  Because of the
+growing uncertainty encoded in the value the interval, many
+potentially interesting calculations end up with [-oo,oo]
+answers. (Well-known iterations, e.g. Newton, have special versions to
+allow them to converge in spite of such widenings.)
+We needed to make special efforts to try to keep intervals
+no wider than necessary.  
+
+3. Dependency.  In a computer implementation it is possible to
+identify two different identifiers (or variables) x, y, as "pointers"
+to the single occurrence of an interval, say [-1,1].  That is, the
+data itself can be identified with a particular location in memory.
+It may be appropriate, under interpretation 1a, to think of the value
+of x-y as zero.  While one does not know the value of x or value of y,
+one could argue that the values are identical and thus x-y is zero.
+
+Alternatively, one could store the values for x,y, each [-1,1] in two different
+locations in memory, in which case the values are presumably independent,
+and x-y would be some number in [-2,2], rather than zero. Under interpretation
+1b it is arguable that x-x is also [-2,2].
+
+If one is unable to tell if two numbers are identical (same location)
+or isomorphic (different location but components are numerically
+equal), the second interpretation should prevail since it
+encloses the former range and is thus "guaranteed" though possibly
+pessimistic. The dependency issue is not resolved by ``location''
+comparisons because $2x$ will be stored in a different location from
+$x$, and yet $2x-x-x$ should be zero.
+
+
+Interval computations  benefit from simplifications in which
+the occurrences of variables are minimized in number. That is, 
+$y \times y$  is inferior to $y^2$.  In the case $y=[-1,1], the
+first value might be computed in a plodding way as [-1,1] whereas
+know that the same value is squared narrows the result to [0,1],
+which is much preferable.
+
+The same idea of reducing the occurrences of an unknown to take
+advantage of correlation, can be followed in other computations.
+x/(x-z) can be rewritten as 1/(1-z/x). 
+sin(x)^5 - 10*cos(x)^2*sin(x)^3 + 5*cos(x)^4*sin(x) looks like it
+can be bounded by [-16,16], be when it is rewritten as
+sin(5*x), we see that [-1,1] is good enough.
+
+4. What other techniques should be considered?
+ Reducing intervals. (Sharpening them.)  
+
+{First note that if Mathematica's Maximize and Minimize programs work
+``exactly'', all we need to do is compute the max and min of a function
+relative to the constraint that its argument(s) are within the
+specified interval(s), to determine the lower and upper bounds of the
+result. Thus to produce a sharp interval (i.e. both upper and lower
+boundsd are achieved), consider this:
+
+inteval[r_,Interval[{lo_,hi_}]]:=
+ Interval[{Minimize[{r[x],lo<=x<=hi},x][[1]],
+           Maximize[{r[x],lo<=x<=hi},x][[1]]}]
+
+While it is not stated how effective Mathematica's programs really are,
+we tried
+
+s[z_] := Sin[z] + Cos[z];
+inteval[s, Interval[{-10, 10}]];
+This gives a messy expression like
+$$[ \cos (2\,
+      \arctan (1 + {\sqrt{2}})) - 
+    \sin (2\,\arctan (1 + {\sqrt{2}}))~,~
+   \cos (2\,\arctan (1 - {\sqrt{2}})) - 
+    \sin (2\,\arctan (1 - {\sqrt{2}}))]$$
+
+which simplification reduces to
+$$[-\sqrt(2),\sqrt(2)]$$
+which is exactly right.
+
+Given an interval with floating-point components, Mathematica will
+generally give an answer that is also a float.  That is, Mathematica
+will abandon exactness given a hint, and in the cases we've tried, will
+run faster.}
+
+5. Can we solve this problem
+more effectively given the simple nature of the contraints?
+
+Consider the evaluation of a polynomial $p(x)$ with real coefficients.
+Here's one proposal: to evaluate $p(I)$, compute a list L
+of (rigorous intervals around) the zeros of $p'(I)$.  Find the relative extrema
+of $p$ in those neighborhoods on the list L, as well as at the values of
+$p$ at the upper and lower bounds of I.  Given this collection, find
+the min and max for $p(I)$.
+
+The details of this computation are not always pretty because it
+depends on accurately finding intervals around each zero. This is a
+well-studied problem for polynomials, but is not a computation undertaken
+lightly. And for non-polynomials, the techniques are not sure-fire at
+all.  We revisit this later.
+
+6. Maybe there should be a general "de-optimization" technique, rather the
+opposite of the compiler optimization for copy propagation; values
+that are known should not be copied into later arithmetic instructions;
+rather the dependences should be as explicit as possible.
+Example:
+ a:= [-1,1];
+ b:= a*a+a
+
+Constant folding gives the wrong optimization for intervals
+ b := [-1,1]*[-1,1]+ [-1,1]. This gives [-2,2]
+
+Better is algebraic simplification to make
+  b:= a^2+a; This gives [0,1]+[-1,1] = [-1,2]
+
+or since p(a)=a*(a+1) has derivative 2*a+1 which has a zero at a=-1/2,
+test p(-1/2)= 1/4-1/2 = -1/4,
+     p(-1) = 0
+     p(1) =  2
+
+So the value of b must be between -1/4 and 2.  [-1/4,2] is
+tighter than the other bounds, and "sharp" as a matter of fact.
+
+As indicated earlier, any method requiring that the roots
+of a polynomial's first derivative be computed can have problems
+for ill-conditioned polynomials. Low-dimension polynomials with
+modest coefficients do not cause trouble, and if one needs to
+handle more difficult cases, software has been developed for
+the reliable location and refinement of zeros using high-precision
+calculations (e.g. ALIAS, MPFI).
+See 
+http://www1.elsevier.com/homepage/sac/cam/mcnamee/12.htm
+for over 100 interval references from McNamee's bibliography
+on roots of polynomials.
+
+We don't really need to find the zeros of the first derivative to
+do better than naive evaluation.
+
+Here's one way to think about a better way: Just divide the interval
+[-1,1] into (say) 100 pieces and evaluate the expression on each of
+these smaller intervals. On most of them the function p will not
+wander very far. Taking the minimum and maximum over all these small
+intervals we get a lower bound of -11/25.  For 1000 pieces, the lower
+bound is -0.252.  The upper bound is 2, which again is tight.  So
+subdivision succeeds. Here's a Mathematica program
+
+subdiv[Interval[{a_, b_}], n_] :=  
+ Module[{del=b-a}, 
+     Table[{a + (i*del)/n, a + ((i + 1)*del)/n}, {i, 0, n - 1}]];
+inteval[f_, q_, z_] :=  (* evaluate f on an interval q, z subdivisions *)
+ Module [{sd = subdiv[q, z]}, 
+     Interval[{Min[f[sd]], Max[f[sd]]}]]
+
+r[a_]:=a^2+a;
+inteval[r, Interval[{-1,1}], 100]
+
+One advantage of this approach is we can plot a function over 100 such
+intervals and be sure to not miss a very narrow peak, something that
+might have been overlooked by merely sampling. (We described this
+approach to "honest plotting" in a paper in ISSAC 1992.) If we are
+merely looking to contain the extrema, we are looking at many boring
+intervals.  We can write a better program to only subdivide the
+sub-intervals within which we believe the function f attains its maximum or
+minimum; with any luck far fewer samples should be necessary.
+
+(* heuristic *min of f on an interval, count= say 5 *)
+
+mini[f_, s:Interval[{a_, b_}], count_] := 
+  If[count == 0,  Min[s],  
+    Module[{m,loint,hiint,f1,f2},
+      m = (a + b)/2;
+      loint = Interval[{a, m}]; 
+      hiint = Interval[{m, b}]; 
+      f1=Min[f[loint]];
+      f2=Min[f[hiint]];
+      If [ f1<f2, 
+        (ans=     mini[f, loint, count - 1];
+         other=   f2; 
+         otherint=hiint),
+        (ans=     mini[f, hiint, count - 1];
+         other=   f1;
+         otherint=loint)];
+        (* Maybe we need to search other branch? *)
+     If [ans<=other, ans, Min[ans,mini[f,otherint, count-1]]]]]
+
+To find maximum we could compute -(mini of f[x_]:= -g[x]),
+or rewrite it this way... 
+
+maxi[f_, s:Interval[{a_, b_}], count_] := 
+  If[count == 0, Max[f[s]], 
+    Module[{m,loint,hiint,f1,f2},
+      m = (a + b)/2;
+      loint = Interval[{a, m}]; 
+      hiint = Interval[{m, b}]; 
+      f1=Max[f[loint]];
+      f2=Max[f[hiint]];
+      If [ f1>f2, 
+        (ans=    maxi[f, loint, count - 1];
+         other=  f2; 
+         otherint=hiint),
+        (ans=     maxi[f, hiint, count - 1];
+         other=   f1;
+         otherint=loint)];
+        (* Maybe we need to search other branch? *)
+     If [ans>=other, ans, Max[ans,maxi[f,otherint, count-1]]]]]
+
+How does the times compare with Mma's Minimize /Maximize?
+This depends on the stopping criterion (eg. setting of count),
+the distribution of (bogus or actual) maxima/minima in different
+regions, the cost of repeated evaluations.  
+
+Should this be done at all considering the extra effort
+compared to the relatively low cost for the naive interval evaluation?
+
+In some of our experiments if the function f is memoized, time can
+be saved.  When does f get called again on the same arguments: when
+calls from maxi and mini are made with the same interval arguments. 
+This happens when the the algorithm has no idea where the maxima and minima
+are, and tries essentially every interval.
+
+While it appears that the time for this bisection should be
+proportional to the count n, it is probably not so favorable.  Because
+the {\em other} part of the bisection is examined at least some of the
+time, the actual number of evaluations can be much higher; a worst
+case is $2^n$ likely this is achieved for a sum of highly oscillatory
+functions that cancel each other.
+
+
+About interval comparisons.  We can ask for relationship
+
+I<J in 3 ways.  
+I< J Certainly
+I<J  possibly
+I<J  always  (or set)
+
+intersection, union (or hull?) 
+element (or in?) 
+subset
+min max
+
+
+
+see 
+
+
+http://docs.sun.com/source/806-3595/iapg_bookTOC.html
+
+Also the term "sharp" was used in the SUN reference
+for intervals that are as tight as possible [within the
+constraints of float representation]. 
+
+Another thought.. It may be plausible in some circumstances to
+compute rigorous functional (polynomial) upper and lower bounds
+for a (non-) polynomial function, and then do interval arithmetic
+on those bounds.
+
+This subdivision/ bisection technique seems to have been proposed at
+least as early as
+http://www.diku.dk/~stig/CompRatIntv.pdf
+Stig Skelboe, Computation of Rational Intervals, 
+BIT 14 (1974) 87-95.
+
+even though it doesn't seem to be used!!
+
+The generalization for functions of multiple variables,
+which would be to subdivide in more than one direction, would
+be straightforward but require 2^n evaluations instead of
+2 at each stage.
+
+
+{7. Numbers in lisp can be exact rationals or integers or floats
+(double, single).
+The endpoints of intervals ordinarily need to be bumped up or down
+unless they are the result of exact calculations
+If they are integers or rationals, they are probably exact.
+If they are floats, we could do float round-up/down.  Or we
+could convert floats to rationals of finite precision
+and bump up/down.  e.g. 
+(defmethod bumpup ((k ratio))(/(1+ (numerator k) )(denominator k)))
+
+(defmethod fbumpawayz ((k double-float)(* k #.(+ 1 double-float-epsilon))))
+(defmethod fbumptoz ((k double-float)(* k #.(- 1  double-float-epsilon))))
+
+
+It probably does not pay to keep rationals to arbitrarily
+high precision as endpoints: If an interval is given as a
+pair of very-high (software) precision numbers:
+[1.000..001, 1.9999..999], it is plausible that a pair consisting
+of integers, or (machine) floats encoding the
+interval [1,2] would be about as satisfactory computationally,
+and substantially more efficient in space and time for operations.
+
+Inquiries about presesetting or preserving IEEE float flags were
+disappointing.. basically you can't rely on other people
+keeping their hands off the flags, and there is no
+ANSI standard Common Lisp access. (Our programs for HP Precision
+Architecture died with those machines..)
+
+(D. Rettig:, Dec 2005
+  It is an
+unfortunate consequence of the fact that no calling-conventions/
+runtime-architecture (or whatever they are called for each system)
+specifies any rounding-mode action (i.e. "you set it, you fix it
+before you leave", or "user must set before every operation",
+etc).  So there can be no guarantees.)}
+
+
+question:  if we use a tabulation formula to evaluate a polynomial
+at a set of equally spaced points, we can do so with n=degree(poly)
+extra operations, after a startup.  Can we do this for intervals?
+
+
+
+;;;comments from Dan L. Dec, 2005
+
+
+
+I think this is a useful approach, and I have seen similar done in order
+to alleviate problems with dimensionality. If you want to pursue this to
+see what folks are doing along such lines of late, here are a couple of
+which I am aware.
+
+Yves Papeguy: The work is in C or C++, I think, but he has some link to
+Mathematica. Uses interval methods.
+
+Ming Zheng: Not sure what is the status of his work. I think he uses
+interval methods in some manner.
+
+
+If you cannot locate contact info I can find details when I get back to
+the office around the 30th.
+
+;;;
+More exploration:
+These papers seem relevant:
+
+http://www.cas.mcmaster.ca/~nedialk/aca2003/
+
+That's Yves Papegay, ALIAS, a C++ library, at INRIA
+
+See also MPFI, built on MPFR built on GMP, I think.
+
+http://perso.ens-lyon.fr/nathalie.revol/mpfi.html
+
+This suggests what we should really be doing from Lisp
+is linking to a C++ library.<
+
+see also
+http://www.boost.org/libs/numeric/interval/doc/interval.htm
+which injects the notion that one should have a defined place
+for a policy (e.g. on rounding, on whether  ">" means
+certainly or possibly, whether empty intervals should cause
+exceptions, etc.)  Rounding given different thread setting
+seems a troublespot.
+
+Other issues:  add to interval.lisp programs for correct
+intervals for sin, cos, tan, exp, log, etc.
+need to do stuff for comparision, <, >, union, intersection,
+ hi, low,  intervals with infinity as bounds.
+gently rounding up and down.
+
+What about constraint satisfaction programming using intervals?
+Does that have any relationship here?
+
+
+
+..............
+
+
+
+Hacking on mathematica function  (less interesting since now written in lisp ....)
+
+
+mini[f_, s:Interval[{a_, b_}], count_] := 
+ mini2[f, a, b, f[s], count]
+
+mini2[f_, a_, b_, fval_, 0]:= Min[fval]
+
+mini2[f_, a_, b_, fval_, count_]:=
+    Module[{m,f1,f2,mf1,mf2,ans},
+      mf1=Min[f1=f[Interval[{a, m=(a+b)/2}]]];
+      mf2=Min[f2=f[Interval[{m, b}]]];
+      If [ mf1<mf2,
+        (If [(ans=mini2[f, a, m, f1, count-1])<=mf2, 
+             ans, 
+             Min[ans,mini2[f,m,b,f2, count-1]]]),
+        (If [(ans=mini2[f, m, b, f2, count-1])<=mf1, 
+             ans, 
+             Min[ans,mini2[f,a,m,f1, count-1]]])]]
+
+
+defining sequentially assigned block variables..
+
+BlockX[{}, E_] := E
+BlockX[{a_, b___}, E_] := Block[{a}, BlockX[{b}, E]]
+Attributes[BlockX] = {HoldAll}
+
+mini2[f_, a_, b_, fval_, count_]:=
+    BlockX[
+    {m  =(a+b)/2,
+     f1 =f[Interval[{a,m}]],
+     f2 =f[Interval[{m,b}]],
+     mf1=Min[f1],
+     mf2=Min[f2],
+     ans},
+      If [ mf1<mf2,
+        (ans=mini2[f, a, m, f1, count-1];
+         If [ans<=mf2, 
+             ans, 
+             Min[ans,mini2[f,m,b,f2, count-1]]]),
+        (ans=mini2[f, m, b, f2, count-1];
+         If [ans<=mf1, 
+             ans, 
+             Min[ans,mini2[f,a,m,f1, count-1]]])]]
+
+
+maxi2[f_, a_, b_, fval_, count_]:=
+    BlockX[
+    {m  =(a+b)/2,
+     f1 =f[Interval[{a,m}]],
+     f2 =f[Interval[{m,b}]],
+     mf1=Max[f1],
+     mf2=Max[f2],
+     ans},
+      If [ mf1>mf2,
+        (ans=maxi2[f, a, m, f1, count-1];
+         If [ans>=mf2, 
+             ans, 
+             Max[ans,maxi2[f,m,b,f2, count-1]]]),
+        (ans=maxi2[f, m, b, f2, count-1];
+         If [ans>=mf1, 
+             ans, 
+             Max[ans,maxi2[f,a,m,f1, count-1]]])]]
+
+..............
+see h:/papers/interval.tex  re Taylor and Affine centered forms, quadratic completing the square, references..
+June, 2006 RJF
+
+see ninterval.lisp and minterval.lisp  for implementations.

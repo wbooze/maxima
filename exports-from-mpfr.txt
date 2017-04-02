@@ -1,0 +1,321 @@
+
+C:\Program Files\Microsoft Visual Studio\Common\MSDev98\Bin>dumpbin c:\temp\p4-libmpfr-1.dll /exports
+dumpbin c:\temp\p4-libmpfr-1.dll /exports
+Microsoft (R) COFF Binary File Dumper Version 6.00.8447
+Copyright (C) Microsoft Corp 1992-1998. All rights reserved.
+
+
+Dump of file c:\temp\p4-libmpfr-1.dll
+
+File Type: DLL
+
+  Section contains the following exports for libmpfr-1.dll
+
+           0 characteristics
+    43DA79F7 time date stamp Fri Jan 27 11:52:23 2006
+        0.00 version
+           1 ordinal base
+         287 number of functions
+         287 number of names
+
+    ordinal hint RVA      name
+
+          1    0 00023890 __gmpfr_cache_const_catalan
+          2    1 00023070 __gmpfr_cache_const_euler
+          3    2 00023010 __gmpfr_cache_const_log2
+          4    3 00023030 __gmpfr_cache_const_pi
+          5    4 00001690 __gmpfr_ceil_exp2
+          6    5 00001740 __gmpfr_ceil_log2
+          7    6 0001C1D0 __gmpfr_cuberoot
+          8    7 00023050 __gmpfr_default_fp_bit_precision
+          9    8 00023060 __gmpfr_default_rounding_mode
+         10    9 00023008 __gmpfr_emax
+         11    A 00023004 __gmpfr_emin
+         12    B 00023000 __gmpfr_flags
+         13    C 000017B0 __gmpfr_floor_log2
+         14    D 00020BD4 __gmpfr_four
+         15    E 00006DA0 __gmpfr_inp_str
+         16    F 0001C170 __gmpfr_int_ceil_log2
+         17   10 0001C190 __gmpfr_isqrt
+         18   11 0001B4F0 __gmpfr_mpfr_get_sj
+         19   12 0001B810 __gmpfr_mpfr_get_uj
+         20   13 00020BB4 __gmpfr_one
+         21   14 00008A20 __gmpfr_out_str
+         22   15 0001B300 __gmpfr_set_sj
+         23   16 0001B330 __gmpfr_set_sj_2exp
+         24   17 0001B130 __gmpfr_set_uj
+         25   18 0001B160 __gmpfr_set_uj_2exp
+         26   19 00020BC4 __gmpfr_two
+         27   1A 00020C20 mpfr_abort_prec_max
+         28   1B 0000B600 mpfr_abs
+         29   1C 000150D0 mpfr_acos
+         30   1D 0000F820 mpfr_acosh
+         31   1E 000017E0 mpfr_add
+         32   1F 00001A00 mpfr_add1
+         33   20 0001A900 mpfr_add1sp
+         34   21 00014B90 mpfr_add_q
+         35   22 0001AED0 mpfr_add_si
+         36   23 000023E0 mpfr_add_ui
+         37   24 00014930 mpfr_add_z
+         38   25 000024B0 mpfr_agm
+         39   26 00011B70 mpfr_asin
+         40   27 0000FA50 mpfr_asinh
+         41   28 00010480 mpfr_atan
+         42   29 0001E340 mpfr_atan2
+         43   2A 0000FCA0 mpfr_atanh
+         44   2B 0001BB80 mpfr_cache
+         45   2C 0000AE20 mpfr_can_round
+         46   2D 0000AE60 mpfr_can_round_raw
+         47   2E 00016ED0 mpfr_cbrt
+         48   2F 0000E270 mpfr_ceil
+         49   30 000192B0 mpfr_check
+         50   31 00001390 mpfr_check_range
+         51   32 000027D0 mpfr_clear
+         52   33 0001BB50 mpfr_clear_cache
+         53   34 000012D0 mpfr_clear_erangeflag
+         54   35 00001240 mpfr_clear_flags
+         55   36 000012B0 mpfr_clear_inexflag
+         56   37 00001290 mpfr_clear_nanflag
+         57   38 00001270 mpfr_clear_overflow
+         58   39 00001250 mpfr_clear_underflow
+         59   3A 00019260 mpfr_clears
+         60   3B 00002980 mpfr_cmp
+         61   3C 00010C70 mpfr_cmp2
+         62   3D 00002810 mpfr_cmp3
+         63   3E 00018C20 mpfr_cmp_d
+         64   3F 00014FB0 mpfr_cmp_f
+         65   40 0001AFA0 mpfr_cmp_ld
+         66   41 00014F40 mpfr_cmp_q
+         67   42 00002BB0 mpfr_cmp_si
+         68   43 00002AA0 mpfr_cmp_si_2exp
+         69   44 00002CC0 mpfr_cmp_ui
+         70   45 00002BD0 mpfr_cmp_ui_2exp
+         71   46 000149F0 mpfr_cmp_z
+         72   47 000029A0 mpfr_cmpabs
+         73   48 0001EC90 mpfr_const_catalan
+         74   49 0001EE30 mpfr_const_catalan_internal
+         75   4A 00011E30 mpfr_const_euler
+         76   4B 00011E60 mpfr_const_euler_internal
+         77   4C 00007030 mpfr_const_log2
+         78   4D 000072A0 mpfr_const_log2_internal
+         79   4E 00008BA0 mpfr_const_pi
+         80   4F 00008C80 mpfr_const_pi_internal
+         81   50 000147F0 mpfr_copysign
+         82   51 00012650 mpfr_cos
+         83   52 0000ECA0 mpfr_cosh
+         84   53 0001F890 mpfr_cot
+         85   54 000205C0 mpfr_coth
+         86   55 0001F6A0 mpfr_csc
+         87   56 000203C0 mpfr_csch
+         88   57 00020C90 mpfr_custom_get_exp
+         89   58 00020D10 mpfr_custom_get_kind
+         90   59 00020C80 mpfr_custom_get_mantissa
+         91   5A 00020C50 mpfr_custom_get_size
+         92   5B 00020C70 mpfr_custom_init
+         93   5C 00020CB0 mpfr_custom_init_set
+         94   5D 00020CA0 mpfr_custom_move
+         95   5E 00014750 mpfr_dim
+         96   5F 000032C0 mpfr_div
+         97   60 00002E90 mpfr_div_2exp
+         98   61 00002EA0 mpfr_div_2si
+         99   62 00002FA0 mpfr_div_2ui
+        100   63 00014AD0 mpfr_div_q
+        101   64 00004370 mpfr_div_si
+        102   65 00003F40 mpfr_div_ui
+        103   66 00014900 mpfr_div_z
+        104   67 000043D0 mpfr_dump
+        105   68 0000A010 mpfr_dump_mant
+        106   69 0001FEC0 mpfr_eint
+        107   6A 00004400 mpfr_eq
+        108   6B 00002E20 mpfr_equal_p
+        109   6C 00001480 mpfr_erangeflag_p
+        110   6D 00018C90 mpfr_erf
+        111   6E 0001E160 mpfr_erfc
+        112   6F 00005220 mpfr_exp
+        113   70 00004610 mpfr_exp10
+        114   71 00004630 mpfr_exp2
+        115   72 00011100 mpfr_exp_2
+        116   73 00004E00 mpfr_exp_3
+        117   74 00013AD0 mpfr_expm1
+        118   75 00001570 mpfr_extract
+        119   76 0000EAA0 mpfr_fac_ui
+        120   77 000177D0 mpfr_fits_intmax_p
+        121   78 000172F0 mpfr_fits_sint_p
+        122   79 000173E0 mpfr_fits_slong_p
+        123   7A 000171F0 mpfr_fits_sshort_p
+        124   7B 00017580 mpfr_fits_uint_p
+        125   7C 000176E0 mpfr_fits_uintmax_p
+        126   7D 00017630 mpfr_fits_ulong_p
+        127   7E 000174D0 mpfr_fits_ushort_p
+        128   7F 0000E290 mpfr_floor
+        129   80 000132F0 mpfr_fma
+        130   81 00009E10 mpfr_fprint_binary
+        131   82 000054A0 mpfr_frac
+        132   83 0001AE90 mpfr_free_cache
+        133   84 00006D40 mpfr_free_str
+        134   85 000162F0 mpfr_gamma
+        135   86 00005820 mpfr_get_d
+        136   87 00005A60 mpfr_get_d1
+        137   88 00005AF0 mpfr_get_d_2exp
+        138   89 0000BA10 mpfr_get_default_prec
+        139   8A 0000BA70 mpfr_get_default_rounding_mode
+        140   8B 000011E0 mpfr_get_emax
+        141   8C 00001230 mpfr_get_emax_max
+        142   8D 00001220 mpfr_get_emax_min
+        143   8E 00001180 mpfr_get_emin
+        144   8F 000011D0 mpfr_get_emin_max
+        145   90 000011C0 mpfr_get_emin_min
+        146   91 00005D00 mpfr_get_exp
+        147   92 0001DDF0 mpfr_get_f
+        148   93 00016D10 mpfr_get_ld
+        149   94 0000BDD0 mpfr_get_prec
+        150   95 00017920 mpfr_get_si
+        151   96 00006480 mpfr_get_str
+        152   97 000179F0 mpfr_get_ui
+        153   98 00019F20 mpfr_get_version
+        154   99 0001BA60 mpfr_get_z
+        155   9A 0000E9C0 mpfr_get_z_exp
+        156   9B 00002CE0 mpfr_greater_p
+        157   9C 00002D20 mpfr_greaterequal_p
+        158   9D 000134E0 mpfr_hypot
+        159   9E 00001470 mpfr_inexflag_p
+        160   9F 00006FD0 mpfr_inf_p
+        161   A0 00006D80 mpfr_init
+        162   A1 00015060 mpfr_init2
+        163   A2 0001BB30 mpfr_init_cache
+        164   A3 0000C260 mpfr_init_set_str
+        165   A4 00019200 mpfr_inits
+        166   A5 00019230 mpfr_inits2
+        167   A6 00006F30 mpfr_integer_p
+        168   A7 00002D60 mpfr_less_p
+        169   A8 00002DA0 mpfr_lessequal_p
+        170   A9 00002DE0 mpfr_lessgreater_p
+        171   AA 00021010 mpfr_lngamma
+        172   AB 00007540 mpfr_log
+        173   AC 00014000 mpfr_log10
+        174   AD 00013850 mpfr_log1p
+        175   AE 00013DA0 mpfr_log2
+        176   AF 00014680 mpfr_max
+        177   B0 000145B0 mpfr_min
+        178   B1 00019F60 mpfr_mpn_exp
+        179   B2 000079E0 mpfr_mul
+        180   B3 00007810 mpfr_mul_2exp
+        181   B4 00007820 mpfr_mul_2si
+        182   B5 00007920 mpfr_mul_2ui
+        183   B6 00014A30 mpfr_mul_q
+        184   B7 000086A0 mpfr_mul_si
+        185   B8 00008280 mpfr_mul_ui
+        186   B9 000148D0 mpfr_mul_z
+        187   BA 0001DC60 mpfr_mulhigh_n
+        188   BB 00006FF0 mpfr_nan_p
+        189   BC 00001460 mpfr_nanflag_p
+        190   BD 00008700 mpfr_neg
+        191   BE 00008900 mpfr_nextabove
+        192   BF 00008940 mpfr_nextbelow
+        193   C0 00008850 mpfr_nexttoinf
+        194   C1 00008980 mpfr_nexttoward
+        195   C2 00008750 mpfr_nexttozero
+        196   C3 00007010 mpfr_number_p
+        197   C4 00001500 mpfr_overflow
+        198   C5 00001450 mpfr_overflow_p
+        199   C6 000091E0 mpfr_pow
+        200   C7 000096C0 mpfr_pow_si
+        201   C8 00009A10 mpfr_pow_ui
+        202   C9 0001D790 mpfr_pow_z
+        203   CA 000156B0 mpfr_powerof2_raw
+        204   CB 0000ACD0 mpfr_prec_round
+        205   CC 00009F50 mpfr_print_binary
+        206   CD 00009F70 mpfr_print_mant_binary
+        207   CE 0000A0F0 mpfr_print_rnd_mode
+        208   CF 0000A240 mpfr_random
+        209   D0 0000A130 mpfr_random2
+        210   D1 0000A280 mpfr_reldiff
+        211   D2 0000DC10 mpfr_rint
+        212   D3 0000E4B0 mpfr_rint_ceil
+        213   D4 0000E5C0 mpfr_rint_floor
+        214   D5 0000E2B0 mpfr_rint_round
+        215   D6 0000E3D0 mpfr_rint_trunc
+        216   D7 0001F130 mpfr_root
+        217   D8 0000E230 mpfr_round
+        218   D9 000207D0 mpfr_round_near_x
+        219   DA 0001E010 mpfr_round_p
+        220   DB 0000A3B0 mpfr_round_raw
+        221   DC 0000A780 mpfr_round_raw_2
+        222   DD 0000A8C0 mpfr_round_raw_4
+        223   DE 0001F4C0 mpfr_sec
+        224   DF 000201D0 mpfr_sech
+        225   E0 0000B5E0 mpfr_set
+        226   E1 0000B2D0 mpfr_set4
+        227   E2 0000B720 mpfr_set_d
+        228   E3 0000B9E0 mpfr_set_default_prec
+        229   E4 0000BA50 mpfr_set_default_rounding_mode
+        230   E5 000011F0 mpfr_set_emax
+        231   E6 00001190 mpfr_set_emin
+        232   E7 00001370 mpfr_set_erangeflag
+        233   E8 0000BA20 mpfr_set_exp
+        234   E9 0000BA80 mpfr_set_f
+        235   EA 00001350 mpfr_set_inexflag
+        236   EB 00015690 mpfr_set_inf
+        237   EC 00016AA0 mpfr_set_ld
+        238   ED 00015670 mpfr_set_nan
+        239   EE 00001330 mpfr_set_nanflag
+        240   EF 00001310 mpfr_set_overflow
+        241   F0 0000BD50 mpfr_set_prec
+        242   F1 0000BCB0 mpfr_set_prec_raw
+        243   F2 0000BEA0 mpfr_set_q
+        244   F3 0000C0B0 mpfr_set_si
+        245   F4 0001B090 mpfr_set_si_2exp
+        246   F5 0000C210 mpfr_set_str
+        247   F6 0000C2C0 mpfr_set_str_binary
+        248   F7 0000C360 mpfr_set_ui
+        249   F8 0001AFF0 mpfr_set_ui_2exp
+        250   F9 000012F0 mpfr_set_underflow
+        251   FA 0000C470 mpfr_set_z
+        252   FB 0000B620 mpfr_setmax
+        253   FC 0000B670 mpfr_setmin
+        254   FD 00019290 mpfr_sgn
+        255   FE 0000E780 mpfr_si_div
+        256   FF 0001AF50 mpfr_si_sub
+        257  100 00012DD0 mpfr_sin
+        258  101 000153E0 mpfr_sin_cos
+        259  102 0000EFD0 mpfr_sinh
+        260  103 0001BFD0 mpfr_sqr
+        261  104 0000C8A0 mpfr_sqrt
+        262  105 0000CD60 mpfr_sqrt_ui
+        263  106 0001D430 mpfr_strtofr
+        264  107 0000CE40 mpfr_sub
+        265  108 0000D070 mpfr_sub1
+        266  109 00019390 mpfr_sub1sp
+        267  10A 00014D50 mpfr_sub_q
+        268  10B 0001AF10 mpfr_sub_si
+        269  10C 0000DB40 mpfr_sub_ui
+        270  10D 00014990 mpfr_sub_z
+        271  10E 0001E880 mpfr_subnormalize
+        272  10F 0001A700 mpfr_sum
+        273  110 0001A310 mpfr_sum_sort
+        274  111 0000EA60 mpfr_swap
+        275  112 00012FE0 mpfr_tan
+        276  113 0000F3E0 mpfr_tanh
+        277  114 0000E250 mpfr_trunc
+        278  115 0000E6D0 mpfr_ui_div
+        279  116 000142C0 mpfr_ui_pow
+        280  117 00014390 mpfr_ui_pow_ui
+        281  118 0000E7E0 mpfr_ui_sub
+        282  119 00001490 mpfr_underflow
+        283  11A 00001440 mpfr_underflow_p
+        284  11B 00002E60 mpfr_unordered_p
+        285  11C 0000E8A0 mpfr_urandomb
+        286  11D 0001BB10 mpfr_zero_p
+        287  11E 00018670 mpfr_zeta
+
+  Summary
+
+        1000 .bss
+        1000 .data
+        2000 .edata
+        1000 .idata
+        1000 .reloc
+       52000 .stab
+        9000 .stabstr
+       22000 .text
+

@@ -1,0 +1,35 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load(angeom);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A:[-3,2,6]; B:[13,10,6];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Die Punkte A (-3/-2/6), B (13/10/6) und C (c1/c2/c3) bilden ein Dreieck, 
+das bei C rechtwinklig ist.
+a) Wo liegen alle möglichen Punkte C?
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Gabt:A+t*(B-A);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+M:A+(B-A)/2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+NF:((x-M[1])^2+(y-M[2])^2+(z-M[3])^2)-(streckeLaenge(A,B)/2)^2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[A,B,M]$ PLOTT_S(NF,"","","","",Gabt,-5,20);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

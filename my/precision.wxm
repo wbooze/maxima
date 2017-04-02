@@ -1,0 +1,81 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 14.12.1 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all)$
+blah(x):=block([fpprintprec, f], f(x):=x^2, fpprintprec: if(f(x) < 1) then 2 else 3, parse_string(string(f(x))))$
+makelist(blah(k), k, 0.1, 1.5, 0.1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+blah(x):=block([fpprec, f], f(x):=x^2, fpprec: if(f(x) < 1) then 2 else 3, parse_string(string(f(x))))$
+makelist(blah(k), k, 0.1, 1.5, 0.1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+	
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+blah(x):=block([fpprec, f], f(x):=x^2, fpprec: if(f(x) < 1) then 2 else 3, bfloat(f(x)))$
+makelist(blah(k), k, 0.1, 1.5, 0.1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+blah(x):=block([fpprec, f], f(x):=x^2, fpprec: if(f(x) < 1) then 2 else 3, float(f(x)))$
+makelist(blah(k), k, 0.1, 1.5, 0.1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+0.0144^2;
+blah(0.0144);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+fpprec:16; fpprintprec:0;
+log10(x):=log(x)/log(10)$
+aaa(x):=x/(10^log10(x))$
+aaa(0.0144);
+aaa(0.0144), numer;
+aaa(0.0144)*10^log10(0.0144);
+aaa(0.0144)*10^log10(0.0144), numer;
+log10(0.0144), numer;
+10^log10(0.0144), numer;
+10^(-1.84163750790475);
+fpprintprec:2; 10^(-1.84163750790475);
+fpprec:16$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+blah(x):=block([fpprintprec, aaa, log10], log10(x):=entier(log(x)/log(10)), aaa(x):=x/10^log10(x),  
+fpprintprec: if aaa(x) < 2 then 2 else 1, 
+bfloat(aaa(x)*10^log10(x)))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+blah(0.0144);
+fpprec;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+blah(x):=block([fpprec, aaa, log10], log10(x):=entier(log(x)/log(10)), aaa(x):=x/10^log10(x),
+fpprec:if aaa(x)<2 then 2 else 1, bfloat(aaa(x)*10^log10(x)))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+blah(0.0144);
+fpprec;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+"1/5"; 1/5;
+fpprintprec:0;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+fpprec:2;
+%e, numer;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

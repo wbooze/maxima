@@ -1,0 +1,78 @@
+/* Copyright (C) 2009-2010  Stefano Ferri
+
+This file is part of SymSAP.
+
+SymSAP is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 3
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
+
+
+/* Input files directory.
+Windows users: remember to always use slashes / instead
+of backslashes \  */
+
+_input_dir : "input_files/" $
+
+
+symsap_solve(_struct_file) := (
+
+	/* The copyright notice is displayed only the first time */
+	symsap_show_license(),
+
+	/* Start (possibly) with a Maxima clean state */
+	reset(),
+	kill(allbut(_struct_file, _input_dir, symsap_solve, symsap_show_results, symsap_help)),
+	load (concat(_input_dir,_struct_file)),
+	load("errcheck.mac"),
+	load("symsap.mac"),
+	
+	print("Done."),
+	print(""),
+	print("Type symsap_show_results() to see some results."),
+	print("Type symsap_help() to display some help."),
+	print("")
+)$
+
+
+symsap_show_results() := (
+	print(""),
+	print("Nodal displacements:"),
+	print("(Node number, displacement component, displacement value)"),
+	print(""),
+	print(u_comp),
+	print(""),
+	print("Constraint reactions:"),
+	print("(Node number, constraint reaction component, value)"),
+	print(""),
+	print(ConstrReact),
+	print("")
+)$
+
+symsap_show_license() := (
+	print(""),
+	print("SymSAP,  Copyright (C) 2009-2010  Stefano Ferri."),
+	print("This program comes with ABSOLUTELY NO WARRANTY."), 
+	print("This is free software, and you are welcome to redistribute it"),
+	print("under the terms of the GNU General Public License, as published"),
+	print("by the Free Software Foundation; either version 3 of the License,"), 
+	print("or (at your option) any later version."),
+	print("")
+)$
+
+symsap_help() := (
+	print("Help not written yet..."),
+	print("")
+)$
+

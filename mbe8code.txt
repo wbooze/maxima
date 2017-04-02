@@ -1,0 +1,211 @@
+  file mbe8code.txt  has Maxima code
+   for Maxima by Example, Chapter 8,
+   Numerical Integration.
+
+    Edwin L Woollett, 2009
+    woollett@charter.net
+    http://www.csulb.edu/~woollett
+
+
+
+8.1 Introduction
+
+8.2 Numerical Integration Basic Tools: quad_qags, romberg, quad_qagi
+
+8.2.1  Syntax for Quadpack Functions
+
+8.2.2 Output List of Quadpack Functions and Error Code Values
+
+8.2.3 Integration Rule Parameters and Optional Arguments
+
+8.2.4 quad_qags for a Finite Interval
+
+(%i1) quad_qags(a*x,x,0,1);
+Example 1
+(%i2) g:sqrt(x)*log(1/x)$
+(%i3) limit(g,x,0,plus);
+(%i4) (load(draw),load(qdraw))$
+(%i5) qdraw( ex(g,x,0,1) )$
+(%i6) fpprintprec:8$
+(%i7) tval:bfloat(integrate(g,x,0,1)),fpprec:20;
+(%i8) qlist:quad_qags(g,x,0,1 );
+(%i9) abs(first(%) - tval ),fpprec:20;
+(%i10) est_answer : first(qlist);
+(%i11) est_abs_err : second(qlist);
+(%i12) est_rel_err : est_abs_err/est_answer;
+Example 2
+(%i1) limit(log(sin(x)),x,0,plus);
+(%i2) ix : taylor(log(sin(x)),x,0,2);
+(%i3) int_ix:integrate(ix,x);
+(%i4) limit(int_ix,x,0,plus);
+(%i5) assume(eps>0,eps<1)$
+(%i6) integrate(ix,x,0,eps);
+(%i7) quad_qags(log(sin(x)),x,0,1);
+
+
+8.2.5 romberg for a Finite Interval
+(%i1) fpprintprec:8$
+(%i2) load(romberg);
+(%i3) [rombergtol,rombergabs,rombergit,rombergmin];
+(%i4) tval : bfloat(integrate(exp(x),x,0,1)),fpprec:20;
+(%i5) rombergtol:1e-8$
+(%i6) romberg(exp(x),x,0,1);
+(%i7) abs(% - tval),fpprec:20;
+(%i8) %/tval,fpprec:20;
+(%i9) quad_qags(exp(x),x,0,1 );
+(%i10) abs(first(%) - tval),fpprec:20;
+(%i11) %/tval,fpprec:20;
+
+
+8.2.6 romberg for Numerical Double Integrals
+Example 1
+(%i12) g : x*y/(x+y)$
+(%i13) tval : bfloat( integrate( integrate(g,y,0,x/2),x,1,3) ),fpprec:20;
+(%i14) rombergtol:1e-6$
+(%i15) romberg( romberg(g,y,0,x/2),x,1,3);
+(%i16) abs(% - tval),fpprec:20;
+(%i17) %/tval,fpprec:20;
+Example 2
+(%i18) g : exp(x-y^2)$
+(%i19) tval : bfloat(integrate( integrate(g,y,1,2+x),x,0,1)),fpprec:20;
+(%i20) romberg( romberg(g,y,1,2+x),x,0,1);
+(%i21) abs(% - tval),fpprec:20;
+(%i22) %/tval,fpprec:20;
+
+8.2.7 quad_qagi for an Infinite or Semi-infinite Interval
+(%i1) fpprintprec:8$
+(%i2) tval : bfloat( integrate (exp(-x^2),x,0,inf) ),fpprec:20;
+(%i3) quad_qagi(exp(-x^2),x,0,inf);
+(%i4) abs(first(%) - tval),fpprec:20;
+(%i5) quad_qagi(exp(-x^2),x,minf,0);
+(%i6) abs(first(%) - tval),fpprec:20;
+(%i7) tval : bfloat(2*tval),fpprec:20;
+(%i8) quad_qagi(exp(-x^2),x,minf,inf);
+(%i9) abs(first(%) - tval),fpprec:20;
+Example 1
+(%i10) g : exp(-x)*x^(5/100)$
+(%i11) tval : bfloat( integrate(g,x,0,inf) ),fpprec:20;
+(%i12) quad_qagi(g,x,0,inf);
+(%i13) abs(first(%) - tval),fpprec:20;
+(%i14) %/tval,fpprec:20;
+Example 2
+(%i15) g : exp(-x)*log(x)$
+(%i16) tval : bfloat( integrate(g,x,0,inf) ),fpprec:20;
+(%i17) tval : bfloat(-%gamma),fpprec:20;
+(%i18) quad_qagi(g,x,0,inf);
+(%i19) abs(first(%) - tval),fpprec:20;
+(%i20) %/tval,fpprec:20;
+Example 3
+(%i21) assume(a>0,b>0,k>0)$
+(%i22) g :a*exp(-b*x^2)$
+(%i23) gft:integrate(exp(-%i*k*x)*g,x,minf,inf)/sqrt(2*%pi);
+(%i24) f : subst([a=1,b=1,k=1],g);
+(%i25) fft : subst([a=1,b=1,k=1],gft);
+(%i26) float(fft);
+(%i27) quad_qagi(f*exp(-%i*x),x,minf,inf);
+
+8.3 Numerical Integration: Sharper Tools
+
+8.3.1 quad_qag for a General Oscillatory Integrand
+Example 1
+(%i1) fpprintprec:8$
+(%i2) f : cos(50*x)*sin(3*x)*exp(-x)$
+(%i3) tval : bfloat( integrate (f,x,0,1) ),fpprec:20;
+(%i4) (load(draw),load(qdraw))$
+(%i5) qdraw( ex(f,x,0,1) )$
+(%i6) quad_qag(f,x,0,1,6);
+(%i7) abs(first(%) - tval),fpprec:20;
+(%i8) %/tval,fpprec:20;
+(%i9) quad_qags(f,x,0,1 );
+(%i10) abs(first(%) - tval),fpprec:20;
+(%i11) %/tval,fpprec:20;
+Example 2
+(%i12) tval : bfloat( integrate (exp(x),x,0,1) ),fpprec:20;
+(%i13) quad_qag(exp(x),x,0,1,6);
+(%i14) abs(first(%) - tval),fpprec:20;
+(%i15) %/tval,fpprec:20;
+(%i16) quad_qags(exp(x),x,0,1 );
+(%i17) abs(first(%) - tval),fpprec:20;
+(%i18) %/tval,fpprec:20;
+Example 3
+(%i19) f : sqrt(x)*log(1/x)$
+(%i20) tval : bfloat( integrate (f,x,0,1) ),fpprec:20;
+(%i21) quad_qag(f,x,0,1,3);
+(%i22) abs(first(%) - tval),fpprec:20;
+(%i23) %/tval,fpprec:20;
+(%i24) quad_qags(f,x,0,1 );
+(%i25) abs(first(%) - tval),fpprec:20;
+(%i26) %/tval,fpprec:20;
+
+8.3.2 quad_qawo for Fourier Series Coefficients
+(%i1) fpprintprec:8$
+(%i2) g : (x+x^4)*cos(3*x)$
+(%i3) tval : bfloat( integrate(g,x,-2,2) ),fpprec:20;
+(%i4) quad_qawo(x+x^4,x,-2,2,3,cos);
+(%i5) abs(first(%) - tval),fpprec:20;
+(%i6) %/tval,fpprec:20;
+(%i7) quad_qags(g,x,-2,2); 
+(%i8) abs(first(%) - tval),fpprec:20;
+(%i9) %/tval,fpprec:20;
+
+8.3.3 quad_qaws for End Point Algebraic and Logarithmic Singularities
+Example 1
+(%i1) fpprintprec:8$
+(%i2) tval : bfloat( integrate(log(x),x,0,1) ),fpprec:20;
+(%i3) quad_qaws(1,x,0,1,0,0,2);
+(%i4) abs(first(%) - tval),fpprec:20;
+(%i5) quad_qags(log(x),x,0,1);
+(%i6) abs(first(%) - tval),fpprec:20;
+Example 2
+(%i15) expand(bfloat(integrate(sin(x)/sqrt(x),x,0,1))),fpprec:20;
+(%i16) tval : bfloat(%),fpprec:20;
+(%i17) quad_qaws(sin(x),x,0,1,-1/2,0,1);
+(%i18) abs(first(%) - tval),fpprec:20;
+(%i19) %/tval,fpprec:20;
+(%i20) quad_qags(sin(x)/sqrt(x),x,0,1);
+(%i21) abs(first(%) - tval),fpprec:20;
+(%i22) %/tval,fpprec:20;
+Example 3
+(%i1) fpprintprec:8$
+(%i2) limit(log(x)/sqrt(x),x,0,plus);
+(%i3) integrate(log(x)/sqrt(x),x);
+(%i4) limit(%,x,0,plus);
+(%i5) tval : bfloat( integrate(log(x)/sqrt(x),x,0,1)),fpprec:20;
+(%i6) quad_qaws(1,x,0,1,-1/2,0,2);
+(%i7) abs(first(%) - tval),fpprec:20;
+(%i8) quad_qags(log(x)/sqrt(x),x,0,1);
+(%i9) abs(first(%) - tval),fpprec:20;
+(%i10) %/tval,fpprec:20;
+
+
+8.3.4 quad_qawc for a Cauchy Principal Value Integral
+(%i11) quad_qawc(1/(x^2-1),x,1,0,b);
+restart
+(%i1) fpprintprec:8$
+(%i2) assume(eps>0, eps<1)$
+(%i3) integrate(1/(x^2-1),x,0,1-eps) +
+               integrate(1/(x^2-1),x,1+eps,2);
+(%i4) limit(%,eps,0,plus);
+(%i5) tval : bfloat(%),fpprec:20;
+(%i6) quad_qawc(1/(1+x),x,1,0,2);
+(%i7) abs(first(%) - tval),fpprec:20;
+(%i8) %/tval,fpprec:20;
+(%i9) quad_qawc(1/(1+x),x,1,0,2,epsabs=1.0e-10,epsrel=0.0);
+(%i10) abs(first(%) - tval),fpprec:20;
+(%i11) %/tval,fpprec:20;
+
+
+8.3.5 quad_qawf for a Semi-infinite Range Cosine or Sine Fourier Transform
+(%i12) quad_qawf(exp(-a*x),x,0,w,'cos);
+restart
+(%i1) fpprintprec:8$
+(%i2) integrate (exp(-x^2)*cos(x), x, 0, inf);
+(%i3) tval : bfloat(%),fpprec:20;
+(%i4) quad_qawf (exp(-x^2), x, 0, 1, 'cos );
+(%i5) abs(first(%) - tval),fpprec:20;
+(%i6) %/tval,fpprec:20;
+
+
+8.4 Finite Region of Integration Decision Tree
+
+8.5 Semi-infinite or Infinite Region of Integration Decision Tree

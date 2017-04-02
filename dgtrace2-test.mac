@@ -1,0 +1,209 @@
+/* dgtrace2-test.mac
+
+  was: tr-test.mac
+uses work.mac which loads tr3.mac,
+  temp1.mac, temp2.mac, temp3.mac, temp4.mac, temp5.mac
+  
+  tr3.mac has the final declarations:
+  
+  Nlast : 0$
+    
+  /* declare ([n1,n2,n3,n4,n5,n6,n7,n8,n9,n10], index); */
+  
+  above replaced by use of mindex in temp4.mac.
+
+ declare ( [D,Gm], symmetric )$
+ 
+ redo some tests (in terms of n1,n2,...)
+ that we previously did and recorded in the
+ file:   dgtrace2_test.mac
+ 
+   */
+
+tr(n1,n1);
+16;
+tr (n1,n2);
+4*Gm(n1,n2);
+tr(n1,n2,n2,n1);
+64;
+tr (n1,n2,n1,n2);
+-32;
+tr(n1,n2,n3,n3,n2,n1);
+256;
+tr (n1,n2,n3,n1,n2,n3);
+64;
+tr (n1,n2,n3,n2,n1,n3);
+64;
+tr(a);
+0;
+
+tr (p1,p2);
+4*D(p1,p2);
+
+tr(a+m,b);
+4*D(a,b);
+tr(a+m,b+M);
+4*m*M+4*D(a,b);
+tr(a+b,c);
+4*D(b,c)+4*D(a,c);
+tr(a+b,c+d);
+4*D(b,d)+4*D(b,c)+4*D(a,d)+4*D(a,c);
+tr(2*a,b);
+8*D(a,b);
+tr(2*a,b/3);
+8*D(a,b)/3;
+
+
+
+tr (a,b,c);
+0;
+tr(p1,p2,p2,p1);
+4*D(p1,p1)*D(p2,p2);
+tr(p1,p1,p1,p1);
+4*D(p1,p1)^2;
+tr(p1,p1,p2,p2);
+4*D(p1,p1)*D(p2,p2);
+
+tr (p1,p2,p3,p4);
+4*D(p1,p2)*D(p3,p4)-4*D(p1,p3)*D(p2,p4)+4*D(p1,p4)*D(p2,p3);
+tr (n1,p1,p2,n1);
+16*D(p1,p2);
+tr (p1,n1,p2,n1);
+-8*D(p1,p2);
+tr (n1,n2,p1,p2,n2,n1);
+64*D(p1,p2);
+tr (n1,n2,n3,p1,p2,n3,n2,n1);
+256*D(p1,p2);
+tr (n1,n2,n3,p1,p2,n1,n2,n3);
+64*D(p1,p2);
+tr (n1,n2,n3,p1,p2,n2,n1,n3);
+64*D(p1,p2);
+tr (n1,p1,p2,n2,n3,n1,n2,n3);
+64*D(p1,p2);
+tr (n1,p1,p2,n2,n3,n3,n2,n1);
+256*D(p1,p2);
+tr (n1,p1,n2,p2,n3,n1,n2,n3);
+-32*D(p1,p2);
+tr (n1,p1,n2,n3,p2,n1,n2,n3);
+64*D(p1,p2);
+tr (n1,p1,n2,n3,n2,p2,n1,n3);
+-32*D(p1,p2);
+tr (n1,p1,n2,n3,n2,p2,n3,n1);
+64*D(p1,p2);
+tr (p1,n3,n2,n1,p2,n1,n2,n3);
+-32*D(p1,p2);
+tr (n1,n2,p1,p2,n3,n1,n2,n3);
+64*D(p1,p2);
+tr (p1,n3,n2,n1,n3,n2,n1,p2);
+64*D(p1,p2);
+tr (p1,n3,n2,n1,n2,n1,n3,p2);
+-128*D(p1,p2);
+tr (p1,n3,n2,n1,n3,n1,n2,p2);
+64*D(p1,p2);
+tr (p1,n3,n2,n1,n1,n3,n2,p2);
+-128*D(p1,p2);
+tr (p1,n1,p2,n2,p1,n3,p2,n2,n3,n1);
+-32*D(p1,p1)*D(p2,p2);
+tr (n1,n2,n3,n4,n4,n3,n2,n1);
+1024;
+tr (n1,n2,n3,n4,n1,n2,n3,n4);
+-512;
+tr (n1,n2,n3,n4,n3,n2,n1,n4);
+-128;
+tr (n4,n3,n2,n1,n4,n3,n2,n1);
+-512;
+tr (n4,n3,n2,n1,n2,n1,n3,n4);
+-512;
+tr (n1,n2,n3,n4,p1,p2,n4,n3,n2,n1);
+1024*D(p1,p2);
+tr (n1,n2,n3,n4,p1,p2,n1,n2,n3,n4);
+-512*D(p1,p2);
+tr (p1,n4,n3,n2,n1,n4,n3,n2,n1,p2);
+-512*D(p1,p2);
+tr (p1,n4,n3,n2,n1,n4,n3,n1,n2,p2);
+256*D(p1,p2);
+tr (p1,n4,n3,n2,n1,n4,n2,n3,n1,p2);
+256*D(p1,p2);
+tr (p1,n4,n3,n2,n1,n4,n2,n1,n3,p2);
+-128*D(p1,p2);
+tr (n5,n4,n3,n2,n1,n5,n1,n4,n3,n2);
+1024;
+
+
+tr (n1,n2,p1,p2,p3,p4,n2,n1);
+64*D(p1,p2)*D(p3,p4)-64*D(p1,p3)*D(p2,p4)+64*D(p1,p4)*D(p2,p3);
+
+UIGm_con(16 + D(a,b));
+D(a,b)+16;
+
+tr(n1,p,p2,p3,p,n1);
+16*D(p,p)*D(p2,p3);
+tr(n1,p,p,p3,p4,n1);
+16*D(p,p)*D(p3,p4);
+tr(p4,n1,p1,p2,p3,p4,n1,p5);
+16*D(p1,p2)*D(p3,p4)*D(p4,p5)-16*D(p1,p3)*D(p2,p4)*D(p4,p5)
+                                    +16*D(p1,p4)*D(p2,p3)*D(p4,p5);
+tr(p4,n1,p1,p1,p3,p4,n1,p3);
+16*D(p1,p1)*D(p3,p4)^2;
+tr(p3,n1,p1,p1,p3,p4,n1,p3);
+16*D(p1,p1)*D(p3,p3)*D(p3,p4);
+tr(p3,n1,p1,p1,p3,p3,n1,p3);
+16*D(p1,p1)*D(p3,p3)^2;
+tr(p3,n1,p1,p2,p3,n1);
+-8*D(p1,p2)*D(p3,p3);
+tr(n1,p1,p2,p3,n1,p1);
+-8*D(p1,p1)*D(p2,p3);
+
+
+tr(n1,p+m,q+M,n1);
+16*m*M+16*D(p,q);
+
+
+tr(2*a,b);
+8*D(a,b);
+tr(2*a,b/3);
+8*D(a,b)/3;
+tr(c1*a,b);
+4*c1*D(a,b);
+tr(2*c1*a,b);
+8*c1*D(a,b);
+tr(2*c1*a/3,b);
+8*c1*D(a,b)/3;
+tr(2*c1*a/3,7*b);
+56*c1*D(a,b)/3;
+tr(2*c1*a/3,7*b/c2);
+56*c1*D(a,b)/(3*c2);
+tr(2*c1*a/3,7*c4*b/c2);
+56*c1*c4*D(a,b)/(3*c2);
+tr(2*%i*c1*a,b);
+8*%i*c1*D(a,b);
+
+tr (a1+m,a2+m);
+4*m^2+4*D(a1,a2);
+
+tr (a1+a2+m,b+m);
+4*m^2+4*D(a2,b)+4*D(a1,b);
+
+tr(a,b,b,a);
+4*D(a,a)*D(b,b);
+tr(a,a,a,a);
+4*D(a,a)^2;
+
+tr (-b,c);
+-4*D(b,c);
+tr(a-b,c);
+4*D(a,c)-4*D(b,c);
+tr(-2*a,b);
+-8*D(a,b);
+tr(-2*a,b/3);
+-8*D(a,b)/3;
+tr(-c1*a,b);
+-4*c1*D(a,b);
+tr (c1*a,c2*b);
+4*c1*c2*D(a,b);
+tr (-c1*a,c2*b);
+-4*c1*c2*D(a,b);
+tr (-c1*a,-c2*b);
+4*c1*c2*D(a,b);
+
+

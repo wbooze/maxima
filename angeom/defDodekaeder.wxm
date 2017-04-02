@@ -1,0 +1,98 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+load(angeom);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+defRhombusDodekaeder(s):=block(
+[a:2*s/sqrt(3)],
+defPunkte("A -a/2 a/2 -a/2 B -a/2 -a/2 -a/2 C a/2 -a/2 -a/2 D a/2 a/2 -a/2 E -a/2 a/2 a/2 F -a/2 -a/2 a/2 G a/2 -a/2 a/2 H a/2 a/2 a/2"),
+I:[-a,0,0], J:[0,-a,0], K:[a,0,0], L:[0,a,0], M:[0,0,-a], N:[0,0,a], X:[0,0,0],
+mesh([J,F],[B,I],[I,B],[A,M],[M,D],[A,L],[L,A],[E,I],[I,F],[E,N],[N,G],[F,J],[J,B],
+[C,M],[M,D],[C,K],[K,D],[H,L],[L,E],[H,N],[N,G],[H,K],[K,G],[C,J])
+)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+cpolygon(vertices) :=
+  block([vert : endcons(vertices[1],vertices)],
+/* draw triangles in white */
+  [color = white, 
+   line_width = 0.001,
+   mesh(vert, makelist(vert[1],k,1,length(vert)) ),
+   line_width = 2,
+   color = blue,
+   mesh(vert,vert)
+  ]) $
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+defDodekaeder(d):=block(
+[a:d*(sqrt(5)+1)/2, h:d/2, z:(d*(sqrt(5)+1)/2-d)/2],
+print(a),
+defPunkte("A -a/2 a/2 -a/2 B -a/2 -a/2 -a/2 C a/2 -a/2 -a/2 D a/2 a/2 -a/2 E -a/2 a/2 a/2 F -a/2 -a/2 a/2 G a/2 -a/2 a/2 H a/2 a/2 a/2"),
+I:E+[a/2,-z,h], J:F+[a/2,z,h], K:A+[a/2,-z,-h], L:B+[a/2,z,-h],
+M:G+[h,a/2,-z], N:C+[h,a/2,z], P:F+[-h,a/2,-z], Q:B+[-h,a/2,z],
+R:F+[+z,-h,-a/2], S:G+[-z,-h,-a/2], U:H+[-z,h,-a/2], T:E+[+z,h,-a/2],
+[cpolygon([R,F,J,G,S]),cpolygon([I,E,P,F,J]),cpolygon([J,G,M,H,I]),cpolygon([U,H,I,E,T]),
+cpolygon([U,D,K,A,T]),cpolygon([K,A,Q,B,L]),cpolygon([P,E,T,A,Q]),cpolygon([P,F,R,B,Q]),
+cpolygon([R,B,L,C,S]),cpolygon([M,G,S,C,N]),cpolygon([M,H,U,D,N]),cpolygon([L,C,N,D,K])]
+)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S_Figur:[]$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S_Figur:defRhombusDodekaeder(6)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ O:[[0,0,0]]$ PLOTT_L([],[],-10,10)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S_Figur:defDodekaeder(16/(1+sqrt(5))), numer$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ O:[[0,0,0]]$ PLOTT_L([],[],-10,10)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+draw3d(S_Figur)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[A,B,C,D,E,F,G,H,I,J,K,L,M,N,P,Q,R,S,T,U]$ PLOTT_L([],[],-10,10)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+d:5$
+a:d*(sqrt(5)+1)/2$ 
+h:d/2$ 
+z:(d*(sqrt(5)+1)/2-d)/2$
+defPunkte("A -a/2 a/2 -a/2 B -a/2 -a/2 -a/2 C a/2 -a/2 -a/2 D a/2 a/2 -a/2 E -a/2 a/2 a/2 F -a/2 -a/2 a/2 G a/2 -a/2 a/2 H a/2 a/2 a/2")$
+I:E+[a/2,-z,h]$ J:F+[a/2,z,h]$ K:A+[a/2,-z,-h]$ L:B+[a/2,z,-h]$
+M:G+[h,a/2,-z]$ N:C+[h,a/2,z]$ P:F+[-h,a/2,-z]$ Q:B+[-h,a/2,z]$
+R:F+[+z,-h,-a/2]$ S:G+[-z,-h,-a/2]$ U:H+[-z,h,-a/2]$ T:E+[+z,h,-a/2]$
+S_Figur:[cpolygon([R,F,J,G,S]),cpolygon([I,E,P,F,J]),cpolygon([J,G,M,H,I]),
+cpolygon([U,H,I,E,T]),cpolygon([U,D,K,A,T]),cpolygon([K,A,Q,B,L]),cpolygon([P,E,T,A,Q]),
+cpolygon([P,F,R,B,Q]),cpolygon([R,B,L,C,S]),cpolygon([M,G,S,C,N]),cpolygon([M,H,U,D,N]),
+cpolygon([L,C,N,D,K])]$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+length(S_Figur);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S_Figur:defWuerfel(6,[0,0,0])$
+O:[[0,0,0]]$  PLOTT_L([],[],-10,10)$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

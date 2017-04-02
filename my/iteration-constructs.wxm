@@ -1,0 +1,75 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 13.04.2 ] */
+
+/* [wxMaxima: input   start ] */
+for x:1 next 10*x while x<=100 do display(x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for i:1 thru fpprec do i;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+load(gcdex);
+gcdex(0.12345, x);
+a:rat(0.12345); gcd(num(a), denom(a)); gcd(12345, 10000);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ratio(num):=block([n], ratprint:false, 
+for n:1 thru fpprec do (a:10^n/ratdenom(num), if(integerp(a)) then return(a)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pairs(items):=block([result],
+result:
+if (emptyp(items)) then [] else
+if (listp(items)) then 
+    if(emptyp(rest(items))) then  [] else
+    cons(cons(first(items),  [second(items)]), 
+                    pairs(rest(rest(items))))
+)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ratio(0.1); ratio(0.01); ratio(0.001); ratio(0.1234); ratio(0.12345);
+makelist(n/10, n, 1, 5), numer;
+makelist([n/10, ratio(n/10)], n, 1, 20), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for x:0.123 next 10*x while x<100 do 
+display(a:mod(10*x, 10^x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for x:1 next 2*x+1 while x<10 do display(x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+poly:0$
+for i:1 thru 5 do
+    for j:i step -1 thru 1 do
+        display(poly:poly+i*x^j);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+poly:0$
+transpose(matrix(makelist(makelist(poly:poly+i*x^j, j, i, 1, -1), i, 1, 5)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(makelist((i, j), j, i, 1, -1), i, 1, 4);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+l[a];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+debugmode(true);
+declare(l, scalar); :h;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

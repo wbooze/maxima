@@ -1,0 +1,19 @@
+/* file doplot1.mac */
+
+disp("doplot1(nlw)")$
+
+doplot1(nlw) := block([cc,qlist,x,val,i ],
+     /* list of 20 single name colors  */
+     cc : [aquamarine,beige,blue,brown,cyan,gold,goldenrod,green,khaki,
+            magenta,orange,pink,plum,purple,red,salmon,skyblue,turquoise,
+            violet,yellow ],
+     qlist : [ xr(-3.3,3) ],     
+     for i thru length(cc) do (
+       x : -3.3 + 0.3*i,
+       val : line( x,-1,x,1, lc( cc[i] ),lw(nlw) ),
+       qlist : append(qlist, [val] )
+     ),
+     qlist : append( qlist,[ cut(all) ] ),
+     apply('qdraw, qlist)
+    )$
+    

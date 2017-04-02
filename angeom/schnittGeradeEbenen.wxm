@@ -1,0 +1,89 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load("angeom");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+NFE1:-x-y+z-9/2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+NFE2:-2*x+z-y-5;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+SpurE1:spurPunkteEbene(NFE1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+SpurE2:spurPunkteEbene(NFE2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:append(SpurE1,SpurE2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gt:[1,0,0]+t*[1,0,0]$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_S(NFE1,NFE2,"",gt,"","",-10,10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gt:schnitt2Ebenen(NFE1,NFE2,t)$ show(gt);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+_ret:flatten(solve([NFE1,NFE2],[x,y,z]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+_ret:map(rhs,ev(_ret,%rnum_list[1]=t));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+%rnum_list;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+_ret:if length(%rnum_list)>1 then ev(_ret,%rnum_list[2]=s) else ret;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gp:[1,1,4]+t*[2,0,-2];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Euv:paramForm(NFE1,u,v);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+P:schnittEbeneGerade(Euv,gp);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[[-15,0,0],[15,0,0],P];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PLOTT_S(NFE1,NFE2,"",gt,gp,"",-6,6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gp:[1,1,4]+p*[2,0,-2];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+schnittNFEbeneGerade(NFE1,gp);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+schnittwinkelEbeneGerade(Euv,gp);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

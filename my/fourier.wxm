@@ -1,0 +1,259 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 14.09.0 ] */
+
+/* [wxMaxima: input   start ] */
+??fourier;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+load(fourie);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f(t):=t;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+fourier(f(t), t, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/***************************************************************************
+*   Copyright (C) 2007, Paul Lutus                                        *
+*                                                                         *
+*   This program is free software; you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 2 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+*   This program is distributed in the hope that it will be useful,       *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU General Public License for more details.                          *
+*                                                                         *
+*   You should have received a copy of the GNU General Public License     *
+*   along with this program; if not, write to the                         *
+*   Free Software Foundation, Inc.,                                       *
+*   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+***************************************************************************/
+
+wxplot_size:[600,400];
+load(fft);
+load(descriptive);
+
+/* *** FFT declarations *** */
+
+pi2:2.0*float(%pi); /* 2 Pi */
+n:2048; /* size of fft arrays, must be power of 2 */
+sf:1.0/n; /* step factor for signal generation */
+cf:500; /* carrier frequency */
+mf:40; /* modulation frequency */
+hf:4; /* harmonic comparison frequency */
+
+
+/* signal generator function */
+/*
+	t = time seconds
+	cf = carrier frequency
+	mf = modulation frequency
+	sf = step factor for FFT array scaling
+	nl = noise level
+*/
+
+fcm(t,cf,mf,sf,nl) := (
+	r:(random(2.0)-1.0)*nl,
+	cos(pi2*cf*sf*t) * (1+r+cos(pi2*mf*sf*t))
+);
+
+/* plot the time domain signal */
+
+fpt() := (
+	wxplot2d(fcm(i,cf,mf,sf,0),[i,0,256],
+	[gnuplot_preamble,
+	"unset key;set xlabel 'Time';set ylabel 'Amplitude';set title 'Amplitude Modulation -- Time Domain';"])
+);
+
+/* FFT setup function */
+fft_setup() := (
+	array(ra,float,n-1), /* real value array */
+	array(ia,float,n-1) /* imaginary value array */
+);
+
+/* FFT perform and plot */
+
+fft_perform() := (
+	/* perform FFT */
+	fft(ra,ia),
+	
+	/* convert FFT values from a+bi form to polar magnitude and angle */
+	recttopolar(ra,ia),
+	
+	/* make a data list from the first half of the magnitude array */
+	lira:makelist(ra[i],i,0,(n/2))
+);
+
+/* plot the Fourier data set */
+
+fft_plot() := (
+	xIndexList:makelist(i,i,0,length(lira)),
+	wxplot2d([discrete, xIndexList,lira],
+	[gnuplot_preamble,
+	"unset key;set xrange [0:1024];set xlabel 'Frequency';set ylabel 'Amplitude';set title 'Amplitude Modulation -- Frequency Domain';"])
+);
+
+/* plot the frequency domain signal */
+
+fpf() := (
+	fft_setup(),
+
+	/* fill the FFT data arrays */
+	for i:0 thru n-1 do (
+		ra[i]:fcm(i,cf,mf,sf,2),
+		ia[i]:0.0
+	),
+
+	fft_perform(),
+	fft_plot()
+);
+
+/* *** waveform generators and display routines *** */
+
+/*
+	each of the generator functions
+	takes these arguments:
+	
+	t = time, seconds
+	f = frequency, Hertz
+	m = number of sums to perform
+*/
+
+/* summation square wave generator */
+
+fsq(t,f,m) := (
+	(4/%pi) * sum(
+	(d:2*n-1,
+	sin(2*%pi*f*t*d)/d),
+	n,1,m)
+);
+
+/* summation triangle wave generator */
+
+ftri(t,f,m) := (
+	(8/%pi^2) * sum(
+	(d:2*n-1,
+	q:(-1)^(n+1)/d^2,
+	sin(2*%pi*f*t*d)*q),
+	n,1,m)
+);
+
+/* summation sawtooth wave generator */
+
+fsaw(t,f,m) := (
+	(2/%pi) * sum(
+	sin(2*%pi*f*t*n)/n,
+	n,1,m)
+);
+
+/* summation rectified sine wave generator */
+
+frec(t,f,m) := (
+	(2/%pi) + (4/%pi) * sum(
+	(
+	q:((-1)^(n+1))/(4*n^2-1),
+	cos(2*%pi*f*t*2*n)*q),
+	n,1,m)
+);
+
+/* generic single plot function */
+
+fpq(m,fn) := (
+	if(is(m <= 0)) then
+		print("Error: argument must be positive.")
+	else
+		wxplot2d(fn(t,10,m),[t,0,0.2])
+);
+
+/* specific single plot functions, m = total sums */
+
+fpsq(m) := fpq(m,fsq);
+fptri(m) := fpq(m,ftri);
+fpsaw(m) := fpq(m,fsaw);
+fprec(m) := fpq(m,frec);
+
+/* generic multiple-plot function */
+
+fgenmult(m,fn) := (
+	if(is(m <= 0)) then
+		print("Error: argument must be positive.")
+	else
+		(tl:makelist(fn(t,4,i),i,1,m),
+		wxplot2d(tl,[t,0,.25],
+		[gnuplot_preamble, "unset key;"]))
+);
+
+/* specific multiple-plot functions, m = number of multiples */
+
+fsqmult(m) := fgenmult(m,fsq);
+ftrimult(m) := fgenmult(m,ftri);
+fsawmult(m) := fgenmult(m,fsaw);
+frecmult(m) := fgenmult(m,frec);
+
+/* *** harmonic comparison routines *** */
+
+/* logical square wave generator (can't be plotted) */
+
+flsq(t,f) := (
+	v:cos(2*%pi*f*t),
+	if(is(v<0)) then -1 else 1
+);
+
+/* fancy print for harmonic comparison */
+
+fancy_print(i,y) := (
+	if(is(y > .08))
+	then
+		print(printf(false,"~4d",i), " = ",printf(false,"~8,4f",y))
+);
+
+/* predict square wave harmonic amplitudes */
+
+fph() := (
+for n:1 thru 24 do (
+	d:2*n-1,
+	x:hf*d,
+	y:float((4/%pi)/d),
+	fancy_print(x,y)
+)
+);
+
+/* create, convert, then print square wave harmonics */
+
+fch() := (
+	fft_setup(),
+	for i:0 thru n-1 do (
+		ra[i]:flsq(i*sf,hf),
+		ia[i]:0.0
+	),
+	fft_perform(),
+	for n:1 thru length(lira)-1 do (
+		y:lira[n]*2,
+		fancy_print(n-1,y)
+	)
+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+fourier(f(t), t, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+fsaw(t, f(t), 1), expand;
+fsaw(t, t, 1), trigexpand;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+fpsaw(100);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

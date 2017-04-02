@@ -1,0 +1,104 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.04.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,n)$
+f[1]:1$ f[n]:=(2*f[n-1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(f[n], n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,n)$
+f[1]:1$ f[n]:=(2^(-f[n-1]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(f[n], n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,n)$
+f[1]:1$ f[n]:=(f[n-1]^(-1)*2^(-1));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(f[n], n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,n)$
+/* 2/n */ f[1]:1$ f[n]:=((f[n-1]^(-1))*2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(f[n], n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,n)$
+/* 1/n */ f[1]:1$ f[n]:=((f[n-1]^(-1)));
+makelist(f[n], n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,n)$
+/* 1/n */ f[1]:1$ f[n]:=((f[n-1]^(-2)));
+makelist(f[n], n, 1, 6);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,g,k,h,n)$
+k[1]:1$ k[n]:=(k[n-1]+1)$ /* n+1 */
+makelist(k[n], n, 1, 10);
+
+f[1]:1$ f[n]:=(2*f[n-1])$ /* 2n */
+makelist(f[n], n, 1, 10);
+
+h[1]:1$ h[n]:=(h[n-1]+2)$ /* n+2 */
+makelist(h[n], n, 1, 10);
+
+g[1]:1$ g[n]:=((2*g[n-1])+1)$ /* 2n+1 */
+makelist(g[n], n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,n)$
+f[1]:1$ f[n]:=(n^(-(f[n-1])));
+makelist(f[n], n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,n)$
+f[1]:1$ f[n]:=(2*f[n-1]^-(1/n)+1);
+makelist(f[n], n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,n)$
+f[1]:1$ f[n]:=(2*f[n-1]^-(1/n)+1);
+makelist(f[n], n, 1, 10), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,n)$
+f[1]:1$ f[n]:=(n*f[n-1]^-(1/n)+1);
+makelist(f[n], n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,n)$
+f[1]:1$ f[n]:=(n * (f[n-1]^-(1/n)) + n);
+makelist(f[n], n, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f,n)$
+f[1]:1$ f[n]:=(n * (f[n-1]^(1/n)) + n);
+makelist(f[n], n, 1, 10), numer;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

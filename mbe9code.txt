@@ -1,0 +1,374 @@
+  file mbe9code.txt  has Maxima code
+   for Maxima by Example, Chapter 9,
+   Bigfloats and Arbitrary Precision Quadrature.
+
+    Edwin L Woollett, 2011
+    woollett@charter.net
+    http://www.csulb.edu/~woollett
+
+
+9.1 Introduction
+
+9.2 The Use of Bigfloat Numbers in Maxima
+
+9.2.1 Bigfloat Numbers Using bfloat, fpprec, and fpprintprec
+(%i1) fpprec;
+(%i2) ?fpprec;
+(%i3) :lisp $fpprec
+(%i3) :lisp fpprec
+restart
+(%i1) [fpprec,fpprintprec];
+(%i2) piby2 : block([fpprintprec,fpprec:30,val],
+                 val:bfloat(%pi/2),
+                 fpprintprec:8,
+                 disp(val),
+                  print("  ",val),
+                  val);
+(%i3) [fpprec,fpprintprec];
+restart
+(%i1) bfloat(%pi),fpprec:20;
+(%i2) slength(string(%));
+(%i3) fpprec;
+(%i4) bfloat(%pi),fpprec:40;
+(%i5) slength(string(%));
+(%i6) fpprec;
+(%i7) tval : bfloat(integrate(exp(x),x,-1,1)),fpprec:30;
+(%i8) slength(string(%));
+restart
+(%i1) f2(w) := block([v2 ],
+            disp(" in f2 "),
+            display([w,fpprec,fpprintprec]),
+             v2 : sin(w),
+             display(v2),
+             print("  "),
+              v2 )$
+(%i2) f1(x,fp,fprt) :=
+           block([fpprintprec,fpprec:fp,v1],
+             fpprintprec:fprt,
+             disp(" in f1 "),
+              display([x,fpprec,fpprintprec]),
+              v1 : f2(bfloat(x))^2,
+              print(" in f1, v1 = ",v1),
+              v1 )$
+(%i3) f1(0.5,30,8);
+(%i4) [fpprec,fpprintprec];
+(%i5) 1 + 2.0b0;
+(%i6) 1.0 + 2.0b0;
+(%i7) sin(0.5b0);
+(%i8) a:2.38b-1$
+(%i9) exp(%pi*a);
+(%i10) bfloat(%);
+(%i11) 1b0 + 1b-25,fpprec:26;
+(%i12) slength(string(%));
+(%i13) 1b0 + 1b-25,fpprec:26;
+(%i14) slength(string(%));
+(%i15) 1b0 +10b0^(-26),fpprec:26;
+(%i16) % - 1b0,fpprec:26;
+(%i17) slength(string(%));
+(%i18) [1b-1,bfloat(10^(-1)),10b0^(-1)];
+(%i19) test1(h,j,fp):=
+  block([fpprec:fp,u,a,x,w],
+   u:bfloat(h*j),
+   a:bfloat(exp(-u)),
+   x:bfloat(exp(u-a)),
+   w:bfloat(exp(-a)+x),
+   [x,w])$
+(%i20) test2(h,j,fp):=
+  block([fpprec:fp,u,a,x,w],
+   u:bfloat(h*j),
+   a:exp(-u),
+   x:exp(u-a),
+   w:exp(-a)+x,
+   [x,w])$
+(%i21) [xt,wt]:test1(1/16,9,60)$
+(%i22) [x1,w1]:test1(1/16,9,40)$
+(%i23) [x2,w2]:test2(1/16,9,40)$
+(%i24) [x1,w1]-[xt,wt],fpprec:60;
+(%i25) [x2,w2]-[xt,wt],fpprec:60;
+(%i26) bfloat([x1,w1]-[xt,wt]),fpprec:60;
+(%i27) map('bfloatp,%o5);
+(%i28) map('bfloatp,%o4);
+
+
+9.2.2 Using print and printf with Bigfloats
+(%i1) [fpprec,fpprintprec];
+(%i2) bf1:bfloat(integrate(exp(x),x,-1,1)),fpprec:45;
+(%i3) slength(string(%));
+(%i4) print(bf1),fpprintprec:12$
+(%i5) [fpprec,fpprintprec];
+(%i6) print(bf1),fpprintprec:15$
+(%i7) [fpprec,fpprintprec];
+(%i8) print(bf1),fpprintprec:16$
+(%i9) [fpprec,fpprintprec];
+(%i10) slength(string(%o8));
+(%i11) print(bf1),fpprec:20,fpprintprec:18$
+(%i12) for j:14 thru 18 do ev(print(bf1),fpprec:j+2,fpprintprec:j)$
+(%i13) bfprint(bf,fpp):=
+  block([fpprec, fpprintprec ],
+        fpprec : fpp+2,
+        fpprintprec:fpp,
+        print("   number of digits = ",fpp),
+        print("  ",bf) )$
+(%i14) bfprint(bf1,24)$
+restart
+(%i1) bf:bfloat(exp(-20)),fpprec:30;
+(%i2) slength(string(%));
+(%i3) printf(true,"~d~a",3,string(bf))$
+(%i4) printf(true,"  ~d~a",3,string(bf))$
+(%i5) printf(true,"  ~d    ~a",3,string(bf))$
+(%i6) (printf(true,"  ~d    ~a",3,string(bf)),
+           printf(true,"  ~d    ~a",3,string(bf)))$
+(%i7) (printf(true,"  ~d    ~a~%",3,string(bf)),
+           printf(true,"  ~d    ~a",3,string(bf)))$
+(%i8) fpprintprec:8$
+(%i9) printf(true,"  ~d    ~a",3,string(bf))$
+(%i10) printf(true,"  ~d    ~f",3,bf)$
+(%i11) printf(true,"  ~d    ~e",3,bf)$
+(%i12) printf(true,"  ~d    ~h",3,bf)$
+restart
+(%i1) print_test(fp) :=
+        block([fpprec,fpprintprec,val],
+         fpprec : fp,
+         fpprintprec : 8,
+         display(fpprec),
+         print("  k          value "),
+         print("  "),
+         for k thru 4 do
+          ( val : bfloat(exp(k^2)), 
+            printf(true,"  ~d       ~a  ~%",k,string(val) ) ))$
+(%i2) print_test(30)$
+(%i3) print_test2(fp) :=
+        block([fpprec,fpprintprec,val],
+         fpprec : fp,
+         fpprintprec : 8,
+         display(fpprec),
+         printf(true,"~%  ~a          ~a ~%~%",k,value), 
+         for k thru 4 do
+          ( val : bfloat(exp(k^2)), 
+            printf(true,"  ~d       ~a  ~%",k,string(val) ) ))$
+(%i4) print_test2(30)$
+
+
+9.2.3 Adding Bigfloats having Differing Precision
+(%i1) fpprintprec:8$
+(%i2) pi50 : bfloat(%pi),fpprec:50;
+(%i3) pi30 : bfloat(%pi),fpprec:30;
+(%i4) abs(pi30 - pi50),fpprec:60;
+(%i5) twopi : bfloat(2*%pi),fpprec:60;
+(%i6) pisum40 : pi30 + pi50,fpprec:40;
+(%i7) abs(pisum40 - twopi),fpprec:60;
+(%i8) pisum60 : pi30 + pi50,fpprec:60;
+(%i9) abs(pisum60 - twopi),fpprec:60;
+
+
+9.2.4 Polynomial Roots Using bfallroots
+(%i1) fpprec;
+(%i2) pi50 : ev (bfloat (%pi), fpprec:50);
+(%i3) slength( string (%));
+(%i4) e : expand ( (x-%pi)^3);
+(%i6) e_f16 : float (e);
+(%i7) sar16 : map ('rhs, allroots (%i*e_f16));
+(%i8) for s in sar16 do (subst (s,x,e_f16), disp (expand (%%)))$
+(%i9) for s in sar16 do disp (pi50 - realpart(s))$
+(%i10) sbfar16 : map ('rhs, bfallroots (%i*e_f16));
+(%i11) for s in sbfar16 do (subst (s,x,e_f16), disp (expand (%%)))$
+(%i12) for s in sbfar16 do disp (pi50 - realpart(s))$
+(%i13) e_f40 : ev (bfloat (e),fpprec : 40);
+(%i16) fpprec:40$
+(%i17) sbfar40 : map ('rhs, bfallroots (%i*e_f40));
+(%i18) for s in sbfar40 do (subst (s,x,e_f40), disp (expand (%%)))$
+(%i19) for s in sbfar40 do disp (pi50 - realpart(s))$
+(%i20) bfloat (9.424777960769379715387930149838508652592B0 -
+                  103993/11034 );
+(%i21) ratepsilon;
+(%i22) ratepsilon : 1.0e-41$
+(%i23) sbfar40 : map ('rhs, bfallroots (%i*e_f40));
+(%i24) for s in sbfar40 do (subst (s,x,e_f40), disp (expand (%%)))$
+(%i25) for s in sbfar40 do disp (pi50 - realpart(s))$
+
+
+9.2.5 Bigfloat Number Gaps and Binary Arithmetic
+(%i1) fpprec:4$
+(%i2) ?fpprec;
+(%i3) x :bfloat(2/3);
+(%i4) u : bfloat(2^(-18));
+(%i5) x1 : x + u;
+(%i6) x1 - x;
+(%i7) x2 : x + 3.814b-6;
+(%i8) x2 - x;
+(%i9) ulp : bfloat(2^(-17));
+(%i10) fpprec:16$
+(%i11) ?fpprec;
+(%i12) x :bfloat(2/3);
+(%i13) u : bfloat(2^(-58));
+(%i14) x1 : x + u;
+(%i15) x1 - x;
+(%i16) x2 : x + 3.469446951953613b-18;
+(%i17) x2 - x;
+(%i18) ulp : bfloat(2^(-57));
+
+
+9.2.6 Effect of Floating Point Precision on Function Evaluation
+(%i1) (fpprintprec:8,load(fdf))$
+(%i2) fpprec;
+(%i3) g(x) := sin(x/2)$
+(%i4) fdf(g,1,10);
+(%i5) fdf(g,1,10),fpprec:30;
+(%i6) fpprec;
+
+
+9.3 Arbitrary Precision Quadrature with Maxima
+
+9.3.1 Using bromberg for Arbitrary Precision Quadrature
+
+(%i1) (fpprintprec:8,load(brmbrg));
+(%i2) [brombergtol,brombergabs,brombergit,brombergmin,fpprec,fpprintprec];
+(%i3) tval: bfloat(integrate(exp(x),x,-1,1)),fpprec:42;
+(%i4) fpprec;
+(%i5) (brombergtol:0.0b0,brombergit:100)$
+(%i6) b15:(brombergabs:1.0b-15,bromberg(exp(x),x,-1,1) ),fpprec:30;
+(%i7) abs(b15 - tval),fpprec:42;
+(%i8) b20:(brombergabs:1.0b-20,bromberg(exp(x),x,-1,1) ),fpprec:30;
+(%i9) abs(b20 - tval),fpprec:42;
+(%i10) load(qbromberg)$
+(%i11) qbr20 : qbromberg(exp,-1,1,20,40,100);
+(%i12) abs(qbr20 - tval);
+(%i13) abs(qbr20 - tval),fpprec:40;
+restart
+(%i1) (fpprintprec:8, load(brmbrg), load(qbromberg))$
+(%i2) tval: bfloat(integrate(exp(x),x,-1,1)),fpprec:42;
+(%i3) qbrlist(exp,-1,1,[10,15,17 ],20,100)$
+(%i4) qbrlist(exp,-1,1,[10,20,27 ],30,100)$
+(%i5) qbrlist(exp,-1,1,[10,20,30,35],40,100)$
+(%i6) g(x):= sqrt(x)*log(x)$
+(%i7) integrate(g(t),t,0,1);
+(%i8) (load(brmbrg),load(qbromberg))$
+(%i9) qbromberg(g,0,1,30,40,100);
+
+
+9.3.2 A Double Exponential Quadrature Method for a <= x < inf
+
+(%i1) fpprintprec:8$
+(%i2) g(x):= exp(-x)$
+(%i3) tval : bfloat(integrate(g(x),x,0,inf)),fpprec:45;
+(%i4) load(quad_de);
+(%i5) quad_de(g,0,30,40);
+(%i6) abs(first(%) - tval),fpprec:45;
+(%i7) idek(g,0,4,40);
+(%i8) abs(% - tval),fpprec:45;
+(%i9) idek_e(g,0,4,40);
+(%i10) abs(first(%) - tval),fpprec:45;
+(%i11) ide(g,0,30,40);
+(%i12) ide_test(g,0,30,40);
+(%i13) g(x):= exp(-x)/sqrt(x)$
+(%i14) integrate(g(t),t,0,inf);
+(%i15) tval : bfloat(%),fpprec:45;
+(%i16) quad_de(g,0,30,40);
+(%i17) abs(first(%) - tval),fpprec:45;
+(%i18) idek_e(g,0,4,40);
+(%i19) g(x) := exp(-x^2/2)$
+(%i20) tval : bfloat(sqrt(%pi/2)),fpprec:45$
+(%i21) quad_de(g,0,30,40);
+(%i22) abs(first(%) - tval),fpprec:45;
+(%i23) idek_e(g,0,5,40);
+(%i24) g(x) := exp(-x)*cos(x)$
+(%i25) integrate(g(x),x,0,inf);
+(%i26) tval : bfloat(%),fpprec:45$
+(%i27) quad_de(g,0,30,40);
+(%i28) abs(first(%) - tval),fpprec:45;
+(%i29) idek_e(g,0,5,40);
+
+
+
+9.3.3 The tanh-sinh Quadrature Method for a <= x <= b
+
+(%i1) fpprintprec:8$
+(%i2) tval : bfloat( integrate( exp(x),x,-1,1 )),fpprec:45;
+(%i3) load(quad_ts);
+(%i4) bfprint(tval,45)$
+(%i5) quad_ts(exp,-1,1,30,40);
+(%i6) abs(first(%) - tval),fpprec:45;
+(%i7) qtsk(exp,-1,1,5,40);
+(%i8) abs(% - tval),fpprec:45;
+(%i9) qtsk_e(exp,-1,1,5,40);
+(%i10) abs(first(%) - tval),fpprec:45;
+(%i11) last(_yw%[8,40]);
+(%i12) fpxy(40)$
+(%i13) qts(exp,-1,1,30,40)$
+(%i14) qts_test(exp,-1,1,30,40)$
+(%i15) g(x):= sqrt(x)*log(x)$
+(%i16) tval : bfloat(integrate(g(t),t,0,1)),fpprec:45;
+(%i17) quad_ts(g,0,1,30,40);
+(%i18) abs(first(%) - tval),fpprec:45;
+(%i19) qtsk_e(g,0,1,5,40);
+(%i20) g(x):= atan(sqrt(2+x^2))/(sqrt(2+x^2)*(1+x^2))$
+(%i21) integrate(g(t),t,0,1);
+(%i22) quad_qags(g(t),t,0,1);
+(%i23) float(5*%pi^2/96);
+(%i24) tval: bfloat(5*%pi^2/96),fpprec:45;
+(%i25) quad_ts(g,0,1,30,40);
+(%i26) abs(first(%) - tval),fpprec:45;
+(%i27) qtsk_e(g,0,1,5,40);
+(%i28) g(x):= sqrt(x)/sqrt(1 - x^2)$
+(%i29) quad_qags(g(t),t,0,1);
+(%i30) integrate(g(t),t,0,1);
+(%i31) tval : bfloat(%),fpprec:45;
+(%i32) quad_ts(g,0,1,30,40);
+(%i33) abs(first(%) - tval),fpprec:45;
+(%i34) qtsk_e(g,0,1,5,40);
+(%i35) makegamma(%o30);
+(%i36) float(%);
+(%i37) bfloat(%o11),fpprec:45;
+(%i38) g(x) := log(x)^2$
+(%i39) integrate(g(t),t,0,1);
+(%i40) quad_ts(g,0,1,30,40);
+(%i41) abs( first(%) - bfloat(2) ),fpprec:45;
+(%i42) qtsk_e(g,0,1,5,40);
+(%i43) g(x) := log( cos(x) )$
+(%i44) quad_qags(g(t),t,0,%pi/2);
+(%i45) integrate(g(t),t,0,%pi/2);
+(%i46) float(-%pi*log(2)/2);
+(%i47) tval : bfloat(-%pi*log(2)/2),fpprec:45;
+(%i48) quad_ts(g,0,%pi/2,30,40);
+(%i49) ans: realpart( first(%) );
+(%i50) abs(ans - tval),fpprec:45;
+(%i51) qtsk_e(g,0,%pi/2,5,40);
+
+9.3.4 The Gauss-Legendre Quadrature Method for a <= x <= b
+
+(%i1) load("quad-maxima.lisp");
+(%i2) fpprintprec:8$
+(%i3) tval : bfloat(integrate(exp(x),x,-1,1)),fpprec:45;
+(%i4) load(quad_gs);
+(%i5) arrays;
+(%i6) arrayinfo(ab_and_wts);
+(%i7) gaussunit(exp,4);
+(%i8) abs(% - tval),fpprec:45;
+(%i9) fpprec;
+(%i10) arrayinfo(ab_and_wts);
+(%i11) first( ab_and_wts[4, 16] );
+(%i12) second( ab_and_wts[4, 16] );
+(%i13) lp4 : legenp(4,x);
+(%i14) float(solve(lp4));
+(%i15) lfp4(x) := legenp(4,x)$
+(%i16) map('lfp4,%o11);
+(%i17) map( lambda([z],legenp(4,z)),%o11 );
+(%i18) gaussunit_e(exp,4);
+(%i19) gaussab(exp,-1,1,4);
+(%i20) abs(% - tval),fpprec:45;
+(%i21) gaussab_e(exp,-1,1,4);
+(%i22) quad_gs(exp,-1,1,10);
+(%i23) abs(first(%) -tval),fpprec:45;
+(%i24) fpprec:30$
+(%i25) quad_gs(exp,-1,1,20);
+(%i26) abs(first(%) -tval),fpprec:45;
+(%i27) fpprec:40$
+(%i28) quad_gs(exp,-1,1,30);
+(%i29) abs(first(%) -tval),fpprec:45;
+(%i30) gaussab_e(exp,-1,1,40);
+(%i31) arrayinfo(ab_and_wts);
+(%i32) quad_gs_table(exp,-1,1,30)$
+
+
+
+ 

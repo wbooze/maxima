@@ -1,0 +1,49 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created by wxMaxima version 0.7.4 ] */
+
+/* [wxMaxima: input   start ] */
+load(angeom);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Gr:[1,0,-1]+r*[-1,1,1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+K:x^2+y^2+z^2-1;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gs:([x,y,z])^^2-1;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gs:(Gr)^^2-1;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gsl:solve(gs[1][1],r);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S1:ev(Gr,gsl[1]); S2:ev(Gr,gsl[2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S_Labels[1]:"S1"; S_Labels[2]:"S2";
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+O:[S1,S2]$ PLOTT_L([K],[Gr],-1,1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+streckeLaenge(S1,S2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+TS:x^2+y^2-3 +sqrt(z);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

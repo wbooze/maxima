@@ -1,0 +1,102 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 12.09.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(t); f(x, t):= 3/(10*(x-v*t)^2+1); v:1;t:[0,1,2,3];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot2d(f(x, t), [x, -3, 10], [y, 0, 3]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ f(x, k) := x^4 - k * x^2 $
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ ye(x) := -x^4 $
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+my_gnuplot_preamble : ["set noborder"]$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+set_draw_defaults (
+user_preamble = my_gnuplot_preamble,
+yrange = [-20, 20],
+xtics_axis = true,
+ytics_axis = true,
+xaxis
+= true,
+yaxis
+= true)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+graph2 : [
+label(["f(x) = x^4 - k x^2", 2.6, 15]),
+color = red, explicit ( ye(x) , x, -3, 3),
+color = black,
+head_length = 0.1,
+vector ( [-3, 0], [6, 0] ),
+vector ( [0, -20], [0, 40] )]$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+bild1 : gr2d (title="k=1",[explicit ( f(x, 1), x, -3, 3)], graph2)$
+bild2 : gr2d (title="k=2", [explicit (f(x, 2), x, -3, 3) ], graph2)$
+bild3 : gr2d (title="k=3", [explicit (f(x, 3), x, -3, 3) ], graph2)$
+bild4 : gr2d (title="k=4", [explicit (f(x, 4), x, -3, 3) ], graph2)$
+bild5 : gr2d (title="k=5", [explicit (f(x, 5), x, -3, 3) ], graph2)$
+bild6 : gr2d (title="k=6", [explicit (f(x, 6), x, -3, 3) ], graph2)$
+bild7 : gr2d (title="k=7", [explicit (f(x, 7), x, -3, 3) ], graph2)$
+bild8 : gr2d (title="k=8", [explicit (f(x, 8), x, -3, 3) ], graph2)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+draw(
+delay = 10000000,
+dimensions = [300, 300],
+file_name = "funktionenschar1",
+terminal = 'animated_gif,
+bild1, bild2, bild3, bild4, bild5, bild6, bild7, bild8)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f:%e^(-x)*sin(x)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+movie(n):=
+    for k:1 thru n step 1 do
+      draw2d(
+        color = blue,
+        explicit(f,x,0,k),
+        color = red,
+        explicit(taylor(f,x,0,k),x,0,k),
+        xrange = [-1,5],
+        yrange = [-1,2])$
+ movie(11);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+movie2(n):=
+    apply(
+      draw,
+      append(
+        [terminal = animated_gif, delay = 20000],
+        makelist(
+          gr2d(
+            color = blue,
+            explicit(f,x,0,k),
+            color = red,
+            explicit(taylor(f,x,0,k),x,0,k),
+            xrange = [-1,5],
+            yrange = [-1,2]),
+          k, 1, n)))$
+ movie2(11);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

@@ -1,0 +1,132 @@
+
+
+
+ mcon (Gam[n1] . Gam[n1],n1);
+ matrix([4,0,0,0],[0,4,0,0],[0,0,4,0],[0,0,0,4]);
+ is (equal (%,4*I4));
+ true;
+ 
+ mcon (Gam[mu] . Gam[5] . Gam[mu],mu);
+ matrix([4,0,0,0],[0,4,0,0],[0,0,-4,0],[0,0,0,-4]);
+ is (equal (%,-4*Gam[5]));
+ true;
+ 
+ mcon(Gam[5] . Gam[mu] . Gam[nu] . Gam[nu] . Gam[mu],mu,nu);
+ matrix([-16,0,0,0],[0,-16,0,0],[0,0,16,0],[0,0,0,16]);
+ is (equal (%,16*Gam[5]));
+ true;
+ 
+ (up1:UU(E,E,0,0,1),
+        is (equal (up1,matrix([0],[0],[sqrt(2*E)],[0]))));
+ true;
+ (vp2b : sbar (VV (E,E,%pi,0,-1)),
+         is (equal (vp2b,matrix([0,-sqrt(2*E),0,0]))));
+ true;
+ 
+ (a12 : vp2b . Gam[mu] . up1,
+    is (equal (a12,
+          matrix([0,-sqrt(2*E),0,0]) . Gam[mu] . matrix([0],[0],[sqrt(2*E)],[0]))));
+ true;
+ 
+ 
+ (up3b : sbar (UU (E,E,th,0,1)),
+     is (equal (up3b,
+       matrix([cos(th/2)*sqrt(2*E),sin(th/2)*sqrt(2*E),0,0]))));
+ true;
+ 
+ (vp4 : VV (E,E,%pi-th,%pi,-1),
+    is (equal (vp4,
+       matrix([0],[0],[-cos((%pi-th)/2)*sqrt(2*E)],
+              [sin((%pi-th)/2)*sqrt(2*E)]))));
+ true;
+ 
+ (a34 : up3b . Gam[mu] . vp4,
+      is (equal (a34,
+       matrix([cos(th/2)*sqrt(2*E),sin(th/2)*sqrt(2*E),0,0])
+         . Gam[mu]
+         . matrix([0],[0],[-cos((%pi-th)/2)*sqrt(2*E)],
+                  [sin((%pi-th)/2)*sqrt(2*E)]))));
+ true;
+ 
+ Con (a12*a34,mu);
+ 8*cos(th/2)^2*E^2;
+ 
+ mcon (a12*a34,mu);
+ 8*cos(th/2)^2*E^2;
+ 
+ 
+ 
+ /* arb. energy e e --> mu mu  */
+ 
+ (invar(D(p1,p1) = m^2,D(p2,p2) = m^2,D(p3,p3) = m^2,D(p4,p4) = m^2,
+             D(p1,Sp1) = 0,D(Sp1,Sp1) = -1,D(p2,Sp2) = 0,D(Sp2,Sp2) = -1,
+             D(p3,Sp3) = 0,D(Sp3,Sp3) = -1,D(p4,Sp4) = 0,D(Sp4,Sp4) = -1),
+              
+  comp_def(p1(E,0,0,p),Sp1(p/m,0,0,E/m),p2(E,0,0,-p),Sp2(p/m,0,0,(-E)/m),
+                p3(E,p*sin(th),0,p*cos(th)),
+                Sp3(p/m,E*sin(th)/m,0,E*cos(th)/m),
+                p4(E,-p*sin(th),0,-p*cos(th)),
+                Sp4(p/m,(-E*sin(th))/m,0,(-E*cos(th))/m)),
+                
+  p_Em(expr):=expand(ratsubst(E^2-m^2,p^2,expr)),
+  
+  E_pm(expr):=expand(ratsubst(m^2+p^2,E^2,expr)),
+  
+  s_th:VP(p2+p1,p2+p1) );
+  
+  4*E^2;
+  
+  t_th:VP(p1-p3,p1-p3);
+ 2*p^2*cos(th)-2*p^2;
+ 
+ u_th:VP(p1-p4,p1-p4);
+ -2*p^2*cos(th)-2*p^2;
+ 
+ t_th2:to_ao2(t_th,th);
+ -4*p^2*sin(th/2)^2;
+ 
+ u_th2:to_ao2(u_th,th);
+ 4*p^2*sin(th/2)^2-4*p^2;
+ 
+ t_thE:p_Em(t_th);
+ 2*cos(th)*E^2-2*E^2-2*m^2*cos(th)+2*m^2;
+ 
+ u_thE:p_Em(u_th);
+ -2*cos(th)*E^2-2*E^2+2*m^2*cos(th)+2*m^2;
+ 
+  /* case RR --> LL  */
+  
+  ( [sv1,sv2,sv3,sv4]:[1,1,-1,-1],
+  
+    M1n_m : trigsimp (E_pm (mcon ( m_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,nu)*
+                 m_tr (S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu))) );
+                 
+  -4*m^4*sin(th)^2-8*m^4*cos(th)+8*m^4;
+  
+  M1n_sm : trigsimp (E_pm (mcon ( nc_tr (S(sv3,Sp3),
+            p3+m,mu,S(sv1,Sp1),p1+m,nu)*nc_tr (S(sv4,Sp4),
+              p4+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+              
+  -4*m^4*sin(th)^2-8*m^4*cos(th)+8*m^4;
+  
+  M1n_s : trigsimp (E_pm (econ ( nc_tr (S(sv3,Sp3),p3+m,mu,S(sv1,Sp1),p1+m,nu)*
+                 nc_tr (S(sv4,Sp4),p4+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+                 
+  -4*m^4*sin(th)^2-8*m^4*cos(th)+8*m^4;
+  
+  M1n_sc : trigsimp (E_pm (Con ( nc_tr (S(sv3,Sp3),
+            p3+m,mu,S(sv1,Sp1),p1+m,nu)*nc_tr (S(sv4,Sp4),
+              p4+m,mu,S(sv2,Sp2),p2+m,nu), mu,nu)));
+              
+ -4*m^4*sin(th)^2-8*m^4*cos(th)+8*m^4; 
+ 
+  M1n_s - M1n_m;
+  0;
+  
+  M1n_sm - M1n_m;
+  0;
+  
+  M1n_sc - M1n_m;
+  0;
+  
+  

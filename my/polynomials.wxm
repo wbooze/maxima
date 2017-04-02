@@ -1,0 +1,387 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 13.04.2 ] */
+
+/* [wxMaxima: input   start ] */
+p(z):=sum(a[k]*'z^k, k, 0, z);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for l:1 thru 8 do print(p(l));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(z):=sum(a[k]*z^k, k, 0, z);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for l:1 thru 8 do print(p(l));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(l):=sum(a[k]*l^k, k, 0, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(l):=sum(a[k]*k^l, k, 0, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(l):=sum(a[l]*k^l, k, 0, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(l):=sum(a[l]*k^l, l, 0, l);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(l):=sum(a[l]*l^k, k, 0, 2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(l):=sum(a[l]*l^k, k, 0, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(l):=sum(a[l]*l^k, k, 0, 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(l):=sum(a[l]*l^k, k, -1, 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(l):=sum(a[l]*l^k, k, -1, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(l):=sum(a[l]*k^l, k, 0, l);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+/* polynomial of degree n with n+1 terms */
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+p(n):=sum(a[k]*z^k, k, 0, n);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(x):=sum(a[k]*z^k, k, 0, x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(x):=sum(a[k]*x^k, k, 0, x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+''p(1); ''p(2); ''p(3); ''p(4); ''p(5); 'p(6); ''p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(x):=sum(c[k]*'x^k, k, 0, x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(x):=sum('a[k]*'x^k, k, 0, x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(x):=sum(a[k]*x^k, k, 0, x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(x):=sum('a[k]*x^k, k, 0, x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(x):=sum('a[k]*'x[k], k, 0, x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(0); p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(x):=sum('a[k]*'x[k]^k, k, 0, x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+/* x[0]^0 is always 1 so it disappears in the representation */ 
+/* and a[0]*x[0]^0 becomes just a[0] */
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+p(0); p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lagrange([x[0], x[1]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lagrange([x[0], x[0]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lagrange([0, 0]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lagrange([0, 1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lagrange([1, 0]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lagrange([1, 1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lagrange([[0, 0], [1, 0]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lagrange([[0, 1], [1, 0]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lagrange([[0, 0], [1, 1]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lagrange([[0, 1], [1, 1]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lagrange([[x[0], x[0]], [x[1], x[0]]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lagrange([[x[0], x[1]], [x[1], x[0]]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lagrange([[x[0], x[0]], [x[1], x[1]]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lagrange([[x[0], x[1]], [x[1], x[1]]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(n):=sum(a[k]*z^k, k, 0, n);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(0); p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(n):=a[n]*product(z-alpha[k], k, 0, n);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(0); p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(k):=a[k]*product(z-alpha[k], k, 0, k);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+p(0); p(1); p(2); p(3); p(4); p(5); p(6); p(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+horner(p(0)); horner(p(1)); horner(p(2)); horner(p(3)); horner(p(4)); 
+horner(p(5)); horner(p(5)); horner(p(6)); horner(p(7)); horner(p(8));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+powerdisp:false$ 
+horner(p(0)); horner(p(1)); horner(p(2)); horner(p(3)); horner(p(4)); 
+horner(p(5)); horner(p(5)); horner(p(6)); horner(p(7)); horner(p(8));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+q(n):=sum(a[k]*z^k, k, 0, n);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+q(0); q(1); q(2); q(3); q(4); q(5); q(6); q(8);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+powerdisp:true$ 
+horner(q(0)); horner(q(1)); horner(q(2)); horner(q(3)); horner(q(4));
+horner(q(5)); horner(q(5)); horner(q(6)); horner(q(7)); horner(q(8));
+horner(q(8))=factor(horner(q(8)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+powerdisp:false$ 
+horner(q(0)); horner(q(1)); horner(q(2)); horner(q(3)); horner(q(4)); 
+horner(q(5)); horner(q(5)); horner(q(6)); horner(q(7)); horner(q(8));
+horner(q(8))=factor(horner(q(8)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(1-z)*p(0) = expand((1-z)*p(0));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(1-z)*p(1) = expand((1-z)*p(1));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(1-z)*p(2) = expand((1-z)*p(2));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(1-z)*'p(2) = factor((1-z)*p(2));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(1-z)*q(0) = expand((1-z)*q(0));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(1-z)*q(1) = expand((1-z)*q(1));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+powerdisp:false$ (1-z)*q(2) = expand((1-z)*q(2));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+powerdisp:true$ (1-z)*q(2) = expand((1-z)*q(2));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(1-z)*q(2) = expand((1-z)*q(2));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(1-z)*q(2) = factor((1-z)*q(2));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+powerdisp:false$ h(k):=((a[k]-a[k-1])*z^k);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+powerdisp:false$ factorout(sum(h(k), k, 1, n), z);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+powerdisp:false$ factorout(sum(h(k), k, 1, 3), z);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(k, z, a)$ powerdisp:false$ factorout(sum(h(k), k, 1, n), z);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(k, z, a)$ powerdisp:false$ factorout(sum(h(k), k, 1, 3), z);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(k, z, a)$ powerdisp:true$ factorout(sum(h(k), k, 1, 3), z);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+g(n):=factorout(sum(h(k), k, 1, n), z);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+g(4);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(k, z, a)$ powerdisp:false$ s(n):=a[0] + g(n) - (a[n]*z^(n+1));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+powerdisp:true$ s(3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+powerdisp:false$ s(3);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

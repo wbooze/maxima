@@ -1,0 +1,739 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 14.09.0 ] */
+
+/* [wxMaxima: input   start ] */
+1+1;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxdraw2d(implicit(x^3+y^3-3*x*y=0, x, -5, 5, y, -5, 5), 
+user_preamble="set zeroaxis");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot3d(x^3+y^3-3*x*y, [x, -5, 5], [y, -5, 5]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot3d(x^3+y^3-3*x*y, [x, -5, 5], [y, -5, 5], [z, -10, 10], 
+[azimuth, 5], [grid, 50, 50], [nticks, 100]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+scene1: gr2d(title="Ellipse",
+                   nticks=30,
+                   user_preamble="set size square; set zeroaxis",
+                   parametric(2*cos(t),5*sin(t),t,0,2*%pi))$
+scene2: gr2d(title="Triangle",
+                   polygon([4,5,7],[6,4,2]))$
+wxdraw(scene1, scene2, columns = 2)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+scene3:gr3d(explicit(x^2+y^2,x,-1,1,y,-1,1));
+scene4:gr3d(explicit(x^2+y,x,-1,1,y,-1,1));
+scene5:gr3d(explicit(x+y^2, x, -1, 1, y, -1, 1));
+scene6:gr3d(explicit(x+y, x, -1, 1, y, -1, 1));
+wxdraw(scene3, scene4, scene5, scene6, columns=2)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+draw(delay     = 100,
+     file_name = "zzz",
+     terminal  = 'animated_gif,
+     gr2d(explicit(x^2-x,x,-1,1)),
+     gr2d(explicit(x^3-x^2,x,-1,1)),
+     gr2d(explicit(x^4-x^3,x,-1,1)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxdraw2d(color=blue,  explicit(x^2,x,-1,1))$
+wxdraw2d(color=red,   explicit(x^3,x,-1,1))$
+wxdraw2d(color=brown, explicit(x^4,x,-1,1))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxdraw(
+        terminal = png,
+        gr2d(proportional_axes=xyz,
+             explicit(x^2,x,0,1)),
+        gr2d(explicit(x^2,x,0,1),
+             xrange = [0,1],
+             yrange = [0,2],
+             proportional_axes=xyz),
+        gr2d(explicit(x^2,x,0,1)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot2d(sin(x), [x, -2, 2], [style, impulses], 
+[title, "sine with impulses"], [legend, "sin x", ""], [y, -2, 2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+xy: [[10, .6], [20, .9], [30, 1.1], [40, 1.3], [50, 1.4]]$
+wxplot2d([[discrete, xy], 2*%pi*sqrt(l/980)], [l,0,50],
+        [style, points, lines], [color, red, blue],
+        [point_type, asterisk],
+        [legend, "experiment", "theory"],
+        [xlabel, "pendulum's length (cm)"],
+        [ylabel, "period (s)"])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot3d (2^(-u^2 + v^2), [u, -3, 3], [v, -2, 2], 
+[azimuth, 0], [elevation, 90], [box, false])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot3d (2^(-u^2 + v^2), [u, 0, 3], [v, 0, 2])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxplot3d(log(x^2+y^2)*32, [x, -100, 100],[y, -100, 100], [z, -1000, 1000]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+define(f(k, x), ((sin(3/2*k)/k)*((2/3)*cos(k*x))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gnuplot_reset();
+multiplot_mode(none)$
+wxdraw(terminal=png, 
+gr2d(explicit((1/2) + sum(f(k, x), k, 1, 1), x, -10, 10)), columns=2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+wxdraw(
+terminal=png,
+for i:1 thru 4 do 
+(return(gr2d(explicit((1/2) + sum(f(k, x), k, 1, 10^(i-1)), x, -10, 10)))),
+    columns=2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+set_plot_option([adapt_depth, 1])$
+set_plot_option([nticks, 1000])$
+set_plot_option([plot_format, gnuplot])$
+set_plot_option([gnuplot_preamble, "set xticks 1; set adapt_depth 1"]);
+wxdraw(
+    terminal=png,
+    makelist(
+    (a:makelist(
+            gr2d(explicit((1/2) + sum(f(k, x), k, 1, 10^i), x, -10, 10)), i, 0, 3),
+            a[i]), i, 1, 4), 
+    columns=2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+plot_options;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(a)$
+define(f(k, x), ((sin(3/2*k)/k)*((2/3)*cos(k*x))))$
+define(a[i], gr2d(explicit((1/2) + sum(f(k, x), k, 1, 10^(i-1)), x, -4, 4)))$
+wxdraw(terminal=png, makelist(a[i], i, 1, 4), columns=2)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(a)$
+define(f(k, x), ((sin(3/2*k)/k)*((2/3)*cos(k*x))))$
+define(a(i), gr2d(explicit((1/2) + sum(f(k, x), k, 1, 10^(i-1)), x, -4, 4)))$
+wxdraw(terminal=png, makelist(a(i), i, 1, 4), columns=2)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(a)$
+define(f(k, x), ((sin(3/2*k)/k)*((2/3)*cos(k*x))))$
+define(a(i), gr2d(explicit((1/2) + sum(f(k, x), k, 1, 10^(i-1)), x, -4, 4)))$
+wxdraw(terminal=png, [block(for i:1 thru 4 do (print(a(i)))], columns=2)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(a, f, k, x, i)$
+f(k, x):=((sin(3/2*k)/k)*((2/3)*cos(k*x)))$
+a[i]:=gr2d(explicit((1/2) + sum(f(k, x), k, 1, 10^(i-1)), x, -4, 4))$
+wxdraw(terminal=png, a[1], a[2], a[3], a[4], columns=2)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+use_fast_arrays:true$
+translate_fast_arrays:true$
+remarray(all)$
+kill(a, f, k, x, i)$
+declare(k, fixnum)$
+declare(x, fixnum)$
+f(k, x):=(sin(3/2*k)/k)*((2/3)*cos(k*x)), numer$
+a[i]:=gr2d(explicit((1/2) + sum(f(k, x), k, 1, 10^(i-1)), x, -4, 4)), numer$
+wxdraw(terminal=png, a[1], a[2], a[3], a[4], columns=2)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+declare(k, integer)$
+declare(x, integer)$
+scene1:gr2d(explicit((1/2) + sum(f(k, x), k, 1, 10^0), x, -4, 4))$
+scene2:gr2d(explicit((1/2) + sum(f(k, x), k, 1, 10^1), x, -4, 4))$
+scene3:gr2d(explicit((1/2) + sum(f(k, x), k, 1, 10^2), x, -4, 4))$
+scene4:gr2d(explicit((1/2) + sum(f(k, x), k, 1, 10^3), x, -4, 4))$
+wxdraw( terminal=png, scene1, scene2, scene3, scene4, columns=2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+define(f(k, x), ((sin(3/2*k)/k)*((2/3)*cos(k*x))))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist((1/2) + sum(f(k, x), k, 1, 10^0), x, -4, 4), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist((1/2) + sum(f(k, x), k, 1, 1), x, -4, 4), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+use_fast_arrays:true$
+translate_fast_arrays:true$
+remarray(all)$
+kill(a, f, k, x, i, four)$
+declare(k, integer)$
+declare(x, integer)$
+declare(f, real)$
+declare(four, real)$
+define(f[k, x], block((sin(3/2*k)/k)*((2/3)*cos(k*x)))), numer$
+define(four(x), block((1/2) + sum(f[k, x], k, 1, 10^(i-1)))), numer$
+define(four[x], block(four(x))), numer$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (proclaim '(optimize speed));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp(defun triangle (n)
+        (labels ((tri (c n)
+                     (declare (type fixnum n c))
+                     (if (zerop n)
+                         c 
+                         (tri (the fixnum (+ n c))
+                              (the fixnum (- n 1))))))
+         (tri 0 n)))
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (triangle 10000)
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+1+1;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (defun sum (term a next b)
+            (if (> a b)
+            0
+            (+ (funcall term a)
+            (sum term (funcall next a) next b))))
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (sum (lambda (x) x) 1 (lambda (x) (+ 1 x)) 100)
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (sum (lambda (x &optional (k 1))
+ (* (* (/ (sin (/ 3 (* 2 k))) k)) (/ 2 3) (cos (* k x)))) 1 (lambda(x) (+ x 1)) 10)
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (sum (lambda (x &optional (k 10))
+ (* (* (/ (sin (/ 3 (* 2 k))) k)) (/ 2 3) (cos (* k x)))) 1 (lambda(x) (+ x 1)) 10)
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (sum (lambda (x &optional (k 100))
+ (* (* (/ (sin (/ 3 (* 2 k))) k)) (/ 2 3) (cos (* k x)))) 1 (lambda(x) (+ x 1)) 10)
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (sum (lambda (x &optional (k 1))
+ (* (* (/ (sin (/ 3 (* 2 k))) k)) (/ 2 3) (cos (* k x)))) 1 (lambda(x) (+ x 1)) 100)
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (sum (lambda (x &optional (k 1))
+ (* (* (/ (sin (/ 3 (* 2 k))) k)) (/ 2 3) (cos (* k x)))) 1 (lambda(x) (+ x 1)) 1000)
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (sum (lambda (x &optional (k (expt 10 1)))
+ (* (* (/ (sin (/ 3 (* 2 k))) k)) (/ 2 3) (cos (* k x)))) 1 (lambda(x) (+ x 1)) 10)
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (do ((x -4 (+ x 1)) (k 1 (+ k 1))) 
+           ((and (> x 4) (= k 4)) 'done)
+        (print (+ 1/2 (sum (lambda (x)
+        (* (/ (sin (/ 3 (* 2 k))) k) (/ 2 3) (cos (* k x)))) 
+                                        1 (lambda(x) (+ x 1)) x))))
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp
+(do ((x -4 (+ x 1)) (k 1 (+ k 1))) 
+           ((and (> k 1) (> x 4)) 'done)
+
+        (print (+ 1/2 (sum (lambda (k)
+        (* (/ (sin (/ 3 (* 2 k))) k) (/ 2 3) (cos (* k x)))) 
+                                        1 (lambda(k) (+ k 1)) k))))
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist((1/2) + sum(f(k, x), k, 1, 10^0), x, -4, 4), numer;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp
+(do ((x -4 (+ x .1)) (k 1 (+ k 1))) 
+           ((and (> k 10) (> x 4)) 'done)
+
+        (print (+ 1/2 (sum (lambda (k)
+        (* (/ (sin (/ 3 (* 2 k))) k) (/ 2 3) (cos (* k x)))) 
+                                        1 (lambda(k) (+ k 1)) k))))
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (list (/ 1 .01))
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp
+(let* ((step .1)
+       (than (/ 1 step)))
+(do ((x -4 (+ x step)) (k 1 (+ k 1))) 
+           ((and (> k than) (> x 4)) 'done)
+
+        (print (+ 1/2 (sum (lambda (k)
+        (* (/ (sin (/ 3 (* 2 k))) k) (/ 2 3) (cos (* k x)))) 
+                                        1 (lambda(k) (+ k 1)) k)))))
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp
+(let* ((m nil)
+       (step 1)
+       (than (/ 1 step)))
+(do ((x -4 (+ x step)) (k 1 (+ k 1))) 
+           ((and (> k than) (> x 4)) m)
+
+        (setq m (append (list (+ 1/2 (sum (lambda (k)
+        (* (/ (sin (/ 3 (* 2 k))) k) (/ 2 3) (cos (* k x)))) 
+                                        1 (lambda(k) (+ k 1)) k))) m))))
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(expr, start,stop,stepping,[shift]) := block([k:listofvars(expr),
+                                            n, y:[],
+                                             shift: (if (not(emptyp(shift))) 
+                                                        then float(first(shift))
+                                                            else (0.0))
+                                            ],
+            (n:floor((float(stop-start)/float(stepping)))),
+            (if (start < stop)
+            then
+            (y:flatten(append([y], 
+                                        map(, [makelist(float(start+shift+(stepping*(i-start))), 
+                                        i, start, (n+start))]))))
+            else
+            (y:flatten(append([y], 
+                                        map(lambda(f, [makelist((-(float(stop-shift-(stepping*(i-stop))))), 
+                                        i, (-(n+stop)), stop)]))))))
+            (if (n>1.0)
+                then return(y)
+                else return([])))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+1+1;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+give(f, seq):=block([k:f, m:seq], map(k, m))$
+seq(start,stop,stepping,[shift]) := block([
+                                            n, y:[],
+                                             shift: (if (not(emptyp(shift))) 
+                                                        then float(first(shift))
+                                                            else (0.0))
+                                            ],
+            
+            (n:floor((float(stop-start)/float(stepping)))),
+            (if (start < stop)
+            then
+            (y:flatten(append([y], 
+                                        makelist(float(start+shift+(stepping*(i-start))), 
+                                        i, start, (n+start)))))
+            else
+            (y:flatten(append([y], 
+                                        makelist((-(float(stop-shift-(stepping*(i-stop))))), 
+                                        i, (-(n+stop)), stop)))))
+            (if (n>1.0)
+                then return(y)
+                else return([])), kill(k, f))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(func, start, stop, stepping, [shift]):=block([k:func, m:block([
+                                            n, y:[],
+                                             shift: (if (not(emptyp(shift))) 
+                                                        then float(first(shift))
+                                                            else (0.0))
+                                            ],
+            (n:floor((float(stop-start)/float(stepping)))),
+            (if (start < stop)
+            then
+            (y:flatten(append([y], 
+                                        makelist(float(start+shift+(stepping*(i-start))), 
+                                        i, start, (n+start)))))
+            else
+            (y:flatten(append([y], 
+                                        makelist((-(float(stop-shift-(stepping*(i-stop))))), 
+                                        i, (-(n+stop)), stop)))))
+            (if (n>1.0)
+                then return(y)
+                else return([])), kill(k, f))], map(k, m))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f)$
+f(x):=x^2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f(x):=x^2+2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(f, 0, 10, 2.5, 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+allOpsPriv(expression, opList) :=
+ block ( [x, args, newList],
+        if atom(expression)
+           then opList
+           else
+             (x:    op(expression),
+              args: args(expression),
+              newList: if member (x, opList)
+                          then opList
+                          else cons(x, opList),
+              for arg in args do
+                newList: allOpsPriv(arg, newList),
+              newList
+             ) 
+        )$
+
+allOps(expression):=
+ block( [ ],
+        allOpsPriv (expression, [])
+       )$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+allOps(f);
+allOps(f(x));
+allOps(seq(f, 0, 10, 2.5, 0));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(n, n, 0, 10, 1.5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(1/n, n, 1, 10, 1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+alpha(t) := [sin(t), cos(t)];
+diff(alpha(z), z);
+J(a) := [-a[2], a[1]];
+J(alpha(y));
+alpha(z).J(alpha(z));
+kappa(fn, t) := diff(fn(t), t, 2).J(diff(fn(t), t))/((diff(fn(t), t).diff(fn(t), t))^(3/2));
+kappa(alpha, t);
+trigsimp(kappa(alpha, t));
+eight(t) := [sin(t), sin(t)*cos(t)];
+wxplot2d(append('[parametric], eight (z), [[z, -%pi, %pi]], [[nticks, 360]]));
+kappa(eight, z);
+wxplot2d(kappa(eight, z), [z, -%pi, %pi]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq:'diff(y,x) = -y;
+ode2(eq, y, x);
+sol: ic1(%, x= 1, y= 8);
+wxplot2d(rhs (sol),[x,-4,4],[y,-10,10]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq: 'diff(y, x, 2) + y = 0;
+sol2: ode2(eq, y, x);
+ps: ic2(sol2, x=0, y=2, 'diff(y, x)=1);
+ev (rhs(ps) , x= 0);
+diff(rhs (ps), x);
+ev (%, x = 0);
+bc2(sol2, x=0, y=2, x=2, y = -1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ratprint:false$
+load(contrib_ode)$
+eq: diff(y, x)=x^2-y^2;
+contrib_ode(eq, y, x);
+rk(rhs(eq), y, 1, [x, 0, 0.2, 0.1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f(x):=log(x)+x;
+y:f(x);
+yp:diff(f(x), x);
+ypp:diff(yp, x);
+k:x^2*ypp + 2*x*yp + y, factor;
+is(k=(log(x)+3*x+1));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f(x):=sqrt(-(1+x^2));
+y:f(x);
+yp:diff(y, x), factor;
+k:x+y*yp, factor;
+is(k=0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(values);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(values)$
+f(x,y):=x^2+y^2-25$
+eq:f(x,y)$
+yp:diff(f(x,y),x)$
+eq1:eq=0;
+k:solve(eq1,y);
+g(x):=rhs(second(k))$
+g:g(x);
+gp:diff(g(x),x);
+is(g*gp+x=0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(x=y, rhs(second(solve(eq, x)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+isolate(eq, x); solve(eq, x);
+solve(isolate(eq, x), x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??relation;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??featurep;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+features;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??rk;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(%i591) limit(bessel_k(1/4, x), x, 0), numer;
+(%o591) infinity
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+bessel_k(1.25, 1);
+bessel_k(1.25, 0.5);
+bessel_k(1.25, 0.25);
+bessel_k(1.25, 0.0025);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+diff(y, x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??bessel;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??ic;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+??ode;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(k, m, f, expr, x, seq)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f(x):=x^2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+op(f(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(expr)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+listofvars(x^2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+expr:x^2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(f, k);
+f(x):=x^2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+values;kill(values)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f(x);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+give(f, seq(0, 10, 2.5, 0));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+give(f, seq(0, 10, 2.5, 0));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(m^2, 0, 10, 2.5, 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(k^2+2, 0, 10, 2.5, 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f(x):=x^2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+map(f, makelist(n, n, 1, 3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+map(lambda([x], f(x)), [1, 2, 3]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+''listofvars(f(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+block([expr:x^2+1, m:listofvars(expr)], 
+map(lambda([''m], ''expr), makelist(n, n, 1, 3))); 
+kill(m, expr, n, k)$
+apply(kill, [expr])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+expr:x^2+1$ m:listofvars(expr)$
+map(lambda(''m, ''expr), makelist(n, n, 1, 3));
+kill(m, expr, n, k)$
+apply(kill, [expr])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+n:1$ apply(n^2, seq(0, 10, 2.5, 0));kill(n)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(n, n, 0, 10, 2.5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(n, 0, 10, 2.5, 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(k^2, 0, 10, 2.5, 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+x:1$ seq(n^2, 0, 10, 2.5, 0);kill(x)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+apply(lambda([n], n^2), [[2, 4, 5]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+apply(lambda([n], n*n), [makelist(n, n, 0, 10, 2.5)]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq(n, 10, 2.5, 0);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+seq((1/2) + sum(f(k, x), k, 1, 10^0), x, -4, 4);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (expt 10 0)
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sum(x^3, x, 1, 10);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+i:4$ wxplot2d(four(x),[x, -4, 4], [adapt_depth, 1])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+i:5$ wxplot2d(four(x),[x, -4, 4])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:lisp (list (+ 1 1));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+1+1;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+makelist(a[i], i, 0, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+a:makelist(gr2d(explicit((1/2) + sum(f(k, x), k, 1, 10^i), x, -10, 10)), i, 0, 3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+a[1];a[2];a[3];
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$
